@@ -1,3 +1,5 @@
-^bin
-^lib
-^include
+^bin/
+^lib/
+^include/
+libks/bin/
+libks/build/
