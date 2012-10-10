@@ -25,6 +25,26 @@ KS_API long int ks_strtol(const char *str, char **endptr, int base)
     return strtol(str, endptr, base);
 }
 
+KS_API void* ks_calloc(size_t nitems, size_t size)
+{
+    return calloc(nitems, size);
+}
+
+KS_API void ks_free(void *ptr)
+{
+    free(ptr);
+}
+
+KS_API void* ks_malloc(size_t size)
+{
+    return malloc(size);
+}
+
+KS_API void* ks_realloc(void *ptr, size_t size)
+{
+    return realloc(ptr, size);
+}
+
 KS_API unsigned long int ks_strtoul(const char *str, char **endptr, int base)
 {
     return strtoul(str, endptr, base);
