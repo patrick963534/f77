@@ -3,7 +3,7 @@
 
 #include <ks/defs.h>
 
-typedef struct ks_time_t ks_time_t;
+typedef long int    ks_time_t;
 
 KS_API ks_time_t    ks_time_now();
 KS_API int          ks_time_differ_in_msec(ks_time_t new, ks_time_t old);
