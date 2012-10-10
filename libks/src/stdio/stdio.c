@@ -152,7 +152,6 @@ KS_API int ks_vsprintf(char *str, const char *format, va_list arg)
     return vsprintf(str, format, arg);
 }
 
-
 KS_API int ks_fscanf(FILE *stream, const char *format, ...)
 {
     int ret;
