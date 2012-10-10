@@ -1,8 +1,8 @@
-#include <stdio.h>
+#include <ks/stdio.h>
 
 int main()
 {
-    printf("hello world. \n");
+    ks_printf("hello world. \n");
 
     return 0;
 }

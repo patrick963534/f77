@@ -3,3 +3,4 @@
 ^include/
 libks/bin/
 libks/build/
+*.swp
