@@ -17,7 +17,7 @@ solution "libks"
       links { "rt" }
       includedirs { "include" }
 
-      files { "src/**.h", "src/**.c" }
+      files { "include/**.h", "platform/linux/**.c", "platform/linux/**.h", "src/**.h", "src/**.c" }
  
       configuration "Debug"
          defines { "DEBUG" }
