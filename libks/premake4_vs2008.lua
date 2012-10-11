@@ -16,7 +16,11 @@ solution "libks"
       libdirs { "../deps/win32/lib" }
       links { }
       includedirs { "include", "../deps/win32/include" }
-      files { "include/**.h", "platform/win32/**.h", "platform/win32/**.c", "src/**.h", "src/**.c" }
+      files { "include/**.h", 
+			  "platform/include/**.h", 
+			  "platform/src/win32/**.h", 
+			  "platform/src/win32/**.c", 
+			  "src/**.h", "src/**.c" }
 	  
 	  prebuildcommands {'@xcopy /Y "$(InputDir)\\..\\..\\deps\\win32\\lib\\*.dll" "$(InputDir)\\..\\bin\\" 1>NUL 2>&1'}
  
