@@ -12,7 +12,7 @@ int main()
 
     while (1)
     {
-        ks_time_sleep(1000);
+        ks_time_sleep(50);
 
         t2 = ks_time_now();
         ks_log("%d ", ks_time_differ_in_msec(t2, t1));
