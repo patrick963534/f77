@@ -3,8 +3,6 @@
 ^include/
 libks/bin/
 libks/build/
-*.lib
-*.dll
 *.swp
 *.sln
 *.ncb

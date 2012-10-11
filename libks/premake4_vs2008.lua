@@ -25,7 +25,7 @@ solution "libks"
 	  prebuildcommands {'@xcopy /Y "$(InputDir)\\..\\..\\deps\\win32\\lib\\*.dll" "$(InputDir)\\..\\bin\\" 1>NUL 2>&1'}
  
       configuration "Debug"
-         defines { "DEBUG" }
+         defines { "DEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
          flags { "Symbols", "ExtraWarnings" }
  
       configuration "Release"
