@@ -17,8 +17,12 @@ solution "libks"
       links { "rt" }
       includedirs { "include" }
 
-      files { "include/**.h", "platform/linux/**.c", "platform/linux/**.h", "src/**.h", "src/**.c" }
- 
+	  files { "include/**.h", 
+			  "platform/include/**.h", 
+			  "platform/src/linux/**.h", 
+			  "platform/src/linux/**.c", 
+			  "src/**.h", "src/**.c" }
+	   
       configuration "Debug"
          defines { "DEBUG" }
          flags { "Symbols", "ExtraWarnings" }
