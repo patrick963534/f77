@@ -1,4 +1,5 @@
 #include <ks/object.h>
+#include <ks/list.h>
 #include <stdlib.h>
 
 KS_API void ks_object_destruct(ks_object_t* me_)

@@ -23,16 +23,4 @@ KS_API void         ks_object_delete(void* o);
 KS_API ks_object_t* ks_object_new(int sz);
 KS_API void         ks_object_destruct(ks_object_t* me_);
 
-#define ks_extends_container()  \
-    ks_extends_object();        \
-    ks_list_t elements
-
-typedef struct ks_container_t
-{
-    ks_extends_container();
-} ks_container_t;
-
-KS_API ks_container_t*  ks_container_new(int sz);
-KS_API void             ks_container_destruct(ks_object_t* me_);
-
 #endif
