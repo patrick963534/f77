@@ -12,71 +12,60 @@ static GLuint programObject;
 GLuint LoadShader(GLenum type, const char *shaderSrc)
 {
    GLuint shader;
-   GLint compiled;
+   GLint  compiled;
    
-   // Create the shader object
-   shader = glCreateShader ( type );
+   shader = glCreateShader(type);
 
    if ( shader == 0 )
         return 0;
 
-   // Load the shader source
-   glShaderSource ( shader, 1, &shaderSrc, NULL );
-   
-   // Compile the shader
-   glCompileShader ( shader );
+   glShaderSource(shader, 1, &shaderSrc, NULL);
+   glCompileShader(shader);
 
    // Check the compile status
-   glGetShaderiv ( shader, GL_COMPILE_STATUS, &compiled );
-
-   if ( !compiled ) 
+   glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+   if (!compiled) 
    {
       GLint infoLen = 0;
-
       glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
       
-      if ( infoLen > 1 )
+      if (infoLen > 1)
       {
          char* infoLog = malloc (sizeof(char) * infoLen );
 
-         glGetShaderInfoLog ( shader, infoLen, NULL, infoLog );
-         ks_log( "Error compiling shader:\n%s\n", infoLog );            
+         glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+         ks_log("Error compiling shader:\n%s\n", infoLog);
          
-         free ( infoLog );
+         free(infoLog);
       }
 
-      glDeleteShader ( shader );
+      glDeleteShader(shader);
       return 0;
    }
 
    return shader;
-
 }
 
-///
-// Initialize the shader and program object
-//
 int Init()
 {
-   GLbyte vShaderStr[] =  
+   char vShaderStr[] =  
       "attribute vec4 vPosition;    \n"
       "void main()                  \n"
       "{                            \n"
       "   gl_Position = vPosition;  \n"
       "}                            \n";
    
-   GLbyte fShaderStr[] =  
-      "precision mediump float;\n"\
+   char fShaderStr[] =  
+      "precision mediump float;                     \n"
       "void main()                                  \n"
       "{                                            \n"
-      "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
+      "  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);   \n"
       "}                                            \n";
 
    GLuint vertexShader;
    GLuint fragmentShader;
    GLint  linked;
 
-   // Load the vertex/fragment shaders
    vertexShader = LoadShader(GL_VERTEX_SHADER, vShaderStr);
    fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
 
@@ -86,16 +75,11 @@ int Init()
 
    glAttachShader(programObject, vertexShader);
    glAttachShader(programObject, fragmentShader);
-
-   // Bind vPosition to attribute 0   
    glBindAttribLocation(programObject, 0, "vPosition");
-
-   // Link the program
    glLinkProgram(programObject);
 
    // Check the link status
    glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
-
    if (!linked) 
    {
       GLint infoLen = 0;
@@ -133,7 +117,6 @@ void Draw()
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
  
-    ks_log("program: %d", programObject);
     glUseProgram(programObject);
  
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
@@ -142,8 +125,6 @@ void Draw()
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     ks_sys_system_instance()->klass->flush();
-
-    ks_log("%s", "flushing");
 }
 
 
@@ -151,6 +132,8 @@ int main()
 {
     ks_time_t t1, t2;
     ks_container_t* c;
+    int ellapse;
+    int count = 0;
 
     ks_log("%d\n", sizeof(long int));
 
@@ -164,12 +147,22 @@ int main()
 
     while (1)
     {
-        ks_time_sleep(50);
+        count++;
+
+        ks_time_sleep(32);
 
         Draw();
 
         t2 = ks_time_now();
-        ks_log("%d ", ks_time_differ_in_msec(t2, t1));
+        ellapse += ks_time_differ_in_msec(t2, t1);
+
+        if (ellapse > 1000)
+        {
+            ks_log("%d ", count);
+            ellapse = 0;
+            count = 0;
+        }
+
         t1 = t2;
     }
 
