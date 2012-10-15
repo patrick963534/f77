@@ -14,11 +14,10 @@ solution "libks"
       location ( "build" )
       targetdir ( "bin" )
       libdirs { "/usr/lib" }
-      links { "rt" }
-      includedirs { "include" }
+      links { "rt", "EGL", "X11", "GLESv2" }
+      includedirs { "include", "platform/include" }
 
 	  files { "include/**.h", 
-			  "platform/include/**.h", 
 			  "platform/src/linux/**.h", 
 			  "platform/src/linux/**.c", 
 			  "src/**.h", "src/**.c" }

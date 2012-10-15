@@ -11,7 +11,7 @@ KS_API ks_object_t* ks_object_new(int sz)
 {
     ks_object_t* me;
     
-    me              = (ks_object_t*)calloc(1, max(sz, sizeof(*me)));
+    me              = (ks_object_t*)calloc(1, ks_max(sz, sizeof(*me)));
     me->destruct    = (ks_destruct_f)ks_object_destruct;
     me->tname       = "ks_object";
     me->magic       = 88888888;

@@ -6,7 +6,7 @@ KS_API ks_container_t* ks_container_new(int sz)
 {
     ks_container_t* me;
     
-    me              = (ks_container_t*)calloc(1, max(sz, sizeof(*me)));
+    me              = (ks_container_t*)calloc(1, ks_max(sz, sizeof(*me)));
     me->destruct    = (ks_destruct_f)ks_container_destruct;
     me->tname       = "ks_container";
 

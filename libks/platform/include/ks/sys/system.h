@@ -5,16 +5,24 @@
 #include <ks/object.h>
 #include <ks/container.h>
 
-#define ks_extends_sys_system()                     \
-    ks_extends_object();                            \
-    void    (init*)(ks_container_t* container);     \
-    void    (create_window*)(const char* title, int w, int h)
+typedef struct ks_sys_system_t ks_sys_system_t;
 
-typedef struct ks_sys_system_t
+typedef struct ks_sys_system_interface_t
+{
+    int     (*create_window)(const char* title, int w, int h);
+    void    (*flush)();
+} ks_sys_system_interface_t;
+
+#define ks_extends_sys_system() \
+    ks_extends_object();    \
+    ks_sys_system_interface_t* klass
+
+struct ks_sys_system_t
 {
     ks_extends_sys_system();
-} ks_sys_system_t;
+};
 
-ks_sys_system_t* ks_sys_system_instance();
+KS_API void             ks_sys_system_init(ks_container_t* container);
+KS_API ks_sys_system_t* ks_sys_system_instance();
 
 #endif
