@@ -111,8 +111,8 @@ void Draw()
                            -0.5f, -0.5f, 0.0f,
                             0.5f, -0.5f, 0.0f };
 
-    int width = 320;
-    int height = 240;
+    int width = ks_sys_system_instance()->klass->get_width();
+    int height = ks_sys_system_instance()->klass->get_height();
        
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);

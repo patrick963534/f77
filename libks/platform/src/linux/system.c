@@ -182,8 +182,20 @@ static void flush()
     eglSwapBuffers(sys->display, sys->surface);
 }
 
+static int get_width()
+{
+    return sys->width;
+}
+
+static int get_height()
+{
+    return sys->height;
+}
+
 static ks_sys_system_interface_t interface = {
     create_window,
+    get_width,
+    get_height,
     flush,
 };
 
