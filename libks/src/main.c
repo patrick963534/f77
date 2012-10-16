@@ -132,7 +132,7 @@ int main()
 {
     ks_time_t t1, t2;
     ks_container_t* c;
-    int ellapse;
+    int ellapse = 0;
     int count = 0;
 
     ks_log("%d\n", sizeof(long int));
@@ -143,7 +143,7 @@ int main()
     ks_sys_system_init(c);
     ks_sys_system_instance()->klass->create_window("hello", 320, 240);
 
-    //Init();
+    Init();
 
     while (1)
     {
