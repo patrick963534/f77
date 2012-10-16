@@ -2,7 +2,7 @@
 #include <ks/time.h>
 #include <ks/log.h>
 #include <ks/sys/system.h>
-#include <GLES/gl.h>
+#include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <stdlib.h>
 #include <string.h>
@@ -143,7 +143,7 @@ int main()
     ks_sys_system_init(c);
     ks_sys_system_instance()->klass->create_window("hello", 320, 240);
 
-    Init();
+    //Init();
 
     while (1)
     {
@@ -151,7 +151,7 @@ int main()
 
         ks_time_sleep(32);
 
-        Draw();
+        //Draw();
 
         t2 = ks_time_now();
         ellapse += ks_time_differ_in_msec(t2, t1);
