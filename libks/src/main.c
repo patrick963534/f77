@@ -151,7 +151,7 @@ int main()
 
         ks_time_sleep(32);
 
-        //Draw();
+        Draw();
 
         t2 = ks_time_now();
         ellapse += ks_time_differ_in_msec(t2, t1);

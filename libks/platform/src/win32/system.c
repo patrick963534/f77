@@ -162,10 +162,12 @@ static int init_egl()
         EGL_RED_SIZE,       5,
         EGL_GREEN_SIZE,     6,
         EGL_BLUE_SIZE,      5,
+        EGL_DEPTH_SIZE,     8,
         EGL_ALPHA_SIZE,     (flags & ES_WINDOW_ALPHA) ? 8 : EGL_DONT_CARE,
         EGL_DEPTH_SIZE,     (flags & ES_WINDOW_DEPTH) ? 8 : EGL_DONT_CARE,
         EGL_STENCIL_SIZE,   (flags & ES_WINDOW_STENCIL) ? 8 : EGL_DONT_CARE,
         EGL_SAMPLE_BUFFERS, (flags & ES_WINDOW_MULTISAMPLE) ? 1 : 0,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL_NONE
     };
 
@@ -180,6 +182,9 @@ static int init_egl()
         goto fail;
  
     if (!eglChooseConfig(display, attribList, &config, 1, &numConfigs))
+        goto fail;
+
+    if (numConfigs <= 0)
         goto fail;
  
     surface = eglCreateWindowSurface(display, config, sys->hwnd, NULL);
