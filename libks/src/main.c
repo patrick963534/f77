@@ -2,7 +2,7 @@
 #include <ks/time.h>
 #include <ks/log.h>
 #include <ks/sys/system.h>
-#include <GLES2/gl2.h>
+#include <GLES/gl.h>
 #include <EGL/egl.h>
 #include <stdlib.h>
 #include <string.h>

@@ -34,7 +34,8 @@ extern "C" {
 
 /* Header file version number */
 /* Current version at http://www.khronos.org/registry/egl/ */
-#define EGL_EGLEXT_VERSION 4
+/* $Revision: 7244 $ on $Date: 2009-01-20 17:06:59 -0800 (Tue, 20 Jan 2009) $ */
+#define EGL_EGLEXT_VERSION 3
 
 #ifndef EGL_KHR_config_attribs
 #define EGL_KHR_config_attribs 1
@@ -119,36 +120,6 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay dpy, EGL
 #define EGL_GL_RENDERBUFFER_KHR			0x30B9	/* eglCreateImageKHR target */
 #endif
 
-#ifndef EGL_KHR_reusable_sync
-#define EGL_KHR_reusable_sync 1
-
-typedef void* EGLSyncKHR;
-typedef khronos_utime_nanoseconds_t EGLTimeKHR;
-
-#define EGL_SYNC_STATUS_KHR			0x30F1
-#define EGL_SIGNALED_KHR			0x30F2
-#define EGL_UNSIGNALED_KHR			0x30F3
-#define EGL_TIMEOUT_EXPIRED_KHR			0x30F5
-#define EGL_CONDITION_SATISFIED_KHR		0x30F6
-#define EGL_SYNC_TYPE_KHR			0x30F7
-#define EGL_SYNC_REUSABLE_KHR			0x30FA
-#define EGL_SYNC_FLUSH_COMMANDS_BIT_KHR		0x0001	/* eglClientWaitSyncKHR <flags> bitfield */
-#define EGL_FOREVER_KHR				0xFFFFFFFFFFFFFFFFull
-#define EGL_NO_SYNC_KHR				((EGLSyncKHR)0)
-#ifdef EGL_EGLEXT_PROTOTYPES
-EGLAPI EGLSyncKHR EGLAPIENTRY eglCreateSyncKHR(EGLDisplay dpy, EGLenum type, const EGLint *attrib_list);
-EGLAPI EGLBoolean EGLAPIENTRY eglDestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync);
-EGLAPI EGLint EGLAPIENTRY eglClientWaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout);
-EGLAPI EGLBoolean EGLAPIENTRY eglSignalSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode);
-EGLAPI EGLBoolean EGLAPIENTRY eglGetSyncAttribKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value);
-#endif /* EGL_EGLEXT_PROTOTYPES */
-typedef EGLSyncKHR (EGLAPIENTRYP PFNEGLCREATESYNCKHR) (EGLDisplay dpy, EGLenum type, const EGLint *attrib_list);
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYSYNCKHR) (EGLDisplay dpy, EGLSyncKHR sync);
-typedef EGLint (EGLAPIENTRYP PFNEGLCLIENTWAITSYNCKHR) (EGLDisplay dpy, EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout);
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLSIGNALSYNCKHR) (EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode);
-typedef EGLBoolean (EGLAPIENTRYP PFNEGLGETSYNCATTRIBKHR) (EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value);
-#endif
-
 #ifndef EGL_KHR_image_base
 #define EGL_KHR_image_base 1
 /* Most interfaces defined by EGL_KHR_image_pixmap above */
@@ -158,14 +129,6 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLGETSYNCATTRIBKHR) (EGLDisplay dpy, EGLSyn
 #ifndef EGL_KHR_image_pixmap
 #define EGL_KHR_image_pixmap 1
 /* Interfaces defined by EGL_KHR_image above */
-#endif
-
-#ifndef EGL_IMG_context_priority
-#define EGL_IMG_context_priority 1
-#define EGL_CONTEXT_PRIORITY_LEVEL_IMG		0x3100
-#define EGL_CONTEXT_PRIORITY_HIGH_IMG		0x3101
-#define EGL_CONTEXT_PRIORITY_MEDIUM_IMG		0x3102
-#define EGL_CONTEXT_PRIORITY_LOW_IMG		0x3103
 #endif
 
 #ifdef __cplusplus

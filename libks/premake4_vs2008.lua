@@ -14,10 +14,10 @@ solution "libks"
       location ( "build" )
       targetdir ( "bin" )
       libdirs { "../deps/win32/lib" }
-      links { }
-      includedirs { "include", "../deps/win32/include" }
+      links { "EGL", "libgles_cm"}
+      includedirs { "platform/include", "include", "../deps/win32/include" }
       files { "include/**.h", 
-			  "platform/include/**.h", 
+              "platform/include/**.h",
 			  "platform/src/win32/**.h", 
 			  "platform/src/win32/**.c", 
 			  "src/**.h", "src/**.c" }
