@@ -3,6 +3,8 @@
 ^include/
 libks/bin/
 libks/build/
+app/gles2_3d_example/bin
+app/gles2_3d_example/build
 *.swp
 *.sln
 *.ncb
