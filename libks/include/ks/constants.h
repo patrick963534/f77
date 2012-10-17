@@ -10,8 +10,16 @@ typedef struct ks_constants_key_t
 #undef KS_KEYS_CONSTANT
 } ks_constants_key_t;
 
+typedef struct ks_constants_type_t
+{
+#define KS_TYPE_CONSTANT(Name)    int Name;
+#include <ks/constants.types.h>
+#undef KS_TYPE_CONSTANT
+} ks_constants_type_t;
+
 typedef struct ks_constants_t
 {
+    ks_constants_type_t types;
     ks_constants_key_t  keys;
 } ks_constants_t;
 
