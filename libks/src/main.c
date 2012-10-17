@@ -145,7 +145,7 @@ int main()
 
     Init();
 
-    while (1)
+    while (count < 100000)
     {
         count++;
 
