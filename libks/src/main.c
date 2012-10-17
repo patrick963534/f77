@@ -6,6 +6,7 @@
 #include <EGL/egl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ks/director.h>
 
 static GLuint programObject;
 
@@ -111,10 +112,7 @@ void Draw()
                            -0.5f, -0.5f, 0.0f,
                             0.5f, -0.5f, 0.0f };
 
-    int width = ks_sys_system_instance()->klass->get_width();
-    int height = ks_sys_system_instance()->klass->get_height();
-       
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
     glClear(GL_COLOR_BUFFER_BIT);
  
     glUseProgram(programObject);
@@ -131,17 +129,13 @@ void Draw()
 int main()
 {
     ks_time_t t1, t2;
-    ks_container_t* c;
     int ellapse = 0;
     int count = 0;
 
     ks_log("%d\n", sizeof(long int));
 
     t1 = ks_time_now();
-
-    c = ks_container_new(sizeof(*c));
-    ks_sys_system_init(c);
-    ks_sys_system_instance()->klass->create_window("hello", 320, 240);
+    ks_director_init("hello", 320, 240);
 
     Init();
 

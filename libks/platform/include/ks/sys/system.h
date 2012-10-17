@@ -9,7 +9,7 @@ typedef struct ks_sys_system_t ks_sys_system_t;
 
 typedef struct ks_sys_system_interface_t
 {
-    int     (*create_window)(const char* title, int w, int h);
+    int     (*create)(const char* title, int w, int h);
     int     (*get_width)();
     int     (*get_height)();
     void    (*flush)();
