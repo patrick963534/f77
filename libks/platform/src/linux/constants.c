@@ -8,6 +8,7 @@
 
 #define KS_TYPES_KEY_DOWN       (10)
 #define KS_TYPES_KEY_UP         (10)
+#define KS_TYPES_KEY_CHAR       (10)
 
 const ks_constants_t ks = {
     { // TYPES

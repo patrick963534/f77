@@ -1,7 +1,7 @@
 #include <ks/defs.h>
 #include <ks/sys/eventq.h>
 #include <ks/list.h>
-#include <windows.h>
+#include <stdlib.h>
 
 typedef struct eventq_t
 {

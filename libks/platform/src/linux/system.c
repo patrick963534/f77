@@ -1,30 +1,12 @@
 #include <ks/sys/system.h>
+#include <ks/sys/graphics.h>
+#include <ks/sys/eventq.h>
+#include <ks/director.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ks/log.h>
-
-///
-//  Macros
-//
-#define ESUTIL_API
-#define ESCALLBACK
-
-/// esCreateWindow flag - RGB color buffer
-#define ES_WINDOW_RGB           0
-
-/// esCreateWindow flag - ALPHA color buffer
-#define ES_WINDOW_ALPHA         1 
-
-/// esCreateWindow flag - depth buffer
-#define ES_WINDOW_DEPTH         2 
-
-/// esCreateWindow flag - stencil buffer
-#define ES_WINDOW_STENCIL       4
-
-/// esCreateWindow flat - multi-sample buffer
-#define ES_WINDOW_MULTISAMPLE   8
 
 typedef struct system_t
 {
@@ -34,8 +16,6 @@ typedef struct system_t
     EGLDisplay              display;
     EGLContext              context;
     EGLSurface              surface;
-    GLint                   width;
-    GLint                   height;
 
     Display*                x_display;
 
@@ -50,7 +30,7 @@ static void destruct(system_t* me)
     ks_container_remove((ks_object_t*)me);
 }
 
-static int init_window(const char* title)
+static int init_window()
 {
     Window                  root;
     XSetWindowAttributes    swa;
@@ -68,7 +48,9 @@ static int init_window(const char* title)
     root = DefaultRootWindow(x_display);
 
     swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask;
-    win = XCreateWindow(x_display, root, 0, 0, sys->width, sys->height, 0,
+    win = XCreateWindow(x_display, root, 0, 0, 
+                        ks_director_instance()->width, 
+                        ks_director_instance()->height, 0,
                         CopyFromParent, InputOutput,
                         CopyFromParent, CWEventMask, &swa);
 
@@ -80,8 +62,8 @@ static int init_window(const char* title)
     XSetWMHints(x_display, win, &hints);
 
     // make the window visible on the screen
-    XMapWindow (x_display, win);
-    XStoreName(x_display, win, title);
+    XMapWindow(x_display, win);
+    XStoreName(x_display, win, ks_director_instance()->title);
 
     // get identifiers for the provided atom name strings
     wm_state = XInternAtom (x_display, "_NET_WM_STATE", 0);
@@ -111,16 +93,12 @@ static int init_egl()
     EGLSurface surface;
     EGLConfig config;
     EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
-    GLuint flags = ES_WINDOW_RGB;
     EGLint attribList[] =
     {
         EGL_RED_SIZE,       5,
         EGL_GREEN_SIZE,     6,
         EGL_BLUE_SIZE,      5,
-        EGL_ALPHA_SIZE,     (flags & ES_WINDOW_ALPHA) ? 8 : EGL_DONT_CARE,
-        EGL_DEPTH_SIZE,     (flags & ES_WINDOW_DEPTH) ? 8 : EGL_DONT_CARE,
-        EGL_STENCIL_SIZE,   (flags & ES_WINDOW_STENCIL) ? 8 : EGL_DONT_CARE,
-        EGL_SAMPLE_BUFFERS, (flags & ES_WINDOW_MULTISAMPLE) ? 1 : 0,
+        EGL_DEPTH_SIZE,     8,
         EGL_NONE
     };
 
@@ -163,12 +141,9 @@ fail:
     return 0;
 }
 
-static int create_window(const char* title, int w, int h)
+static int create_window()
 {
-    sys->width  = w;
-    sys->height = h;       
-
-    if (!init_window(title))
+    if (!init_window())
         return 0;
 
     if (!init_egl())
@@ -177,13 +152,18 @@ static int create_window(const char* title, int w, int h)
     return 1;
 }
 
+static void update_messages()
+{
+
+}
+
 static void flush()
 {
     eglSwapBuffers(sys->display, sys->surface);
 }
 
 static ks_sys_system_interface_t interfaces = {
-    create_window,
+    update_messages,
     flush,
 };
 
@@ -195,6 +175,11 @@ KS_API void ks_sys_system_init(ks_container_t* container)
 
     if (container)
         ks_container_add(container, (ks_object_t*)sys);
+
+    create_window();
+    
+    ks_sys_graphics_init(container);
+    ks_sys_eventq_init(container);
 }
 
 KS_API ks_sys_system_t* ks_sys_system_instance()
