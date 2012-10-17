@@ -20,9 +20,14 @@ static eventq_t* eventq;
 
 static void destruct(eventq_t* me)
 {
-    ks_unused(me);
+    event_node_t *pos, *n;
 
-    ks_container_remove((ks_object_t*)me);
+    ks_list_for_each_entry_reverse_safe(pos, n, &me->events, event_node_t, element)
+    {
+        ks_list_remove(&pos->element);
+        free(pos);
+    }
+
     ks_object_destruct((ks_object_t*)me);
 }
 

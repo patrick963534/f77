@@ -131,7 +131,6 @@ static void destruct(graphics_t* me)
 {
     ks_unused(me);
 
-    ks_container_remove((ks_object_t*)me);
     ks_object_destruct((ks_object_t*)me);
 }
 
