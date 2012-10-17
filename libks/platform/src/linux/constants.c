@@ -9,7 +9,7 @@
 #define KS_TYPES_KEY_DOWN       (10)
 #define KS_TYPES_KEY_UP         (10)
 
-KS_API const ks_constants_t ks = {
+const ks_constants_t ks = {
     { // TYPES
         #define KS_TYPE_CONSTANT(Name) KS_TYPES_ ## Name,
         #include <ks/constants.types.h>
