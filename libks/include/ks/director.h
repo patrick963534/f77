@@ -9,6 +9,7 @@ typedef struct ks_director_t
 {
     ks_extends_container();
     
+    char        title[256];
     int         width;
     int         height;
 

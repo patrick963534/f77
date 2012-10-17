@@ -5,7 +5,8 @@
 
 typedef struct ks_event_key_t
 {
-    int unicode;
+    int character;
+    int code;
 } ks_event_key_t;
 
 typedef struct ks_event_t

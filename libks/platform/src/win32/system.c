@@ -5,27 +5,10 @@
 #include <string.h>
 #include <ks/log.h>
 #include <windows.h>
-
-///
-//  Macros
-//
-#define ESUTIL_API
-#define ESCALLBACK
-
-/// esCreateWindow flag - RGB color buffer
-#define ES_WINDOW_RGB           0
-
-/// esCreateWindow flag - ALPHA color buffer
-#define ES_WINDOW_ALPHA         1 
-
-/// esCreateWindow flag - depth buffer
-#define ES_WINDOW_DEPTH         2 
-
-/// esCreateWindow flag - stencil buffer
-#define ES_WINDOW_STENCIL       4
-
-/// esCreateWindow flat - multi-sample buffer
-#define ES_WINDOW_MULTISAMPLE   8
+#include "ks/sys/graphics.h"
+#include "ks/sys/eventq.h"
+#include "ks/constants.h"
+#include "ks/director.h"
 
 typedef struct system_t
 {
@@ -53,49 +36,41 @@ static void destruct(system_t* me)
 LRESULT WINAPI ESWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     LRESULT  lRet = 1; 
+    ks_event_t e;
 
     switch (uMsg) 
     { 
-    case WM_CREATE:
-        break;
+        case WM_DESTROY:
+            PostQuitMessage(0);             
+            break; 
 
-    case WM_PAINT:
-        {
-            //ESContext *esContext = (ESContext*)(LONG_PTR) GetWindowLongPtr ( hWnd, GWL_USERDATA );
+        case WM_KEYDOWN:
+            e.type = ks.types.KEY_DOWN;
+            e.key.code = (int)wParam;
+            ks_sys_eventq_instance()->klass->endqueue(&e);
+            break;
 
-            //if ( esContext && esContext->drawFunc )
-            //    esContext->drawFunc ( esContext );
+        case WM_KEYUP:
+            e.type = ks.types.KEY_UP;
+            e.key.code = (int)wParam;
+            ks_sys_eventq_instance()->klass->endqueue(&e);
+            break;
 
-            //ValidateRect( esContext->hWnd, NULL );
-        }
-        break;
+        case WM_CHAR:
+            e.type = ks.types.KEY_CHAR;
+            e.key.character = (int)wParam;
+            ks_sys_eventq_instance()->klass->endqueue(&e);
+            break;
 
-    case WM_DESTROY:
-        PostQuitMessage(0);             
-        break; 
-
-    case WM_CHAR:
-        {
-            //POINT      point;
-            //ESContext *esContext = (ESContext*)(LONG_PTR) GetWindowLongPtr ( hWnd, GWL_USERDATA );
-
-            //GetCursorPos( &point );
-
-            //if ( esContext && esContext->keyFunc )
-            //    esContext->keyFunc ( esContext, (unsigned char) wParam, 
-            //    (int) point.x, (int) point.y );
-        }
-        break;
-
-    default: 
-        lRet = DefWindowProc (hWnd, uMsg, wParam, lParam); 
-        break; 
+        default: 
+            lRet = DefWindowProc (hWnd, uMsg, wParam, lParam); 
+            break; 
     } 
 
     return lRet; 
 }
 
-static int init_window(const char* title)
+static int init_window()
 {
     WNDCLASS wndclass = {0}; 
     DWORD    wStyle   = 0;
@@ -117,14 +92,14 @@ static int init_window(const char* title)
     // the correct number of pixels
     windowRect.left = 0;
     windowRect.top = 0;
-    windowRect.right = sys->width;
-    windowRect.bottom = sys->height;
+    windowRect.right = ks_director_instance()->width;
+    windowRect.bottom = ks_director_instance()->height;
 
     AdjustWindowRect ( &windowRect, wStyle, FALSE );
 
     sys->hwnd = CreateWindow(
         "opengles2.0",
-        title,
+        ks_director_instance()->title,
         wStyle,
         0,
         0,
@@ -209,12 +184,9 @@ fail:
     return 0;
 }
 
-static int create_window(const char* title, int w, int h)
+static int create_window()
 {
-    sys->width  = w;
-    sys->height = h;       
-
-    if (!init_window(title))
+    if (!init_window())
         return 0;
 
     if (!init_egl())
@@ -223,13 +195,24 @@ static int create_window(const char* title, int w, int h)
     return 1;
 }
 
+static void update_messages()
+{
+    MSG sMessage;
+
+    if(PeekMessage(&sMessage, NULL, 0, 0, PM_REMOVE)) 
+    {
+        TranslateMessage(&sMessage);
+        DispatchMessage(&sMessage);
+    }
+}
+
 static void flush()
 {
     eglSwapBuffers(sys->display, sys->surface);
 }
 
 static ks_sys_system_interface_t interfaces = {
-    create_window,
+    update_messages,
     flush,
 };
 
@@ -241,6 +224,11 @@ KS_API void ks_sys_system_init(ks_container_t* container)
 
     if (container)
         ks_container_add(container, (ks_object_t*)sys);
+
+    create_window();
+
+    ks_sys_graphics_init(container);
+    ks_sys_eventq_init(container);
 }
 
 KS_API ks_sys_system_t* ks_sys_system_instance()

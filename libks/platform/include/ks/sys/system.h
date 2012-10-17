@@ -9,7 +9,7 @@ typedef struct ks_sys_system_t ks_sys_system_t;
 
 typedef struct ks_sys_system_interface_t
 {
-    int     (*create)(const char* title, int w, int h);
+    void    (*update_messages)();
     void    (*flush)();
 } ks_sys_system_interface_t;
 

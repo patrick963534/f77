@@ -1,13 +1,15 @@
 #include <ks/constants.h>
+#include <windows.h>
 
-#define KS_KEYS_VALUE_ESCAPE    (10)
-#define KS_KEYS_VALUE_UP        (10)
-#define KS_KEYS_VALUE_DOWN      (10)
-#define KS_KEYS_VALUE_LEFT      (10)
-#define KS_KEYS_VALUE_RIGHT     (10)
+#define KS_KEYS_VALUE_ESCAPE    (VK_ESCAPE)
+#define KS_KEYS_VALUE_UP        (VK_UP)
+#define KS_KEYS_VALUE_DOWN      (VK_DOWN)
+#define KS_KEYS_VALUE_LEFT      (VK_LEFT)
+#define KS_KEYS_VALUE_RIGHT     (VK_RIGHT)
 
-#define KS_TYPES_KEY_DOWN       (10)
-#define KS_TYPES_KEY_UP         (10)
+#define KS_TYPES_KEY_DOWN       (WM_KEYDOWN)
+#define KS_TYPES_KEY_UP         (WM_KEYUP)
+#define KS_TYPES_KEY_CHAR       (WM_CHAR)
 
 KS_API const ks_constants_t ks = {
     { // TYPES
