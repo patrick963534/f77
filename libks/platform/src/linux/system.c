@@ -182,20 +182,8 @@ static void flush()
     eglSwapBuffers(sys->display, sys->surface);
 }
 
-static int get_width()
-{
-    return sys->width;
-}
-
-static int get_height()
-{
-    return sys->height;
-}
-
-static ks_sys_system_interface_t interface = {
+static ks_sys_system_interface_t interfaces = {
     create_window,
-    get_width,
-    get_height,
     flush,
 };
 
@@ -203,7 +191,7 @@ KS_API void ks_sys_system_init(ks_container_t* container)
 {
     sys             = (system_t*)ks_object_new(sizeof(*sys));
     sys->destruct   = (ks_destruct_f)destruct;
-    sys->klass      = &interface;
+    sys->klass      = &interfaces;
 
     if (container)
         ks_container_add(container, (ks_object_t*)sys);
