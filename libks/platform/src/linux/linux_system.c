@@ -2,11 +2,18 @@
 #include <ks/graphics.h>
 #include <ks/eventq.h>
 #include <ks/director.h>
+#include <ks/constants.h>
+#include <ks/event.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ks/log.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
 
 typedef struct system_t
 {
@@ -47,7 +54,12 @@ static int init_window()
 
     root = DefaultRootWindow(x_display);
 
-    swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask;
+    //swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask;
+    swa.event_mask = KeyPressMask | ExposureMask | EnterWindowMask | 
+                     LeaveWindowMask | PointerMotionMask | 
+                     VisibilityChangeMask | ButtonPressMask | 
+                     ButtonReleaseMask | StructureNotifyMask;
+
     win = XCreateWindow(x_display, root, 0, 0, 
                         ks_director_instance()->width, 
                         ks_director_instance()->height, 0,
@@ -154,7 +166,32 @@ static int create_window()
 
 static void update_messages()
 {
+    XEvent xe;
+    ks_event_t e;
 
+    while (XPending(sys->x_display)) 
+    {
+        XNextEvent(sys->x_display, &xe);
+
+        if (xe.type == ButtonPress) 
+        {
+            ks_log("%s", "button down");
+        }
+        else if (xe.type == KeyPress)
+        {
+            e.type = ks.types.KEY_DOWN;
+            e.key.code = XLookupKeysym(&xe.xkey, 0);
+            ks_eventq_endqueue(&e);
+            ks_log("keydown:  %d", e.key.code);
+        }
+        else if (xe.type == KeyRelease)
+        {
+            e.type = ks.types.KEY_UP;
+            e.key.code = XLookupKeysym(&xe.xkey, 0);
+            ks_eventq_endqueue(&e);
+            ks_log("keydown:  %d", e.key.code);
+        }
+    }
 }
 
 static void flush()

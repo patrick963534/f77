@@ -1,6 +1,14 @@
 #include <ks/constants.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
 
-#define KS_KEYS_VALUE_ESCAPE    (10)
+
+/* get the XK_xxx values from /usr/include/X11/keysymdef.h */
+
+#define KS_KEYS_VALUE_ESCAPE    (XK_Escape)
 #define KS_KEYS_VALUE_UP        (10)
 #define KS_KEYS_VALUE_DOWN      (10)
 #define KS_KEYS_VALUE_LEFT      (10)
