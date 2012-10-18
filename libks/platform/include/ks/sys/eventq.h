@@ -10,7 +10,7 @@ typedef struct ks_sys_eventq_interface_t
 {
     int     nothing;
     void    (*endqueue)(const ks_event_t* e);
-    int     (*pop)(ks_event_t* e);
+    int     (*pop_message)(ks_event_t* e);
 } ks_sys_eventq_interface_t;
 
 #define ks_extends_sys_eventq() \
