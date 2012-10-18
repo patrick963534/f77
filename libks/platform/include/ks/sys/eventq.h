@@ -1,5 +1,5 @@
-#ifndef __KS_SYS_EVENTQ_H__
-#define __KS_SYS_EVENTQ_H__
+#ifndef __KS_EVENTQ_H__
+#define __KS_EVENTQ_H__
 
 #include <ks/defs.h>
 #include <ks/object.h>

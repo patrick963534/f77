@@ -1,5 +1,5 @@
-#ifndef __KS_SYS_GRAPHICS_H__
-#define __KS_SYS_GRAPHICS_H__
+#ifndef __KS_GRAPHICS_H__
+#define __KS_GRAPHICS_H__
 
 #include <ks/defs.h>
 #include <ks/object.h>
