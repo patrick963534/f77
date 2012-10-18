@@ -9,14 +9,14 @@
 /* get the XK_xxx values from /usr/include/X11/keysymdef.h */
 
 #define KS_KEYS_VALUE_ESCAPE    (XK_Escape)
-#define KS_KEYS_VALUE_UP        (10)
-#define KS_KEYS_VALUE_DOWN      (10)
-#define KS_KEYS_VALUE_LEFT      (10)
-#define KS_KEYS_VALUE_RIGHT     (10)
+#define KS_KEYS_VALUE_UP        (XK_Up)
+#define KS_KEYS_VALUE_DOWN      (XK_Down)
+#define KS_KEYS_VALUE_LEFT      (XK_Left)
+#define KS_KEYS_VALUE_RIGHT     (XK_Right)
 
-#define KS_TYPES_KEY_DOWN       (10)
-#define KS_TYPES_KEY_UP         (10)
-#define KS_TYPES_KEY_CHAR       (10)
+#define KS_TYPES_KEY_DOWN       (KeyPress)
+#define KS_TYPES_KEY_UP         (KeyRelease)
+#define KS_TYPES_KEY_CHAR       (3000)
 
 const ks_constants_t ks = {
     { // TYPES

@@ -55,10 +55,9 @@ static int init_window()
     root = DefaultRootWindow(x_display);
 
     //swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask;
-    swa.event_mask = KeyPressMask | ExposureMask | EnterWindowMask | 
-                     LeaveWindowMask | PointerMotionMask | 
-                     VisibilityChangeMask | ButtonPressMask | 
-                     ButtonReleaseMask | StructureNotifyMask;
+    //swa.event_mask = KeyPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask | PointerMotionMask | VisibilityChangeMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask;
+
+    swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask | KeyReleaseMask;
 
     win = XCreateWindow(x_display, root, 0, 0, 
                         ks_director_instance()->width, 
@@ -189,7 +188,15 @@ static void update_messages()
             e.type = ks.types.KEY_UP;
             e.key.code = XLookupKeysym(&xe.xkey, 0);
             ks_eventq_endqueue(&e);
-            ks_log("keydown:  %d", e.key.code);
+            ks_log("keyup:  %d", e.key.code);
+
+            if (e.key.code >= 'a' && e.key.code <= 'z')
+            {
+                e.type = ks.types.KEY_CHAR;
+                e.key.code = e.key.code;
+                ks_eventq_endqueue(&e);
+                ks_log("keychar:  %d", e.key.code);
+            }
         }
     }
 }
