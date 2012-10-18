@@ -1,5 +1,5 @@
 #include <ks/defs.h>
-#include <ks/sys/eventq.h>
+#include <ks/eventq.h>
 #include <ks/list.h>
 #include <stdlib.h>
 

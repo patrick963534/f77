@@ -1,4 +1,4 @@
-#include <ks/sys/graphics.h>
+#include <ks/graphics.h>
 #include <stdlib.h>
 
 KS_API void ks_graphics_draw(int x, int y)

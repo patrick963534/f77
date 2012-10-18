@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ks/time.h>
 #include <ks/log.h>
-#include <ks/sys/system.h>
+#include <ks/system.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ks/director.h>

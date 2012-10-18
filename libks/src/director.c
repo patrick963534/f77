@@ -1,9 +1,9 @@
 #include <ks/director.h>
-#include <ks/sys/system.h>
+#include <ks/system.h>
 #include <ks/time.h>
 #include <ks/event.h>
-#include <ks/sys/eventq.h>
-#include <ks/sys/graphics.h>
+#include <ks/eventq.h>
+#include <ks/graphics.h>
 #include <ks/log.h>
 #include <ks/constants.h>
 #include <string.h>
