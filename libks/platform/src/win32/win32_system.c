@@ -18,8 +18,6 @@ typedef struct system_t
     EGLDisplay              display;
     EGLContext              context;
     EGLSurface              surface;
-    GLint                   width;
-    GLint                   height;
 
 } system_t;
 
