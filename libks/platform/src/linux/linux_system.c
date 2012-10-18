@@ -1,6 +1,6 @@
-#include <ks/sys/system.h>
-#include <ks/sys/graphics.h>
-#include <ks/sys/eventq.h>
+#include <ks/system.h>
+#include <ks/graphics.h>
+#include <ks/eventq.h>
 #include <ks/director.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
@@ -10,7 +10,7 @@
 
 typedef struct system_t
 {
-    ks_extends_sys_system();
+    ks_extends_system();
     
     EGLNativeWindowType     hwnd;
     EGLDisplay              display;
@@ -182,7 +182,7 @@ KS_API void ks_system_init(ks_container_t* container)
     ks_eventq_init(container);
 }
 
-KS_API ks_sys_system_t* ks_system_instance()
+KS_API ks_system_t* ks_system_instance()
 {
-    return (ks_sys_system_t*)sys;
+    return (ks_system_t*)sys;
 }
