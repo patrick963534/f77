@@ -21,6 +21,7 @@ solution "libks"
               "platform/include/**.h",
 	          "platform/src/linux/**.h", 
 			  "platform/src/linux/**.c", 
+			  "platform/src/common/**.c", 
 			  "platform/src/gles2/**.c", 
 			  "src/**.h", "src/**.c" }
 	   

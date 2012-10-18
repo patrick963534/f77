@@ -137,6 +137,8 @@ static void destruct(graphics_t* me)
 {
     ks_unused(me);
 
+    ks_log("%s", "destruct gles2_graphics");
+
     ks_object_destruct((ks_object_t*)me);
 }
 
@@ -155,6 +157,7 @@ KS_API void ks_graphics_init(ks_container_t* container)
     g = (graphics_t*)ks_object_new(sizeof(*g));
     g->destruct = (ks_destruct_f)destruct;
     g->klass = ks_sys_graphics_interface_instance();
+    g->tname = "gles2_graphics";
 
     if (container)
         ks_container_add(container, (ks_object_t*)g);

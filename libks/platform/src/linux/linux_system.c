@@ -34,6 +34,8 @@ static void destruct(system_t* me)
 {
     ks_unused(me);
 
+    ks_log("%s", "destruct system");
+
     ks_object_destruct((ks_object_t*)me);
 }
 

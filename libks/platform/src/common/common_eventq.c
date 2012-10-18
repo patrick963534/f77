@@ -1,6 +1,7 @@
-#include <ks/eventq.h>
 #include <ks/defs.h>
+#include <ks/eventq.h>
 #include <ks/list.h>
+#include <ks/log.h>
 #include <stdlib.h>
 
 typedef struct eventq_t
@@ -27,6 +28,8 @@ static void destruct(eventq_t* me)
         ks_list_remove(&pos->element);
         free(pos);
     }
+
+    ks_log("%s", "destruct common_eventq");
 
     ks_object_destruct((ks_object_t*)me);
 }
