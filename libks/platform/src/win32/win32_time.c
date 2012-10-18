@@ -1,5 +1,5 @@
-#include <ks/defs.h>
 #include <ks/time.h>
+#include <ks/defs.h>
 #include <windows.h>
 
 KS_API ks_time_t ks_time_now()

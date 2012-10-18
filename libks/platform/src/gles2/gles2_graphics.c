@@ -1,11 +1,10 @@
-#include <ks/defs.h>
 #include <ks/graphics.h>
+#include <ks/director.h>
+#include <ks/defs.h>
+#include <ks/log.h>
+
 #include <GLES2/gl2.h>
-#include <EGL/egl.h>
-#include "ks/director.h"
-#include "ks/system.h"
 #include <stdlib.h>
-#include "ks/log.h"
 
 typedef struct graphics_t
 {
