@@ -18,8 +18,10 @@ solution "libks"
       includedirs { "include", "platform/include" }
 
 	  files { "include/**.h", 
-			  "platform/src/linux/**.h", 
+              "platform/include/**.h",
+	          "platform/src/linux/**.h", 
 			  "platform/src/linux/**.c", 
+			  "platform/src/gles2/**.c", 
 			  "src/**.h", "src/**.c" }
 	   
       configuration "Debug"
