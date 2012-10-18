@@ -18,7 +18,7 @@ static void director_update()
 static void director_draw()
 {
     ks_graphics_draw(0, 0);
-    ks_sys_system_instance()->klass->flush();
+    ks_system_flush();
 }
 
 static void destruct(ks_director_t* me)
@@ -34,7 +34,7 @@ KS_API void ks_director_init(const char* title, int w, int h)
     director->height = h;
     strcpy(director->title, title);
 
-    ks_sys_system_init((ks_container_t*)director);
+    ks_system_init((ks_container_t*)director);
 }
 
 KS_API void ks_director_run(ks_scene_t* scene)
@@ -50,12 +50,16 @@ KS_API void ks_director_run(ks_scene_t* scene)
 
     while (count < 10000)
     {
-        ks_sys_system_instance()->klass->update_messages();
-        ks_eventq_pop(&e);
+        ks_system_update_message();
+        
+        if (ks_eventq_pop(&e))
+        {
+            if (e.type == ks.types.KEY_DOWN && e.key.code == ks.keys.Escape)
+                break;
 
-        if (e.type == ks.types.KEY_DOWN && e.key.code == ks.keys.Escape)
-            break;
-
+            continue;
+        }
+        
         count++;
 
         ks_time_sleep(32);

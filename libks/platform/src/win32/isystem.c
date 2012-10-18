@@ -215,7 +215,7 @@ static ks_sys_system_interface_t interfaces = {
     flush,
 };
 
-KS_API void ks_sys_system_init(ks_container_t* container)
+KS_API void ks_system_init(ks_container_t* container)
 {
     sys             = (system_t*)ks_object_new(sizeof(*sys));
     sys->destruct   = (ks_destruct_f)destruct;
@@ -230,7 +230,7 @@ KS_API void ks_sys_system_init(ks_container_t* container)
     ks_eventq_init(container);
 }
 
-KS_API ks_sys_system_t* ks_sys_system_instance()
+KS_API ks_sys_system_t* ks_system_instance()
 {
     return (ks_sys_system_t*)sys;
 }
