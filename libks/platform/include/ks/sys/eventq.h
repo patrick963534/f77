@@ -22,7 +22,7 @@ typedef struct ks_sys_eventq_t
     ks_extends_sys_eventq();
 } ks_sys_eventq_t;
 
-const ks_sys_eventq_interface_t* ks_sys_eventq_interface_instance();
+ks_sys_eventq_interface_t* ks_sys_eventq_interface_instance();
 
 KS_API void ks_eventq_init(ks_container_t* container);
 KS_API ks_sys_eventq_t* ks_eventq_instance();

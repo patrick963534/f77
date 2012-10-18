@@ -56,13 +56,13 @@ static int pop(ks_event_t* e)
     return 1;
 }
 
-static const ks_sys_eventq_interface_t interfaces = {
+static ks_sys_eventq_interface_t interfaces = {
     0,
     endqueue,
     pop
 };
 
-const ks_sys_eventq_interface_t* ks_sys_eventq_interface_instance()
+ks_sys_eventq_interface_t* ks_sys_eventq_interface_instance()
 {
     return &interfaces;
 }
