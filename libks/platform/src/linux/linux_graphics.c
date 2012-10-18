@@ -9,7 +9,7 @@
 
 typedef struct graphics_t
 {
-    ks_extends_sys_graphics();
+    ks_extends_graphics();
 } graphics_t;
 
 static graphics_t* g = 0;
@@ -147,7 +147,7 @@ static ks_sys_graphics_interface_t interfaces = {
     draw
 };
 
-KS_API void ks_sys_graphics_init(ks_container_t* container)
+KS_API void ks_graphics_init(ks_container_t* container)
 {
     g = (graphics_t*)ks_object_new(sizeof(*g));
     g->destruct = (ks_destruct_f)destruct;
@@ -159,7 +159,7 @@ KS_API void ks_sys_graphics_init(ks_container_t* container)
     test_init();
 }
 
-KS_API ks_sys_graphics_t* ks_sys_graphics_instance()
+KS_API ks_graphics_t* ks_graphics_instance()
 {
-    return (ks_sys_graphics_t*)g;
+    return (ks_graphics_t*)g;
 }
