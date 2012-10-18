@@ -11,16 +11,10 @@ typedef struct ks_sys_graphics_interface_t
     void    (*draw)(int x, int y);
 } ks_sys_graphics_interface_t;
 
-#define ks_extends_sys_graphics() \
-    ks_extends_object();    \
-    ks_sys_graphics_interface_t* klass
+ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance();
 
-typedef struct ks_sys_graphics_t
-{
-    ks_extends_sys_graphics();
-} ks_sys_graphics_t;
-
-KS_API void               ks_sys_graphics_init(ks_container_t* container);
-KS_API ks_sys_graphics_t* ks_sys_graphics_instance();
+KS_API void ks_graphics_init(ks_container_t* container);
+KS_API void ks_graphics_draw(int x, int y);
+KS_API void ks_graphics_flush();
 
 #endif

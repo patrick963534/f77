@@ -56,17 +56,21 @@ static int pop(ks_event_t* e)
     return 1;
 }
 
-static ks_sys_eventq_interface_t interfaces = {
-    0,
-    endqueue,
-    pop
-};
+KS_API void ks_eventq_endqueue(const ks_event_t* e)
+{
+    endqueue(e);
+}
 
-KS_API void ks_sys_eventq_init(ks_container_t* container)
+KS_API int ks_eventq_pop(ks_event_t* e)
+{
+    return pop(e);
+}
+
+KS_API void ks_eventq_init(ks_container_t* container)
 {
     eventq             = (eventq_t*)ks_object_new(sizeof(*eventq));
     eventq->destruct   = (ks_destruct_f)destruct;
-    eventq->klass      = &interfaces;
+    eventq->klass      = ks_sys_eventq_interface_instance();
 
     ks_list_init(&eventq->events);
 

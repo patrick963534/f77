@@ -7,9 +7,13 @@
 #include <stdlib.h>
 #include "ks/log.h"
 
+#define ks_extends_graphics() \
+    ks_extends_object();    \
+    ks_sys_graphics_interface_t* klass
+
 typedef struct graphics_t
 {
-    ks_extends_sys_graphics();
+    ks_extends_graphics();
 } graphics_t;
 
 static graphics_t* g = 0;
@@ -97,7 +101,7 @@ static int test_init()
             char* infoLog = malloc(sizeof(char) * infoLen);
 
             glGetProgramInfoLog(programObject, infoLen, NULL, infoLog);
-            ks_log("Error linking program:\n%s\n", infoLog);            
+            ks_log("Error linking program:\n%s\n", infoLog);
 
             free(infoLog);
         }
@@ -134,32 +138,29 @@ static void destruct(graphics_t* me)
     ks_object_destruct((ks_object_t*)me);
 }
 
-static void draw(int x, int y)
+KS_API void ks_graphics_draw(int x, int y)
 {
-    test_draw();
-
     ks_unused(x);
     ks_unused(y);
+
+    test_draw();
+
+    g->klass->draw(x, y);
 }
 
-static ks_sys_graphics_interface_t interfaces = {
-    0,
-    draw
-};
+KS_API void ks_graphics_flush()
+{
 
-KS_API void ks_sys_graphics_init(ks_container_t* container)
+}
+
+KS_API void ks_graphics_init(ks_container_t* container)
 {
     g = (graphics_t*)ks_object_new(sizeof(*g));
     g->destruct = (ks_destruct_f)destruct;
-    g->klass = &interfaces;
+    g->klass = ks_sys_graphics_interface_instance();
 
     if (container)
         ks_container_add(container, (ks_object_t*)g);
 
     test_init();
-}
-
-KS_API ks_sys_graphics_t* ks_sys_graphics_instance()
-{
-    return (ks_sys_graphics_t*)g;
 }

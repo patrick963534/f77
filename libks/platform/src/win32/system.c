@@ -46,19 +46,19 @@ LRESULT WINAPI ESWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_KEYDOWN:
             e.type = ks.types.KEY_DOWN;
             e.key.code = (int)wParam;
-            ks_sys_eventq_instance()->klass->endqueue(&e);
+            ks_eventq_endqueue(&e);
             break;
 
         case WM_KEYUP:
             e.type = ks.types.KEY_UP;
             e.key.code = (int)wParam;
-            ks_sys_eventq_instance()->klass->endqueue(&e);
+            ks_eventq_endqueue(&e);
             break;
 
         case WM_CHAR:
             e.type = ks.types.KEY_CHAR;
             e.key.character = (int)wParam;
-            ks_sys_eventq_instance()->klass->endqueue(&e);
+            ks_eventq_endqueue(&e);
             break;
 
         default: 
@@ -226,8 +226,8 @@ KS_API void ks_sys_system_init(ks_container_t* container)
 
     create_window();
 
-    ks_sys_graphics_init(container);
-    ks_sys_eventq_init(container);
+    ks_graphics_init(container);
+    ks_eventq_init(container);
 }
 
 KS_API ks_sys_system_t* ks_sys_system_instance()

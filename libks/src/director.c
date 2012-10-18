@@ -17,7 +17,7 @@ static void director_update()
 
 static void director_draw()
 {
-    ks_sys_graphics_instance()->klass->draw(0, 0);
+    ks_graphics_draw(0, 0);
     ks_sys_system_instance()->klass->flush();
 }
 
@@ -51,13 +51,10 @@ KS_API void ks_director_run(ks_scene_t* scene)
     while (count < 10000)
     {
         ks_sys_system_instance()->klass->update_messages();
-        
-        if (ks_sys_eventq_instance()->klass->pop_message(&e))
-        {
-            if (e.type == ks.types.KEY_DOWN && e.key.code == ks.keys.Escape)
-                break;
-            continue;
-        }
+        ks_eventq_pop(&e);
+
+        if (e.type == ks.types.KEY_DOWN && e.key.code == ks.keys.Escape)
+            break;
 
         count++;
 
