@@ -33,17 +33,17 @@ static GLuint CreateSimpleTexture2D()
 {
     GLuint textureId;
 
-    GLubyte pixels[4 * 3] = { 255,   0,   0,  // Red
-                              0, 255,   0,    // Green
-                              0,   0, 255,    // Blue
-                              255, 255,   0   // Yellow
+    GLubyte pixels[4 * 4] = { 255,   0,   0, 255,  // Red
+                              0, 255,   0,   0,  // Green
+                              0,   0, 255,   255,  // Blue
+                              255, 255,   0, 255,  // Yellow
     };
 
     // Use tightly packed data
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -65,6 +65,9 @@ static void draw(int x, int y)
 
     if (g->tex_render.texture_id == 0)
         g->tex_render.texture_id = CreateSimpleTexture2D();
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 
     glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
     glClear(GL_COLOR_BUFFER_BIT);
