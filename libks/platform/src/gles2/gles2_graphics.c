@@ -52,6 +52,7 @@ static GLuint CreateSimpleTexture2D()
 
 static void draw(int x, int y)
 {
+    GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
     GLfloat vVertices[] = {-0.5f,  0.5f, 0.0f, // Position 0
                             0.0f,  0.0f,       // TexCoord 0 
                            -0.5f, -0.5f, 0.0f, // Position 1
@@ -61,7 +62,6 @@ static void draw(int x, int y)
                             0.5f,  0.5f, 0.0f, // Position 3
                             1.0f,  0.0f        // TexCoord 3
     };
-    GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
 
     if (g->tex_render.texture_id == 0)
         g->tex_render.texture_id = CreateSimpleTexture2D();
