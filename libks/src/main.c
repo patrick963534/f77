@@ -7,8 +7,6 @@
 #include <ks/director.h>
 #include <ks/scene.h>
 
-
-
 int main()
 {
     ks_director_init("Hello World", 320, 240);

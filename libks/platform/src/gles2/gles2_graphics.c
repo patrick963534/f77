@@ -27,7 +27,6 @@ typedef struct graphics_t
 } graphics_t;
 
 static graphics_t* g = 0;
-static GLuint programObject = 0;
 
 static GLuint CreateSimpleTexture2D()
 {
@@ -128,7 +127,7 @@ KS_API void ks_graphics_init(ks_container_t* container)
     if (container)
         ks_container_add(container, (ks_object_t*)g);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 }
 
 KS_API ks_graphics_t* ks_graphics_instance()

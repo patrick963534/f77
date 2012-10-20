@@ -72,7 +72,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
 
         if (ellapse > 1000)
         {
-            ks_log("%d ", count);
+            ks_log("FPS: %d ", count);
             ellapse = 0;
             count = 0;
         }
