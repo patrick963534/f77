@@ -2,6 +2,7 @@
 #include <ks/director.h>
 #include <ks/defs.h>
 #include <ks/log.h>
+#include <ks/image.h>
 
 #include <GLES2/gl2.h>
 #include <stdlib.h>
@@ -49,7 +50,7 @@ static GLuint CreateSimpleTexture2D()
     return textureId;
 }
 
-static void draw(int x, int y)
+static void draw(ks_image_t* img, int x, int y, int w, int h)
 {
     GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
     GLfloat vVertices[] = {-0.5f,  0.5f, 0.0f, // Position 0
@@ -93,8 +94,11 @@ static void draw(int x, int y)
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 
+    ks_unused(img);
     ks_unused(x);
     ks_unused(y);
+    ks_unused(w);
+    ks_unused(h);
     //test_draw();
 }
 

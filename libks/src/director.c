@@ -17,7 +17,7 @@ static void director_update()
 
 static void director_draw()
 {
-    ks_graphics_draw(0, 0);
+    ks_graphics_draw(NULL, 0, 0, 0, 0);
     ks_system_flush();
 }
 
