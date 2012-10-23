@@ -8,7 +8,7 @@
 #define ks_extends_image()  \
     ks_extends_object();    \
     unsigned char* pixels;  \
-    char* file;             \
+    const char* file;       \
     int width;              \
     int height
 

@@ -9,6 +9,7 @@
 
 #include "gles2_shader.h"
 
+// Maybe it's better to use 'Renderer' for different 'program'. 
 typedef struct tex_program_t
 {
     GLuint      program;
