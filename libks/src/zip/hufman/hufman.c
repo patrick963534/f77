@@ -52,7 +52,7 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
     {
         if (dict[i] != 0)
         {
-            hm->nodes[hm->nleaf] = calloc(1, sizeof(hm->nodes[0]));
+            hm->nodes[hm->nleaf] = calloc(1, sizeof(*hm->nodes[0]));
             hm->nodes[hm->nleaf]->left = (void*)0;
             hm->nodes[hm->nleaf]->right = (void*)0;
             hm->nodes[hm->nleaf]->pt = dict[i];
@@ -65,6 +65,9 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
 
     for (i = 0; i < hm->nleaf; i++)
         hm->leafs[hm->nleaf] = hm->nodes[i]->ch;
+
+    for (i = 0; i < hm->nleaf; i++)
+        ks_log("0x%02x : %d", hm->nodes[i]->ch, hm->nodes[i]->pt);
 }
 
 static void build_tree(hufman_t* hm)
