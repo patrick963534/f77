@@ -28,10 +28,13 @@ typedef struct hufman_t
 
 static int node_comparer(const void* v1, const void* v2)
 {
-    node_t* n1 = (node_t*)v1;
-    node_t* n2 = (node_t*)v2;
+    node_t** vp1 = (node_t**)v1;
+    node_t** vp2 = (node_t**)v2;
+
+    node_t* n1 = (node_t*)*vp1;
+    node_t* n2 = (node_t*)*vp2;
     
-    return n1->point < n2->point;
+    return n1->point - n2->point;
 }
 
 char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
@@ -50,6 +53,7 @@ char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
         if (dict[i] != 0)
         {
             k = hm->nleaf;
+
             hm->nodes[k] = calloc(1, sizeof(hm->nodes[0]));
             hm->nodes[k]->point = dict[i];
             hm->nodes[k]->val = (char)i;
@@ -60,6 +64,8 @@ char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
             ks_log("0x%02x : %d", hm->nodes[k]->val, hm->nodes[k]->point);
         }
     }
+
+    ks_log("%s", "*************************");
 
     qsort(hm->nodes, hm->nleaf, sizeof(hm->nodes[0]), node_comparer);
 
