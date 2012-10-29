@@ -47,6 +47,16 @@ static int hash_string(const char* key)
     return h;
 }
 
+static int determine_id(ks_hash_t* me, const char* key)
+{
+    int h = hash_string(key);
+
+    if (h < me->cap)
+        return h;
+    else
+        return h % me->cap;
+}
+
 KS_API ks_hash_t* ks_hash_new(int cap)
 {
     ks_hash_t* me = (ks_hash_t*)malloc(sizeof(*me));
@@ -58,7 +68,7 @@ KS_API ks_hash_t* ks_hash_new(int cap)
 
 KS_API void ks_hash_add(ks_hash_t* me, const char* key, void* val)
 {
-    int i     = hash_string(key) % me->cap;
+    int i     = determine_id(me, key);
     item_t* t = search(me, i, key);
 
     if (t)
