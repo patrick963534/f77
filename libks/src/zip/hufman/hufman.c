@@ -8,20 +8,27 @@
 
 typedef struct node_t
 {
-    int     point;
-    char    val;
+    int     pt;
+    char    ch;
 
     struct node_t* left;
     struct node_t* right;
 } node_t;
 
+typedef struct code_t
+{
+    char    val;
+    int     bits;
+    int     nbit;
+} code_t;
+
 typedef struct hufman_t
 {
-    node_t*  nodes[NODE_MAX];
-    node_t*  root;
+    const node_t*   root;
+    node_t*         nodes[NODE_MAX];
 
-    char     leafs[LEAF_MAX];
-    int      nleaf;
+    char            leafs[LEAF_MAX];
+    int             nleaf;
 } hufman_t;
 
 static int node_comparer(const void* v1, const void* v2)
@@ -29,7 +36,7 @@ static int node_comparer(const void* v1, const void* v2)
     node_t* n1 = *((node_t**)v1);
     node_t* n2 = *((node_t**)v2);
     
-    return n1->point - n2->point;
+    return n1->pt - n2->pt;
 }
 
 static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
@@ -48,8 +55,8 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
             hm->nodes[hm->nleaf] = calloc(1, sizeof(hm->nodes[0]));
             hm->nodes[hm->nleaf]->left = (void*)0;
             hm->nodes[hm->nleaf]->right = (void*)0;
-            hm->nodes[hm->nleaf]->point = dict[i];
-            hm->nodes[hm->nleaf]->val = (char)i;
+            hm->nodes[hm->nleaf]->pt = dict[i];
+            hm->nodes[hm->nleaf]->ch = (char)i;
             hm->nleaf++;
         }
     }
@@ -57,7 +64,7 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
     qsort(hm->nodes, hm->nleaf, sizeof(hm->nodes[0]), node_comparer);
 
     for (i = 0; i < hm->nleaf; i++)
-        hm->leafs[hm->nleaf] = hm->nodes[i]->val;
+        hm->leafs[hm->nleaf] = hm->nodes[i]->ch;
 }
 
 static void build_tree(hufman_t* hm)
@@ -72,7 +79,7 @@ static void build_tree(hufman_t* hm)
 
         n->left = nodes[cur];
         n->right = nodes[cur + 1];
-        n->point = n->left->point + n->right->point;
+        n->pt = n->left->pt + n->right->pt;
 
         nodes[cur + sz] = n;
         cur += 2;
