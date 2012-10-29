@@ -18,9 +18,7 @@ typedef struct node_t
 typedef struct hufman_t
 {
     node_t*  nodes[NODE_MAX];
-    int      total;
-    int      current;
-    int      count;
+    node_t*  root;
 
     char     leafs[LEAF_MAX];
     int      nleaf;
@@ -48,6 +46,8 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
         if (dict[i] != 0)
         {
             hm->nodes[hm->nleaf] = calloc(1, sizeof(hm->nodes[0]));
+            hm->nodes[hm->nleaf]->left = (void*)0;
+            hm->nodes[hm->nleaf]->right = (void*)0;
             hm->nodes[hm->nleaf]->point = dict[i];
             hm->nodes[hm->nleaf]->val = (char)i;
             hm->nleaf++;
@@ -60,13 +60,39 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
         hm->leafs[hm->nleaf] = hm->nodes[i]->val;
 }
 
+static void build_tree(hufman_t* hm)
+{
+    node_t** nodes = hm->nodes;
+    int      sz    = hm->nleaf;
+    int      cur   = 0;
+
+    while (sz > 1)
+    {
+        node_t* n = calloc(1, sizeof(*n));
+
+        n->left = nodes[cur];
+        n->right = nodes[cur + 1];
+        n->point = n->left->point + n->right->point;
+
+        nodes[cur + sz] = n;
+        cur += 2;
+        sz--;
+
+        qsort(nodes + cur, sz, sizeof(nodes[0]), node_comparer);
+    }
+
+    hm->root = nodes[cur];
+}
+
 char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
 {
     hufman_t* hm;
 
     hm = calloc(1, sizeof(*hm));
+
     com_generate_leafs(hm, data, sz);    
-    
+    build_tree(hm);
+
     ks_unused(data);
     ks_unused(sz);
     ks_unused(ret_sz);

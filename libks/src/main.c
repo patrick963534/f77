@@ -10,7 +10,7 @@
 
 int main()
 {
-    const char* data = "adsfjoaewijfaowegjagael;fjeiowfoasdfaeoifjawoegj;eig";
+    const char* data = "bbaddddccc";
     int ret = 0;
     ks_zip_compress(data, strlen(data) + 1, &ret);
 
