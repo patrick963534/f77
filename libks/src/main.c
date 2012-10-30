@@ -6,13 +6,11 @@
 #include <string.h>
 #include <ks/director.h>
 #include <ks/scene.h>
-#include <ks/zip.h>
+#include "utest/utest.h"
 
 int main()
 {
-    const char* data = "bbaddddccc";
-    int ret = 0;
-    ks_zip_compress(data, strlen(data) + 1, &ret);
+    ks_utest_start();
 
     ks_director_init("Hello World", 320, 240);
     ks_director_run(ks_scene_new(sizeof(ks_scene_t)));
