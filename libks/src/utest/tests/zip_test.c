@@ -19,5 +19,5 @@ static void test_1()
 
 void ks_utest_zip_test()
 {
-
+    test_1();
 }
