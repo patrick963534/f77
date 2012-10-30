@@ -10,8 +10,7 @@ typedef struct node_t
 {
     int     pt;
     char    ch;
-
-    char    code;
+    char    bit;
 
     struct node_t* parent;
     struct node_t* left;
@@ -51,7 +50,7 @@ static void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
 
         np = (node_t*)n;
         for (i = code->nbit - 1; i >= 0; i--, np = np->parent)
-            code->bits[i] = np->code;
+            code->bits[i] = np->bit;
 
         hm->codes[(unsigned char)n->ch] = code;
 
@@ -123,10 +122,10 @@ static void build_tree(hufman_t* hm)
         n->right = right;
 
         left->parent = n;
-        left->code = 0;
+        left->bit = 0;
 
         right->parent = n;
-        right->code = 1;
+        right->bit = 1;
 
         n->pt = n->left->pt + n->right->pt;
 
