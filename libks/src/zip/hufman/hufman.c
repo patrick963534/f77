@@ -50,11 +50,8 @@ static void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
         code->bits = calloc(code->nbit, sizeof(code->bits[0]));
 
         np = (node_t*)n;
-        for (i = code->nbit - 1; i >= 0; i--)
-        {
+        for (i = code->nbit - 1; i >= 0; i--, np = np->parent)
             code->bits[i] = np->code;
-            np = np->parent;
-        }
 
         hm->codes[(unsigned char)n->ch] = code;
 
@@ -65,14 +62,10 @@ static void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
     }
 
     if (n->left != NULL)
-    {
         deep_search_build_codes(hm, n->left, level + 1);
-    }
 
     if (n->right != NULL)
-    {
         deep_search_build_codes(hm, n->right, level + 1);
-    }
 }
 
 static int node_comparer(const void* v1, const void* v2)

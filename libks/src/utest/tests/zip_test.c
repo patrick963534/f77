@@ -14,7 +14,7 @@ static void test_1()
     for (i = 0; i < sz; i++)
         data[i] = rand() % 26;
 
-    ks_zip_compress(data, 256, &ret);
+    ks_zip_compress(data, sz, &ret);
 }
 
 void ks_utest_zip_test()
