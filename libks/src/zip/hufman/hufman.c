@@ -31,6 +31,7 @@ typedef struct hufman_t
 
     code_t*         codes[LEAF_MAX];
     char            leafs[LEAF_MAX];
+    int             dict[LEAF_MAX];
     int             nleaf;
 
     int             max_level;
@@ -78,9 +79,9 @@ static int node_comparer(const void* v1, const void* v2)
 static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
 {
     int       i;
-    int       dict[256];
+    int*      dict;
 
-    memset(dict, 0, sizeof(dict));
+    dict = hm->dict;
     for (i = 0; i < sz; i++)
         dict[(unsigned char)data[i]] += 1;
 
@@ -139,20 +140,77 @@ static void build_tree(hufman_t* hm)
     hm->root = nodes[cur];
 }
 
+static int calculate_total_bits(hufman_t* hm)
+{
+    int total = 0;
+    int i;
+    
+    for (i = 0; i < hm->nleaf; i++)
+    {
+        unsigned int idx = (unsigned char)hm->leafs[i];
+        int sz  = hm->codes[idx]->nbit * hm->dict[idx];
+        total += sz;
+    }
+
+    return total;
+}
+
+static char* generate_compress_data(hufman_t* hm, const char* data, int sz, int* ret_sz)
+{
+    unsigned char*  bytes;
+    int             nbyte;
+    int             nbit;
+    int             i, j;
+    int             ibyte;
+    int             ibit;
+
+    nbit  = calculate_total_bits(hm);
+    nbyte = *ret_sz = (nbit + 8 - 1) / 8;
+
+    ibyte = 0;
+    ibit  = 0;
+    bytes = (unsigned char*)calloc(1, nbyte);
+    for (i = 0; i < sz; i++)
+    {
+        unsigned char* b = &bytes[ibyte];
+        char* cb = hm->codes[(unsigned char)data[i]]->bits;
+        int   cc = hm->codes[(unsigned char)data[i]]->nbit;
+        
+        for (j = 0; j < cc; j++)
+        {
+            if (cb[j])
+            {
+                if (nbit == 0)
+                    *b += 1;
+                else
+                    *b += 1 << ibit;
+            }
+
+            if (ibit++ == 8)
+            {
+                ibit = 0;
+                ibyte++;
+                b = &bytes[ibyte];
+            }
+        }
+    }
+
+    return (char*)bytes;
+}
+
 char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
 {
     hufman_t* hm;
+    char*     result;
 
     hm = calloc(1, sizeof(*hm));
 
-    com_generate_leafs(hm, data, sz);    
+    com_generate_leafs(hm, data, sz);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
+    result = generate_compress_data(hm, data, sz, ret_sz);
 
-    ks_unused(data);
-    ks_unused(sz);
-    ks_unused(ret_sz);
-    return 0;
+    return result;
 }
 
 char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
