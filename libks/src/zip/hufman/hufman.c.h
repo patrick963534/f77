@@ -44,8 +44,27 @@ typedef struct hufman_t
     int             max_level;
 } hufman_t;
 
+typedef struct data_leaf_t
+{
+    unsigned char   ch;
+    int             pt;
+} data_leaf_t;
+
+typedef struct compression_data_t
+{
+    int             nleaf;
+    data_leaf_t     leaf_data[LEAF_MAX];
+    int             uncompress_bytes_count;
+    int             bits_count;
+    unsigned char*  all;
+    unsigned char*  content;
+} compression_data_t;
+
 int     node_comparer(const void* v1, const void* v2);
 void    build_tree(hufman_t* hm);
 void    deep_search_build_codes(hufman_t* hm, const node_t* n, int level);
+
+void    compression_data_save(compression_data_t* cd);
+void    compression_data_load(compression_data_t* cd, const char* data);
 
 #endif

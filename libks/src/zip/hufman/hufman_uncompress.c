@@ -7,17 +7,20 @@
 static void reader_head(hufman_t* hm, const unsigned char* data)
 {
     int i;
+    compression_data_t cd;
 
-    ks_helper_bytes_to_int((char*)&data[0], &hm->nleaf);
+    compression_data_load(&cd, (char*)data);
 
-    for (i = 0; i < hm->nleaf; i++)
+    hm->nleaf = cd.nleaf;
+
+    for (i = 0; i < cd.nleaf; i++)
     {
         hm->nodes[i]        = calloc(1, sizeof(*hm->nodes[0]));
         hm->nodes[i]->left  = (void*)0;
         hm->nodes[i]->right = (void*)0;
-        hm->nodes[i]->ch    = (unsigned char)data[4 + i * 5];
+        hm->nodes[i]->ch    = cd.leaf_data[i].ch;
+        hm->nodes[i]->pt    = cd.leaf_data[i].pt;
 
-        ks_helper_bytes_to_int((char*)&data[4 + i * 5 + 1], &hm->nodes[i]->pt);
         hm->dict[hm->nodes[i]->ch] = hm->nodes[i]->pt;
     }
 
@@ -26,10 +29,7 @@ static void reader_head(hufman_t* hm, const unsigned char* data)
     for (i = 0; i < hm->nleaf; i++)
         hm->leafs[i] = hm->nodes[i]->ch;
 
-    ks_helper_bytes_to_int((char*)&data[4 + hm->nleaf], &hm->uncompress_content_sz);
-
-    for (i = 0; i < hm->nleaf; i++)
-        ks_log("0x%02x : %d", hm->nodes[i]->ch, hm->nodes[i]->pt);
+    hm->uncompress_content_sz = cd.uncompress_bytes_count;
 }
 
 char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)

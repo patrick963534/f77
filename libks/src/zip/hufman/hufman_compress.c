@@ -31,9 +31,6 @@ static void reader_head(hufman_t* hm, const unsigned char* data, int sz)
 
     for (i = 0; i < hm->nleaf; i++)
         hm->leafs[i] = hm->nodes[i]->ch;
-
-    for (i = 0; i < hm->nleaf; i++)
-        ks_log("0x%02x : %d", hm->nodes[i]->ch, hm->nodes[i]->pt);
 }
 
 static int calculate_total_bits(hufman_t* hm)
@@ -51,47 +48,35 @@ static int calculate_total_bits(hufman_t* hm)
     return total;
 }
 
-static void generate_compress_header(hufman_t* hm, int sz)
+static void generate_compress_header(compression_data_t* cd, hufman_t* hm, int sz)
 {
-    unsigned char* pt_leaf_count;
-    unsigned char* pt_leaf_data;
-    unsigned char* pt_uncompress_size;
+    int i;
 
-    int  nbit;
-    int  i;
+    cd->bits_count = calculate_total_bits(hm);
+    cd->nleaf = hm->nleaf;
+    cd->uncompress_bytes_count = sz;
 
-    nbit = calculate_total_bits(hm);
-
-    hm->compress_header_sz = sizeof(int) + hm->nleaf * 5 + sizeof(int);
-    hm->compress_content_sz = (nbit + 8 - 1) / 8;
-    hm->compress_data_sz = hm->compress_header_sz + hm->compress_content_sz;
-    hm->compress_data = (unsigned char*)calloc(1, hm->compress_data_sz);
-
-    pt_leaf_count       = &hm->compress_data[0];
-    pt_leaf_data        = &hm->compress_data[4];
-    pt_uncompress_size  = &hm->compress_data[4 + hm->nleaf * 5];
-
-    ks_helper_int_to_bytes((char*)&hm->compress_data[0], hm->nleaf);
-
-    for (i = 0; i < hm->nleaf; i++)
+    for (i = 0; i < cd->nleaf; i++)
     {
-        pt_leaf_data[i * 5] = hm->leafs[i];
-        ks_helper_int_to_bytes((char*)&pt_leaf_data[i * 5 + 1], hm->dict[hm->leafs[i]]);
+        cd->leaf_data[i].ch = hm->leafs[i];
+        cd->leaf_data[i].pt = hm->dict[hm->leafs[i]];
     }
 
-    ks_helper_int_to_bytes((char*)pt_uncompress_size, sz);
+    compression_data_save(cd);
 }
 
-static void compress_data(hufman_t* hm, const unsigned char* data, int sz)
+static char* compress_data(hufman_t* hm, const unsigned char* data, int sz, int *ret_sz)
 {
     unsigned char*  bytes;
     int             i, j;
     int             ibyte;
     int             ibit;
 
-    generate_compress_header(hm, sz);
+    compression_data_t cd;
 
-    bytes = &hm->compress_data[hm->compress_header_sz];
+    generate_compress_header(&cd, hm, sz);
+
+    bytes = cd.content;
     ibyte = 0;
     ibit  = 0;
     for (i = 0; i < sz; i++)
@@ -113,6 +98,10 @@ static void compress_data(hufman_t* hm, const unsigned char* data, int sz)
             }
         }
     }
+
+    *ret_sz = hm->compress_data_sz;
+
+    return (char*)cd.all;
 }
 
 char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
@@ -126,9 +115,6 @@ char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
     reader_head(hm, udata, sz);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
-    compress_data(hm, udata, sz);
 
-    *ret_sz = hm->compress_data_sz;
-
-    return (char*)hm->compress_data;
+    return compress_data(hm, udata, sz, ret_sz);
 }
