@@ -19,6 +19,13 @@ static void test_1()
 
     cdata = ks_zip_compress(data, sz, &cret);
     udata = ks_zip_uncompress(cdata, cret, &uret);
+
+    if (uret != cret)
+        return;
+
+    for (i = 0; i < uret; i++)
+        if (data[i] != udata[i])
+            return;
 }
 
 static void test_2()
