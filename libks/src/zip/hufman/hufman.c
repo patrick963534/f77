@@ -8,9 +8,9 @@
 
 typedef struct node_t
 {
-    int     pt;
-    char    ch;
-    char    bit;
+    int             pt;
+    unsigned char   ch;
+    unsigned char   bit;
 
     struct node_t* parent;
     struct node_t* left;
@@ -19,9 +19,9 @@ typedef struct node_t
 
 typedef struct code_t
 {
-    char    ch;
-    char*   bits;
-    int     nbit;
+    unsigned char   ch;
+    unsigned char*  bits;
+    int             nbit;
 } code_t;
 
 typedef struct hufman_t
@@ -30,9 +30,14 @@ typedef struct hufman_t
     node_t*         nodes[NODE_MAX];
 
     code_t*         codes[LEAF_MAX];
-    char            leafs[LEAF_MAX];
+    unsigned char   leafs[LEAF_MAX];
     int             dict[LEAF_MAX];
     int             nleaf;
+
+    unsigned char*  compress_data;
+    int             compress_content_sz;
+    int             compress_header_sz;
+    int             compress_data_sz;
 
     int             max_level;
 } hufman_t;
@@ -53,7 +58,7 @@ static void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
         for (i = code->nbit - 1; i >= 0; i--, np = np->parent)
             code->bits[i] = np->bit;
 
-        hm->codes[(unsigned char)n->ch] = code;
+        hm->codes[n->ch] = code;
 
         if (level > hm->max_level)
             hm->max_level = level;
@@ -76,14 +81,14 @@ static int node_comparer(const void* v1, const void* v2)
     return n1->pt - n2->pt;
 }
 
-static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
+static void com_generate_leafs(hufman_t* hm, const unsigned char* data, int sz)
 {
     int       i;
     int*      dict;
 
     dict = hm->dict;
     for (i = 0; i < sz; i++)
-        dict[(unsigned char)data[i]] += 1;
+        dict[data[i]] += 1;
 
     for (i = 0; i < LEAF_MAX; i++)
     {
@@ -93,7 +98,7 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
             hm->nodes[hm->nleaf]->left = (void*)0;
             hm->nodes[hm->nleaf]->right = (void*)0;
             hm->nodes[hm->nleaf]->pt = dict[i];
-            hm->nodes[hm->nleaf]->ch = (char)i;
+            hm->nodes[hm->nleaf]->ch = (unsigned char)i;
             hm->nleaf++;
         }
     }
@@ -104,7 +109,7 @@ static void com_generate_leafs(hufman_t* hm, const char* data, int sz)
         hm->leafs[i] = hm->nodes[i]->ch;
 
     for (i = 0; i < hm->nleaf; i++)
-        ks_log("0x%02x : %d", (unsigned char)hm->nodes[i]->ch, hm->nodes[i]->pt);
+        ks_log("0x%02x : %d", hm->nodes[i]->ch, hm->nodes[i]->pt);
 }
 
 static void build_tree(hufman_t* hm)
@@ -155,36 +160,48 @@ static int calculate_total_bits(hufman_t* hm)
     return total;
 }
 
-static char* generate_compress_data(hufman_t* hm, const char* data, int sz, int* ret_sz)
+static void generate_compress_header(hufman_t* hm, int sz)
+{
+    int* val;
+    int  nbit;
+    int  i;
+
+    nbit  = calculate_total_bits(hm);
+
+    hm->compress_header_sz = hm->nleaf + sizeof(int);
+    hm->compress_content_sz = (nbit + 8 - 1) / 8;
+    hm->compress_data_sz = hm->compress_header_sz + hm->compress_content_sz;
+    hm->compress_data = (unsigned char*)calloc(1, hm->compress_data_sz);
+
+    for (i = 0; i < hm->nleaf; i++)
+        hm->compress_data[i] = hm->leafs[i];
+
+    val = (int*)&hm->compress_data[hm->nleaf];
+    *val = sz;
+}
+
+static void generate_compress_data(hufman_t* hm, const unsigned char* data, int sz)
 {
     unsigned char*  bytes;
-    int             nbyte;
-    int             nbit;
     int             i, j;
     int             ibyte;
     int             ibit;
 
-    nbit  = calculate_total_bits(hm);
-    nbyte = *ret_sz = (nbit + 8 - 1) / 8;
+    generate_compress_header(hm, sz);
 
+    bytes = &hm->compress_data[hm->compress_header_sz];
     ibyte = 0;
     ibit  = 0;
-    bytes = (unsigned char*)calloc(1, nbyte);
     for (i = 0; i < sz; i++)
     {
-        unsigned char* b = &bytes[ibyte];
-        char* cb = hm->codes[(unsigned char)data[i]]->bits;
-        int   cc = hm->codes[(unsigned char)data[i]]->nbit;
+        unsigned char* b  = &bytes[ibyte];
+        unsigned char* cb = hm->codes[data[i]]->bits;
+        int   cc = hm->codes[data[i]]->nbit;
         
         for (j = 0; j < cc; j++)
         {
             if (cb[j])
-            {
-                if (nbit == 0)
-                    *b += 1;
-                else
-                    *b += 1 << ibit;
-            }
+                *b += 1 << ibit;
 
             if (ibit++ == 8)
             {
@@ -194,23 +211,24 @@ static char* generate_compress_data(hufman_t* hm, const char* data, int sz, int*
             }
         }
     }
-
-    return (char*)bytes;
 }
 
 char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
 {
-    hufman_t* hm;
-    char*     result;
+    hufman_t*       hm;
+    unsigned char*  udata;
 
     hm = calloc(1, sizeof(*hm));
+    udata = (unsigned char*)data;
 
-    com_generate_leafs(hm, data, sz);
+    com_generate_leafs(hm, udata, sz);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
-    result = generate_compress_data(hm, data, sz, ret_sz);
+    generate_compress_data(hm, udata, sz);
 
-    return result;
+    *ret_sz = hm->compress_data_sz;
+
+    return (char*)hm->compress_data;
 }
 
 char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
