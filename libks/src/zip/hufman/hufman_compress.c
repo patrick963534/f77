@@ -1,40 +1,11 @@
 #include "hufman.c.h"
 #include <ks/log.h>
+#include <ks/helper.h>
 #include <stdlib.h>
 #include <string.h>
 
-static void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
-{
-    if (n->left == NULL && n->right == NULL)
-    {
-        code_t* code;
-        node_t* np;
-        int i;
 
-        code = calloc(1, sizeof(*code));
-        code->nbit = level + 1;
-        code->bits = calloc(code->nbit, sizeof(code->bits[0]));
-
-        np = (node_t*)n;
-        for (i = code->nbit - 1; i >= 0; i--, np = np->parent)
-            code->bits[i] = np->bit;
-
-        hm->codes[n->ch] = code;
-
-        if (level > hm->max_level)
-            hm->max_level = level;
-
-        return;
-    }
-
-    if (n->left != NULL)
-        deep_search_build_codes(hm, n->left, level + 1);
-
-    if (n->right != NULL)
-        deep_search_build_codes(hm, n->right, level + 1);
-}
-
-static void com_generate_leafs(hufman_t* hm, const unsigned char* data, int sz)
+static void reader_head(hufman_t* hm, const unsigned char* data, int sz)
 {
     int       i;
     int*      dict;
@@ -82,25 +53,36 @@ static int calculate_total_bits(hufman_t* hm)
 
 static void generate_compress_header(hufman_t* hm, int sz)
 {
-    int* val;
+    unsigned char* pt_leaf_count;
+    unsigned char* pt_leaf_data;
+    unsigned char* pt_uncompress_size;
+
     int  nbit;
     int  i;
 
-    nbit  = calculate_total_bits(hm);
+    nbit = calculate_total_bits(hm);
 
-    hm->compress_header_sz = hm->nleaf + sizeof(int);
+    hm->compress_header_sz = sizeof(int) + hm->nleaf * 5 + sizeof(int);
     hm->compress_content_sz = (nbit + 8 - 1) / 8;
     hm->compress_data_sz = hm->compress_header_sz + hm->compress_content_sz;
     hm->compress_data = (unsigned char*)calloc(1, hm->compress_data_sz);
 
-    for (i = 0; i < hm->nleaf; i++)
-        hm->compress_data[i] = hm->leafs[i];
+    pt_leaf_count       = &hm->compress_data[0];
+    pt_leaf_data        = &hm->compress_data[4];
+    pt_uncompress_size  = &hm->compress_data[4 + hm->nleaf * 5];
 
-    val = (int*)&hm->compress_data[hm->nleaf];
-    *val = sz;
+    ks_helper_int_to_bytes((char*)&hm->compress_data[0], hm->nleaf);
+
+    for (i = 0; i < hm->nleaf; i++)
+    {
+        pt_leaf_data[i * 5] = hm->leafs[i];
+        ks_helper_int_to_bytes((char*)&pt_leaf_data[i * 5 + 1], hm->dict[hm->leafs[i]]);
+    }
+
+    ks_helper_int_to_bytes((char*)pt_uncompress_size, sz);
 }
 
-static void generate_compress_data(hufman_t* hm, const unsigned char* data, int sz)
+static void compress_data(hufman_t* hm, const unsigned char* data, int sz)
 {
     unsigned char*  bytes;
     int             i, j;
@@ -141,10 +123,10 @@ char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
     hm = calloc(1, sizeof(*hm));
     udata = (unsigned char*)data;
 
-    com_generate_leafs(hm, udata, sz);
+    reader_head(hm, udata, sz);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
-    generate_compress_data(hm, udata, sz);
+    compress_data(hm, udata, sz);
 
     *ret_sz = hm->compress_data_sz;
 

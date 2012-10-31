@@ -40,10 +40,12 @@ typedef struct hufman_t
     int             compress_header_sz;
     int             compress_data_sz;
 
+    int             uncompress_content_sz;
     int             max_level;
 } hufman_t;
 
 int     node_comparer(const void* v1, const void* v2);
 void    build_tree(hufman_t* hm);
+void    deep_search_build_codes(hufman_t* hm, const node_t* n, int level);
 
 #endif

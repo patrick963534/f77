@@ -43,3 +43,34 @@ void build_tree(hufman_t* hm)
 
     hm->root = nodes[cur];
 }
+
+void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
+{
+    if (n->left == NULL && n->right == NULL)
+    {
+        code_t* code;
+        node_t* np;
+        int i;
+
+        code = calloc(1, sizeof(*code));
+        code->nbit = level + 1;
+        code->bits = calloc(code->nbit, sizeof(code->bits[0]));
+
+        np = (node_t*)n;
+        for (i = code->nbit - 1; i >= 0; i--, np = np->parent)
+            code->bits[i] = np->bit;
+
+        hm->codes[n->ch] = code;
+
+        if (level > hm->max_level)
+            hm->max_level = level;
+
+        return;
+    }
+
+    if (n->left != NULL)
+        deep_search_build_codes(hm, n->left, level + 1);
+
+    if (n->right != NULL)
+        deep_search_build_codes(hm, n->right, level + 1);
+}

@@ -5,7 +5,9 @@
 static void test_1()
 {
     char* data;
-    int ret, sz, i;
+    char* cdata;
+    char* udata;
+    int cret, uret, sz, i;
 
     sz = 65536;
     data = malloc(sz);
@@ -15,7 +17,8 @@ static void test_1()
     for (i = 0; i < sz; i++)
         data[i] = rand() % 26;
 
-    ks_zip_compress(data, sz, &ret);
+    cdata = ks_zip_compress(data, sz, &cret);
+    udata = ks_zip_uncompress(cdata, cret, &uret);
 }
 
 static void test_2()
