@@ -114,6 +114,7 @@ void compression_data_load(compression_data_t* cd, const char* data)
 {
     unsigned char* pt_leaf_data;
     unsigned char* pt_uncompress_size;
+    int header_sz;
     int i;
 
     ks_helper_bytes_to_int(data, &cd->nleaf);
@@ -129,4 +130,7 @@ void compression_data_load(compression_data_t* cd, const char* data)
     }
 
     ks_helper_bytes_to_int((char*)pt_uncompress_size, &cd->uncompress_bytes_count);
+
+    header_sz   = sizeof(int) + cd->nleaf * 5 + sizeof(int);
+    cd->content = &cd->all[header_sz];
 }

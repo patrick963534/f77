@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void reader_head(hufman_t* hm, const unsigned char* data)
+static unsigned char* reader_head(hufman_t* hm, const unsigned char* data)
 {
     int i;
     compression_data_t cd;
@@ -30,12 +30,15 @@ static void reader_head(hufman_t* hm, const unsigned char* data)
         hm->leafs[i] = hm->nodes[i]->ch;
 
     hm->uncompress_content_sz = cd.uncompress_bytes_count;
+
+    return cd.content;
 }
 
-static unsigned char* uncompress(hufman_t* hm, const char* data, int sz)
+static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int sz)
 {
     unsigned char* udata;
     unsigned char* p;
+    unsigned char  b;
     const node_t*  n;
     int i;
     int ibit;
@@ -46,10 +49,10 @@ static unsigned char* uncompress(hufman_t* hm, const char* data, int sz)
     ibyte = 0;
     i     = 0;
     n     = hm->root;
+    b     = content[ibyte];
 
     while (i < hm->uncompress_content_sz)
     {
-        unsigned char b = data[ibyte];
         
         if (n->left == NULL && n->right == NULL)
         {
@@ -59,7 +62,7 @@ static unsigned char* uncompress(hufman_t* hm, const char* data, int sz)
             continue;
         }
 
-        if (((b >> ibit) & 0xFF) == 0)
+        if (((b >> ibit) & 0x1) == 0)
             n = n->left;
         else
             n = n->right;
@@ -68,6 +71,7 @@ static unsigned char* uncompress(hufman_t* hm, const char* data, int sz)
         {
             ibit = 0;
             ibyte++;
+            b = content[ibyte];
         }
     }
 
@@ -81,12 +85,11 @@ char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
     unsigned char*  udata;
 
     hm = calloc(1, sizeof(*hm));
-    udata = (unsigned char*)data;
 
-    reader_head(hm, udata);
+    udata = reader_head(hm, (unsigned char*)data);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
-    udata = uncompress(hm, data, sz);
+    udata = uncompress(hm, udata, sz);
     *ret_sz = hm->uncompress_content_sz;
 
     return (char*)udata;
