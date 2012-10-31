@@ -32,6 +32,49 @@ static void reader_head(hufman_t* hm, const unsigned char* data)
     hm->uncompress_content_sz = cd.uncompress_bytes_count;
 }
 
+static unsigned char* uncompress(hufman_t* hm, const char* data, int sz)
+{
+    unsigned char* udata;
+    unsigned char* p;
+    const node_t*  n;
+    int i;
+    int ibit;
+    int ibyte;
+
+    udata = p = (unsigned char*)malloc(hm->uncompress_content_sz);
+    ibit  = 0;
+    ibyte = 0;
+    i     = 0;
+    n     = hm->root;
+
+    while (i < hm->uncompress_content_sz)
+    {
+        unsigned char b = data[ibyte];
+        
+        if (n->left == NULL && n->right == NULL)
+        {
+            i++;
+            *p++ = n->ch;
+            n = hm->root;
+            continue;
+        }
+
+        if (((b >> ibit) & 0xFF) == 0)
+            n = n->left;
+        else
+            n = n->right;
+
+        if (ibit++ == 8)
+        {
+            ibit = 0;
+            ibyte++;
+        }
+    }
+
+
+    return udata;
+}
+
 char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
 {
     hufman_t*       hm;
@@ -43,9 +86,8 @@ char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
     reader_head(hm, udata);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
+    udata = uncompress(hm, data, sz);
+    *ret_sz = hm->uncompress_content_sz;
 
-    ks_unused(data);
-    ks_unused(sz);
-    ks_unused(ret_sz);
-    return 0;
+    return (char*)udata;
 }

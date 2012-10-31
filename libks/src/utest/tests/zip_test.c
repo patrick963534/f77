@@ -1,4 +1,5 @@
 #include <ks/zip.h>
+#include <ks/log.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -20,12 +21,20 @@ static void test_1()
     cdata = ks_zip_compress(data, sz, &cret);
     udata = ks_zip_uncompress(cdata, cret, &uret);
 
-    if (uret != cret)
+    if (uret != sz)
+    {
+        ks_log("%s, (%d, %d)", "not the same size.", uret, sz);
         return;
+    }
 
     for (i = 0; i < uret; i++)
+    {
         if (data[i] != udata[i])
+        {
+            ks_log("%s : %d", "not the same content.", i);
             return;
+        }
+    }
 }
 
 static void test_2()
