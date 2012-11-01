@@ -68,6 +68,7 @@ static void generate_compress_header(compression_data_t* cd, hufman_t* hm, int s
 static char* compress_data(hufman_t* hm, const unsigned char* data, int sz, int *ret_sz)
 {
     unsigned char*  bytes;
+    unsigned char   b;
     int             i, j;
     int             ibyte;
     int             ibit;
@@ -79,25 +80,27 @@ static char* compress_data(hufman_t* hm, const unsigned char* data, int sz, int 
     bytes = cd.content;
     ibyte = 0;
     ibit  = 0;
+    b     = 0;
     for (i = 0; i < sz; i++)
     {
-        unsigned char* b  = &bytes[ibyte];
         unsigned char* cb = hm->codes[data[i]]->bits;
         int   cc = hm->codes[data[i]]->nbit;
         
         for (j = 0; j < cc; j++)
         {
             if (cb[j])
-                *b += 1 << ibit;
+                b += 1 << (7 - ibit);
 
-            if (ibit++ == 8)
+            if (++ibit == 8)
             {
                 ibit = 0;
+                bytes[ibyte] = b;
                 ibyte++;
-                b = &bytes[ibyte];
+                b = 0;
             }
         }
     }
+    bytes[ibyte] = b;
 
     *ret_sz = hm->compress_data_sz;
 

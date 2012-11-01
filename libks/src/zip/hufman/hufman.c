@@ -1,5 +1,6 @@
 #include "hufman.c.h"
 #include <ks/log.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ks/helper.h"
@@ -54,7 +55,8 @@ void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
         int i;
 
         code = calloc(1, sizeof(*code));
-        code->nbit = level + 1;
+        code->nbit = level;
+        code->ch   = n->ch;
         code->bits = calloc(code->nbit, sizeof(code->bits[0]));
 
         np = (node_t*)n;
@@ -62,6 +64,12 @@ void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
             code->bits[i] = np->bit;
 
         hm->codes[n->ch] = code;
+
+        printf("0x%02x : %d : ", code->ch, n->pt);
+        for (i = 0; i < code->nbit; i++)
+            printf("%d", code->bits[i]);
+        printf("\n");
+        fflush(stdout);
 
         if (level > hm->max_level)
             hm->max_level = level;

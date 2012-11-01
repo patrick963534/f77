@@ -1,6 +1,7 @@
 #include "hufman.c.h"
 #include <ks/log.h>
 #include <ks/helper.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -53,7 +54,6 @@ static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int
 
     while (i < hm->uncompress_content_sz)
     {
-        
         if (n->left == NULL && n->right == NULL)
         {
             i++;
@@ -62,12 +62,12 @@ static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int
             continue;
         }
 
-        if (((b >> ibit) & 0x1) == 0)
+        if (((b >> (7 - ibit)) & 0x1) == 0)
             n = n->left;
         else
             n = n->right;
 
-        if (ibit++ == 8)
+        if (++ibit == 8)
         {
             ibit = 0;
             ibyte++;
@@ -75,7 +75,7 @@ static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int
         }
     }
 
-
+    ks_unused(sz);
     return udata;
 }
 
