@@ -35,7 +35,7 @@ static unsigned char* reader_head(hufman_t* hm, const unsigned char* data)
     return cd.content;
 }
 
-static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int sz)
+static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int sz, int* ret_sz)
 {
     unsigned char* udata;
     unsigned char* p;
@@ -75,6 +75,8 @@ static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int
         }
     }
 
+    *ret_sz = hm->uncompress_content_sz;
+
     ks_unused(sz);
     return udata;
 }
@@ -89,8 +91,8 @@ char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
     udata = reader_head(hm, (unsigned char*)data);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
-    udata = uncompress(hm, udata, sz);
-    *ret_sz = hm->uncompress_content_sz;
+    udata = uncompress(hm, udata, sz, ret_sz);
+    delete_hm(hm);
 
     return (char*)udata;
 }

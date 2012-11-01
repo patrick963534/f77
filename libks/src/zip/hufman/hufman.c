@@ -77,6 +77,19 @@ void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
         deep_search_build_codes(hm, n->right, level + 1);
 }
 
+void delete_hm(hufman_t* hm)
+{
+    int i;
+
+    for (i = 0; i < NODE_MAX; i++)
+        free(hm->nodes[i]);
+
+    for (i = 0; i < LEAF_MAX; i++)
+        free(hm->codes[i]);
+
+    free(hm);
+}
+
 void compression_data_save(compression_data_t* cd)
 {
     unsigned char* pt_leaf_count;

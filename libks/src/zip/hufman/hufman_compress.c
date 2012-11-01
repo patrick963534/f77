@@ -110,6 +110,7 @@ char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
 {
     hufman_t*       hm;
     unsigned char*  udata;
+    char*           result;
 
     hm = calloc(1, sizeof(*hm));
     udata = (unsigned char*)data;
@@ -117,6 +118,8 @@ char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
     reader_head(hm, udata, sz);
     build_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
+    result = compress_data(hm, udata, sz, ret_sz);
+    delete_hm(hm);
 
-    return compress_data(hm, udata, sz, ret_sz);
+    return result;
 }

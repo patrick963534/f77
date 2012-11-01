@@ -35,7 +35,6 @@ typedef struct hufman_t
     int             dict[LEAF_MAX];
     int             nleaf;
 
-    unsigned char*  compress_data;
     int             compress_content_sz;
     int             compress_header_sz;
     int             compress_data_sz;
@@ -64,6 +63,7 @@ typedef struct compression_data_t
 int     node_comparer(const void* v1, const void* v2);
 void    build_tree(hufman_t* hm);
 void    deep_search_build_codes(hufman_t* hm, const node_t* n, int level);
+void    delete_hm(hufman_t* hm);
 
 void    compression_data_save(compression_data_t* cd);
 void    compression_data_load(compression_data_t* cd, const char* data);
