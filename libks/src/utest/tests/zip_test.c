@@ -52,12 +52,12 @@ static void test_3()
     const char* data = "good morning.";
     const char* udata;
     const char* cdata;
-    int i, csz, usz;
+    int         i, usz, csz;
 
     cdata = ks_zip_compress(data, strlen(data) + 1, &csz);
     udata = ks_zip_uncompress(cdata, csz, &usz);
 
-    if (csz != usz)
+    if (strlen(data) + 1 != (unsigned int)usz)
     {
         ks_log("%s, (%d, %d)", "not the same size.", csz, usz);
         return;
@@ -76,6 +76,6 @@ static void test_3()
 void ks_utest_zip_test()
 {
     test_3();
-    //test_1();
-    //test_2();
+    test_1();
+    test_2();
 }

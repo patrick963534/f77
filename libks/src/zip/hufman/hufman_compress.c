@@ -23,14 +23,12 @@ static void reader_head(hufman_t* hm, const unsigned char* data, int sz)
             hm->nodes[hm->nleaf]->right = (void*)0;
             hm->nodes[hm->nleaf]->pt = dict[i];
             hm->nodes[hm->nleaf]->ch = (unsigned char)i;
+            hm->leafs[hm->nleaf]     = (unsigned char)i;
             hm->nleaf++;
         }
     }
 
     qsort(hm->nodes, hm->nleaf, sizeof(hm->nodes[0]), node_comparer);
-
-    for (i = 0; i < hm->nleaf; i++)
-        hm->leafs[i] = hm->nodes[i]->ch;
 }
 
 static int calculate_total_bits(hufman_t* hm)
@@ -63,6 +61,7 @@ static void generate_compress_header(compression_data_t* cd, hufman_t* hm, int s
     }
 
     compression_data_save(cd);
+    hm->compress_data_sz = cd->compress_bytes_count;
 }
 
 static char* compress_data(hufman_t* hm, const unsigned char* data, int sz, int *ret_sz)

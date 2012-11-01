@@ -1,6 +1,5 @@
 #include "hufman.c.h"
 #include <ks/log.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ks/helper.h"
@@ -65,12 +64,6 @@ void deep_search_build_codes(hufman_t* hm, const node_t* n, int level)
 
         hm->codes[n->ch] = code;
 
-        printf("0x%02x : %d : ", code->ch, n->pt);
-        for (i = 0; i < code->nbit; i++)
-            printf("%d", code->bits[i]);
-        printf("\n");
-        fflush(stdout);
-
         if (level > hm->max_level)
             hm->max_level = level;
 
@@ -97,7 +90,8 @@ void compression_data_save(compression_data_t* cd)
     header_sz   = sizeof(int) + cd->nleaf * 5 + sizeof(int);
     content_sz  = (cd->bits_count + 8 - 1) / 8;
     
-    cd->all = malloc(header_sz + content_sz);
+    cd->compress_bytes_count = header_sz + content_sz;
+    cd->all = malloc(cd->compress_bytes_count);
 
     ks_helper_int_to_bytes((char*)&cd->all[0], cd->nleaf);
  

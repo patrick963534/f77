@@ -55,6 +55,7 @@ typedef struct compression_data_t
     int             nleaf;
     data_leaf_t     leaf_data[LEAF_MAX];
     int             uncompress_bytes_count;
+    int             compress_bytes_count;
     int             bits_count;
     unsigned char*  all;
     unsigned char*  content;
