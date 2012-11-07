@@ -81,7 +81,7 @@ static unsigned char* uncompress(hufman_t* hm, const unsigned char* content, int
     return udata;
 }
 
-char* ks_zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
+char* zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
 {
     hufman_t*       hm;
     unsigned char*  udata;

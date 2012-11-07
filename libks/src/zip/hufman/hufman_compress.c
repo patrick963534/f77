@@ -106,7 +106,7 @@ static char* compress_data(hufman_t* hm, const unsigned char* data, int sz, int 
     return (char*)cd.all;
 }
 
-char* ks_zip_hufman_compress(const char* data, int sz, int* ret_sz)
+char* zip_hufman_compress(const char* data, int sz, int* ret_sz)
 {
     hufman_t*       hm;
     unsigned char*  udata;
