@@ -23,38 +23,39 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
 
     while (cur < end)
     {
+        const char* cp = cur;
         const char* wp = win_pos;
         int length = 0;
+
+        pr = calloc(1, sizeof(*pr));
+        pr->ch = *cp;
+        ks_list_init(&pr->e);
+        ks_list_add_tail(&lz->pairs, &pr->e);
 
         if (win_sz < max_win_sz)
             win_sz++;
         
         while (wp < win_pos + win_sz)
         {
-            if (*wp == *cur)
+            if (*wp == *cp)
             {
                 length++;
+                cp++;
             }
-            else
+            else if (length != 0)
             {
-                pr = calloc(1, sizeof(*pr));
-                pr->ch = *cur;
-
-                if (length != 0)
+                if (pr->length < length)
                 {
                     pr->length = length;
-                    pr->offset = win_pos - wp;
+                    pr->offset = wp - win_pos;
+                    pr->ch = *cp;
                 }
                 
-                ks_list_init(&pr->e);
-                ks_list_add_tail(&lz->pairs, &pr->e);
-
-                cur++;
-                break;
+                length = 0;
+                cp = cur;
             }
 
-            wp++;
-            cur++;
+            wp++;            
         }
     }
 }
