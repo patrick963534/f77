@@ -3,12 +3,10 @@
 static void build_pairs(lz77_t* lz, const char* data, int sz)
 {
     pair_t* pr;
-
     const char *win_pos;
     const char *cur, *end;
 
-    int win_sz = 1;
-    int max_win_sz = 1024;
+    int cur_win_sz = 1;
 
     cur = data;
     end = data + sz;
@@ -34,7 +32,7 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
         ks_list_add_tail(&lz->pairs, &pr->e);
         lz->npair++;
         
-        while (wp < win_pos + win_sz)
+        while (wp < win_pos + cur_win_sz)
         {
             if (*wp == *cp)
             {
@@ -64,12 +62,17 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
             pr->ch = *cp;
         }
 
-        win_sz += pr->length + 1;
-        if (win_sz > max_win_sz)
-            win_sz = max_win_sz;
+        cur_win_sz += pr->length + 1;
+        if (cur_win_sz > MAX_WIN_SZ)
+        {
+            cur_win_sz = MAX_WIN_SZ;
+            wp += pr->length + 1;
+        }
 
         cur += pr->length + 1;
     }
+
+    lz->max_win_sz = cur_win_sz;
 }
 
 static void print_pairs(lz77_t* lz)
@@ -84,6 +87,43 @@ static void print_pairs(lz77_t* lz)
     }
 }
 
+static unsigned char* generate(lz77_t* lz, int* ret_sz)
+{
+    pair_t*         pos;
+    unsigned char*  bytes;
+    int             offset_bits;
+    int             length_bits;
+    int             nbit;
+    int             nbyte;
+
+    bytes = (unsigned char*)lz77_header_save(lz);
+    offset_bits = lz->offset_bits;
+    length_bits = lz->length_bits;
+    nbit = 0;
+    nbyte = 0;
+    
+    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    {
+        unsigned char b = 0;
+        unsigned char ch = pos->ch;
+        
+        if (pos->length != 0)
+            b += 1 << (7 - nbit);
+        
+        nbit++;
+        if (nbit == 8)
+        {
+            bytes[nbyte++] = b;
+            nbit = 0;
+        }
+
+        
+    }
+
+    *ret_sz = lz->nbyte;
+    return lz->all_bytes;
+}
+
 char* zip_lz77_compress(const char* data, int sz, int* ret_sz)
 {
     lz77_t* lz;
@@ -93,8 +133,7 @@ char* zip_lz77_compress(const char* data, int sz, int* ret_sz)
 
     build_pairs(lz, data, sz);
     print_pairs(lz);
-
-    *ret_sz = 0;
+    generate(lz, ret_sz);
 
     return 0;
 }

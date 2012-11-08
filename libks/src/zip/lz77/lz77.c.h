@@ -5,24 +5,35 @@
 #include <ks/list.h>
 #include <ks/log.h>
 #include <stdlib.h>
+#include <math.h>
+
+#define MAX_WIN_SZ  2048
 
 typedef struct pair_t
 {
     ks_list_t e;
 
-    int     offset;
-    int     length;
-    char    ch;
+    int             offset;
+    int             length;
+    unsigned char   ch;
 } pair_t;
 
 typedef struct lz77_t
 {
     int         max_win_sz;
-    int         cur_win_sz;
 
     ks_list_t   pairs;
     int         npair;
 
+    int         offset_bits;
+    int         length_bits;
+
+    unsigned char*  all_bytes;
+    int             nbyte;
+
 } lz77_t;
+
+unsigned char*  lz77_header_save(lz77_t* lz);
+void            lz77_header_load(lz77_t* lz);
 
 #endif
