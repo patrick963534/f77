@@ -17,6 +17,7 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
     pr->ch = *cur;
     ks_list_init(&pr->e);
     ks_list_add_tail(&lz->pairs, &pr->e);
+    lz->npair++;
 
     cur++;
     win_pos = data;
@@ -31,9 +32,7 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
         pr->ch = *cp;
         ks_list_init(&pr->e);
         ks_list_add_tail(&lz->pairs, &pr->e);
-
-        if (win_sz < max_win_sz)
-            win_sz++;
+        lz->npair++;
         
         while (wp < win_pos + win_sz)
         {
@@ -44,7 +43,7 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
             }
             else if (length != 0)
             {
-                if (pr->length < length)
+                if (pr->length <= length)
                 {
                     pr->length = length;
                     pr->offset = wp - win_pos;
@@ -57,6 +56,31 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
 
             wp++;            
         }
+
+        if (length != 0)
+        {
+            pr->length = length;
+            pr->offset = wp - win_pos;
+            pr->ch = *cp;
+        }
+
+        win_sz += pr->length + 1;
+        if (win_sz > max_win_sz)
+            win_sz = max_win_sz;
+
+        cur += pr->length + 1;
+    }
+}
+
+static void print_pairs(lz77_t* lz)
+{
+    pair_t* pos;
+
+    ks_log("sizeof(long) : %d", sizeof(long));
+
+    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    {
+        ks_log("(%2d,%2d)%c", pos->offset, pos->length, pos->ch);
     }
 }
 
@@ -68,6 +92,7 @@ char* zip_lz77_compress(const char* data, int sz, int* ret_sz)
     ks_list_init(&lz->pairs);
 
     build_pairs(lz, data, sz);
+    print_pairs(lz);
 
     *ret_sz = 0;
 

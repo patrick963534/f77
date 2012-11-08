@@ -3,6 +3,7 @@
 
 #include <ks/defs.h>
 #include <ks/list.h>
+#include <ks/log.h>
 #include <stdlib.h>
 
 typedef struct pair_t
@@ -20,6 +21,7 @@ typedef struct lz77_t
     int         cur_win_sz;
 
     ks_list_t   pairs;
+    int         npair;
 
 } lz77_t;
 
