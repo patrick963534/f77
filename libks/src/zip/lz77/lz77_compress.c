@@ -95,6 +95,8 @@ static unsigned char* generate(lz77_t* lz, int* ret_sz)
     int             length_bits;
     int             nbit;
     int             nbyte;
+    unsigned char   b;
+    int             i;
 
     bytes = (unsigned char*)lz77_header_save(lz);
     offset_bits = lz->offset_bits;
@@ -104,9 +106,9 @@ static unsigned char* generate(lz77_t* lz, int* ret_sz)
     
     ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
     {
-        unsigned char b = 0;
         unsigned char ch = pos->ch;
-        
+        b = 0;
+
         if (pos->length != 0)
             b += 1 << (7 - nbit);
         
@@ -115,11 +117,58 @@ static unsigned char* generate(lz77_t* lz, int* ret_sz)
         {
             bytes[nbyte++] = b;
             nbit = 0;
+            b = 0;
         }
 
-        
+        for (i = 0; i < 8; i++)
+        {
+            if (((ch >> (7 - i)) & 0x1))
+                b += 1 << (7 - nbit);
+
+            nbit++;
+            if (nbit == 8)
+            {
+                bytes[nbyte++] = b;
+                nbit = 0;
+                b = 0;
+            }
+        }
+
+        if (pos->length != 0)
+        {
+            int t_offset = pos->offset;
+            int t_length = pos->length;
+            for (i = 0; i < offset_bits; i++)
+            {
+                if (((t_offset >> (offset_bits - 1 - i)) & 0x1))
+                    b += 1 << (7 - nbit);
+
+                nbit++;
+                if (nbit == 8)
+                {
+                    bytes[nbyte++] = b;
+                    nbit = 0;
+                    b = 0;
+                }
+            }
+
+            for (i = 0; i < length_bits; i++)
+            {
+                if (((t_length >> (length_bits - 1 - i)) & 0x1))
+                    b += 1 << (7 - nbit);
+
+                nbit++;
+                if (nbit == 8)
+                {
+                    bytes[nbyte++] = b;
+                    nbit = 0;
+                    b = 0;
+                }
+            }
+        }
     }
 
+    bytes[nbyte++] = b;
     *ret_sz = lz->nbyte;
     return lz->all_bytes;
 }
