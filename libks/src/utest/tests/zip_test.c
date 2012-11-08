@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void test_1()
+static void test_hufman_1()
 {
     char* data;
     char* cdata;
@@ -39,7 +39,7 @@ static void test_1()
     }
 }
 
-static void test_2()
+static void test_hufman_2()
 {
     const char* data = "aabdakliaeaaaiesaasdfeawfasdfadfasdfadfaefeafagafdfaefsdfadfa";
     int sz;
@@ -47,7 +47,7 @@ static void test_2()
     ks_zip_compress(data, strlen(data) + 1, &sz, ks_zip_type_hufman);
 }
 
-static void test_3()
+static void test_hufman_3()
 {
     const char* data = "good morning.";
     const char* udata;
@@ -73,9 +73,22 @@ static void test_3()
     }
 }
 
+static void test_lz77_1()
+{
+    char* cdata;
+    const char* data = "good good study, day day up.";
+    int sz = strlen(data) + 1;
+    int cret;
+
+    cdata = ks_zip_compress(data, sz, &cret, ks_zip_type_lz77);
+    ks_unused(cdata);
+}
+
 void ks_utest_zip_test()
 {
-    test_3();
-    test_1();
-    test_2();
+    test_hufman_3();
+    test_hufman_1();
+    test_hufman_2();
+
+    test_lz77_1();
 }

@@ -6,7 +6,7 @@ KS_API char* ks_zip_compress(const char* data, int sz, int* ret_sz, ks_zip_type_
 {
     if (type == ks_zip_type_hufman)
         return zip_hufman_compress(data, sz, ret_sz);
-    else if (type == ks_zip_type_hufman)
+    else if (type == ks_zip_type_lz77)
         return zip_lz77_compress(data, sz, ret_sz);
 
     return 0;
