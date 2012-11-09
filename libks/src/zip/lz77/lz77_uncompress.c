@@ -11,7 +11,7 @@ char* zip_lz77_uncompress(const char* data, int sz, int* ret_sz)
     lz->bytes_compressed = (uchar*)data;
     lz->nbyte_compressed = sz;
 
-    lz77_header_load(lz, data, sz);
+    lz77_header_load(lz);
 
     ks_unused(data);
     ks_unused(sz);
