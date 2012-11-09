@@ -1,10 +1,15 @@
 #include "lz77.c.h"
 
-static void build_pairs(lz77_t* lz, const char* data, int sz)
+typedef unsigned char   uchar;
+
+static void build_pairs(lz77_t* lz)
 {
-    pair_t* pr;
-    const char *win_pos;
-    const char *cur, *end;
+    pair_t *pr;
+    uchar  *win_pos;
+    uchar  *cur, *end;
+
+    uchar* data = lz->bytes_uncompressed;
+    int    sz   = lz->nbyte_uncompressed;
 
     int cur_win_sz = 1;
 
@@ -22,8 +27,8 @@ static void build_pairs(lz77_t* lz, const char* data, int sz)
 
     while (cur < end)
     {
-        const char* cp = cur;
-        const char* wp = win_pos;
+        uchar* cp = cur;
+        uchar* wp = win_pos;
         int length = 0;
 
         pr = calloc(1, sizeof(*pr));
@@ -87,26 +92,27 @@ static void print_pairs(lz77_t* lz)
     }
 }
 
-static unsigned char* generate(lz77_t* lz, int* ret_sz)
+static uchar* generate(lz77_t* lz, int* ret_sz)
 {
-    pair_t*         pos;
-    unsigned char*  bytes;
-    int             offset_bits;
-    int             length_bits;
-    int             nbit;
-    int             nbyte;
-    unsigned char   b;
-    int             i;
+    pair_t* pos;
+    uchar*  bytes;
+    int     offset_bits;
+    int     length_bits;
+    int     nbit;
+    int     nbyte;
+    uchar   b;
+    int     i;
 
-    bytes = (unsigned char*)lz77_header_save(lz);
+    bytes = (uchar*)lz77_header_save(lz);
     offset_bits = lz->offset_bits;
     length_bits = lz->length_bits;
-    nbit = 0;
+    nbit  = 0;
     nbyte = 0;
+    b     = 0;
     
     ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
     {
-        unsigned char ch = pos->ch;
+        uchar ch = pos->ch;
         b = 0;
 
         if (pos->length != 0)
@@ -169,28 +175,23 @@ static unsigned char* generate(lz77_t* lz, int* ret_sz)
     }
 
     bytes[nbyte++] = b;
-    *ret_sz = lz->nbyte;
-    return lz->all_bytes;
+    *ret_sz = lz->nbyte_compressed;
+    return lz->bytes_compressed;
 }
 
-char* zip_lz77_compress(const char* data, int sz, int* ret_sz)
+char* zip_lz77_compress(uchar* data, int sz, int* ret_sz)
 {
     lz77_t* lz;
 
     lz = calloc(1, sizeof(*lz));
     ks_list_init(&lz->pairs);
 
-    build_pairs(lz, data, sz);
+    lz->bytes_uncompressed = (uchar*)data;
+    lz->nbyte_uncompressed = sz;
+
+    build_pairs(lz);
     print_pairs(lz);
     generate(lz, ret_sz);
 
-    return 0;
-}
-
-char* zip_lz77_uncompress(const char* data, int sz, int* ret_sz)
-{
-    ks_unused(data);
-    ks_unused(sz);
-    ks_unused(ret_sz);
-    return 0;
+    return (char*)lz->bytes_compressed;
 }

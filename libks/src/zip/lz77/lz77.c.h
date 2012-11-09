@@ -28,12 +28,17 @@ typedef struct lz77_t
     int         offset_bits;
     int         length_bits;
 
-    unsigned char*  all_bytes;
-    int             nbyte;
+    int         nbit_left_in_last_byte;
+
+    unsigned char*  bytes_uncompressed;
+    int             nbyte_uncompressed;
+
+    unsigned char*  bytes_compressed;
+    int             nbyte_compressed;
 
 } lz77_t;
 
 unsigned char*  lz77_header_save(lz77_t* lz);
-void            lz77_header_load(lz77_t* lz);
+unsigned char*  lz77_header_load(lz77_t* lz, const char* data, int sz);
 
 #endif

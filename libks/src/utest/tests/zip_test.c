@@ -75,13 +75,28 @@ static void test_hufman_3()
 
 static void test_lz77_1()
 {
-    char* cdata;
+    char *cdata, *udata;
     const char* data = "good good study, day day up.";
     int sz = strlen(data) + 1;
-    int cret;
+    int cret, uret, i;
 
     cdata = ks_zip_compress(data, sz, &cret, ks_zip_type_lz77);
-    ks_unused(cdata);
+    udata = ks_zip_uncompress(cdata, cret, &uret, ks_zip_type_lz77);
+
+    if (sz != uret)
+    {
+        ks_log("%s, (%d, %d)", "not the same size.", sz, uret);
+        return;
+    }
+
+    for (i = 0; i < uret; i++)
+    {
+        if (data[i] != udata[i])
+        {
+            ks_log("%s : %d", "not the same content.", i);
+            return;
+        }
+    }
 }
 
 void ks_utest_zip_test()
