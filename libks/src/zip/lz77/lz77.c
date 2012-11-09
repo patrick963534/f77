@@ -40,9 +40,9 @@ uchar* lz77_header_save(lz77_t* lz)
     lz->bytes_compressed = (uchar*)calloc(1, lz->nbyte_compressed);
 
     lz->bytes_compressed[0] = ((lz->offset_bits & 0xF) << 4) + (lz->length_bits & 0xF);
-    ks_helper_int_to_bytes(&lz->bytes_compressed[1], lz->nbyte_compressed);
+    ks_helper_int_to_bytes(&lz->bytes_compressed[1], lz->nbyte_uncompressed);
 
-    return &lz->bytes_compressed[2];
+    return &lz->bytes_compressed[5];
 }
 
 uchar* lz77_header_load(lz77_t* lz)
@@ -55,5 +55,5 @@ uchar* lz77_header_load(lz77_t* lz)
     ks_helper_bytes_to_int(&data[1], &lz->nbyte_uncompressed);
     lz->bytes_uncompressed = calloc(1, lz->nbyte_uncompressed);
 
-    return &data[2];
+    return &data[5];
 }

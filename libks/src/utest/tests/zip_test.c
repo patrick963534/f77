@@ -76,7 +76,7 @@ static void test_hufman_3()
 static void test_lz77_1()
 {
     char *cdata, *udata;
-    const char* data = "good good study, day day up.";
+    const char* data = "good good study and day day up.";
     int sz = strlen(data) + 1;
     int cret, uret, i;
 

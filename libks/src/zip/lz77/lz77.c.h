@@ -39,6 +39,6 @@ typedef struct lz77_t
 } lz77_t;
 
 unsigned char*  lz77_header_save(lz77_t* lz);
-unsigned char*  lz77_header_load(lz77_t* lz, const char* data, int sz);
+unsigned char*  lz77_header_load(lz77_t* lz);
 
 #endif
