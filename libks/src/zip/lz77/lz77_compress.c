@@ -1,7 +1,5 @@
 #include "lz77.c.h"
 
-typedef unsigned char   uchar;
-
 static void build_pairs(lz77_t* lz)
 {
     pair_t *pr;

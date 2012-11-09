@@ -9,6 +9,8 @@
 
 #define MAX_WIN_SZ  2048
 
+typedef unsigned char   uchar;
+
 typedef struct pair_t
 {
     ks_list_t e;
@@ -27,8 +29,6 @@ typedef struct lz77_t
 
     int         offset_bits;
     int         length_bits;
-
-    int         nbit_left_in_last_byte;
 
     unsigned char*  bytes_uncompressed;
     int             nbyte_uncompressed;

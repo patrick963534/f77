@@ -30,18 +30,14 @@ static int build_header(lz77_t* lz)
             bits += pair_bit_sz;
     }
 
-    return bits;
+    return (bits + 8 - 1) / 8;
 }
 
-unsigned char* lz77_header_save(lz77_t* lz)
+uchar* lz77_header_save(lz77_t* lz)
 {
-    int bits;
-
-    bits = build_header(lz);
-
-    lz->nbyte_compressed = (bits + 8 - 1) / 8;
+    lz->nbyte_compressed =  build_header(lz);
     lz->nbyte_compressed += 5;
-    lz->bytes_compressed = (unsigned char*)calloc(1, lz->nbyte_compressed);
+    lz->bytes_compressed = (uchar*)calloc(1, lz->nbyte_compressed);
 
     lz->bytes_compressed[0] = ((lz->offset_bits & 0xF) << 4) + (lz->length_bits & 0xF);
     ks_helper_int_to_bytes(&lz->bytes_compressed[1], lz->nbyte_compressed);
@@ -49,14 +45,15 @@ unsigned char* lz77_header_save(lz77_t* lz)
     return &lz->bytes_compressed[2];
 }
 
-unsigned char* lz77_header_load(lz77_t* lz, const char* data, int sz)
+uchar* lz77_header_load(lz77_t* lz)
 {
-    lz->offset_bits             = (data[0] >> 4) & 0xF;
-    lz->length_bits             = (data[0] & 0xF);
-    lz->nbit_left_in_last_byte  = data[1];
+    uchar* data = lz->bytes_compressed;
 
-    lz->bytes_compressed = (unsigned char*)data;
-    lz->nbyte_compressed = sz;
+    lz->offset_bits = (data[0] >> 4) & 0xF;
+    lz->length_bits = (data[0] & 0xF);
+
+    ks_helper_bytes_to_int(&data[1], &lz->nbyte_uncompressed);
+    lz->bytes_uncompressed = calloc(1, lz->nbyte_uncompressed);
 
     return &data[2];
 }
