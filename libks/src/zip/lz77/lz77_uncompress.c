@@ -3,6 +3,7 @@
 static void generate(lz77_t* lz)
 {
     uchar* bytes_uncompress;
+    uchar* win_pos;
 
     uchar* bytes;
     int    offset_bits;
@@ -15,6 +16,7 @@ static void generate(lz77_t* lz)
     bytes = lz77_header_load(lz);
 
     bytes_uncompress = lz->bytes_uncompressed;
+    win_pos          = bytes_uncompress;
     offset_bits = lz->offset_bits;
     length_bits = lz->length_bits;
 
@@ -49,8 +51,6 @@ static void generate(lz77_t* lz)
                 b = bytes[nbyte];
             }
         }
-
-        *bytes_uncompress++ = (uchar)to;
 
         if (is_pair)
         {
@@ -87,11 +87,16 @@ static void generate(lz77_t* lz)
 
             for (i = 0; i < t_length; i++)
             {
-                bytes_uncompress[i] = *(bytes_uncompress - t_offset + i);
+                bytes_uncompress[i] = *(win_pos + t_offset + i);
             }
 
             bytes_uncompress += t_length;
         }
+
+        *bytes_uncompress++ = (uchar)to;
+
+        if (bytes_uncompress - lz->bytes_uncompressed > MAX_WIN_SZ)
+            win_pos = bytes_uncompress - MAX_WIN_SZ;
     }
 }
 

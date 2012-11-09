@@ -47,7 +47,7 @@ static void build_pairs(lz77_t* lz)
                 if (pr->length <= length)
                 {
                     pr->length = length;
-                    pr->offset = wp - win_pos;
+                    pr->offset = wp - win_pos - length;
                     pr->ch = *cp;
                 }
                 
@@ -61,7 +61,7 @@ static void build_pairs(lz77_t* lz)
         if (length != 0)
         {
             pr->length = length;
-            pr->offset = wp - win_pos;
+            pr->offset = wp - win_pos - length;
             pr->ch = *cp;
         }
 
@@ -111,7 +111,6 @@ static uchar* generate(lz77_t* lz, int* ret_sz)
     ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
     {
         uchar ch = pos->ch;
-        b = 0;
 
         if (pos->length != 0)
             b += 1 << (7 - nbit);

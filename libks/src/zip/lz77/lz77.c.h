@@ -6,6 +6,7 @@
 #include <ks/log.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 
 #define MAX_WIN_SZ  2048
 
