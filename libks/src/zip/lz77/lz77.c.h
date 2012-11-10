@@ -4,6 +4,7 @@
 #include <ks/defs.h>
 #include <ks/list.h>
 #include <ks/log.h>
+#include <ks/helper.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>

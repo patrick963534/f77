@@ -99,6 +99,42 @@ static void test_lz77_1()
     }
 }
 
+static void test_lz77_2()
+{
+    char* data;
+    char* cdata;
+    char* udata;
+    int cret, uret, sz, i;
+
+    sz = 65536;
+    data = malloc(sz);
+
+    srand(0);
+
+    for (i = 0; i < sz; i++)
+        data[i] = rand() % 26;
+
+    data[0] = 12;
+
+    cdata = ks_zip_compress(data, sz, &cret, ks_zip_type_lz77);
+    udata = ks_zip_uncompress(cdata, cret, &uret, ks_zip_type_lz77);
+
+    if (uret != sz)
+    {
+        ks_log("%s, (%d, %d)", "not the same size.", uret, sz);
+        return;
+    }
+
+    for (i = 0; i < uret; i++)
+    {
+        if (data[i] != udata[i])
+        {
+            ks_log("%s : %d", "not the same content.", i);
+            return;
+        }
+    }
+}
+
 void ks_utest_zip_test()
 {
     test_hufman_3();
@@ -106,4 +142,5 @@ void ks_utest_zip_test()
     test_hufman_2();
 
     test_lz77_1();
+    test_lz77_2();
 }

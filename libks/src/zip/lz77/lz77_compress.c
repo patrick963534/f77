@@ -78,18 +78,6 @@ static void build_pairs(lz77_t* lz)
     lz->max_win_sz = cur_win_sz;
 }
 
-static void print_pairs(lz77_t* lz)
-{
-    pair_t* pos;
-
-    ks_log("sizeof(long) : %d", sizeof(long));
-
-    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
-    {
-        ks_log("(%2d,%2d)%c", pos->offset, pos->length, pos->ch);
-    }
-}
-
 static uchar* generate(lz77_t* lz, int* ret_sz)
 {
     pair_t* pos;
@@ -187,7 +175,6 @@ char* zip_lz77_compress(uchar* data, int sz, int* ret_sz)
     lz->nbyte_uncompressed = sz;
 
     build_pairs(lz);
-    print_pairs(lz);
     generate(lz, ret_sz);
 
     return (char*)lz->bytes_compressed;
