@@ -55,7 +55,7 @@ static void build_pairs(lz77_t* lz)
                 cp = cur;
             }
 
-            wp++;            
+            wp++;
         }
 
         if (length != 0)
@@ -65,14 +65,14 @@ static void build_pairs(lz77_t* lz)
             pr->ch = *cp;
         }
 
+        cur += pr->length + 1;
+
         cur_win_sz += pr->length + 1;
         if (cur_win_sz > MAX_WIN_SZ)
         {
             cur_win_sz = MAX_WIN_SZ;
-            wp += pr->length + 1;
+            win_pos = cur - MAX_WIN_SZ;
         }
-
-        cur += pr->length + 1;
     }
 
     lz->max_win_sz = cur_win_sz;
