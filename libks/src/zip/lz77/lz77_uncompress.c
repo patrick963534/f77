@@ -87,7 +87,7 @@ static void generate(lz77_t* lz, int* ret_sz)
 
             for (i = 0; i < t_length; i++)
             {
-                bytes_uncompress[i] = *(win_pos + t_offset + i);
+                bytes_uncompress[i] = *(bytes_uncompress - t_offset + i);
             }
 
             bytes_uncompress += t_length;

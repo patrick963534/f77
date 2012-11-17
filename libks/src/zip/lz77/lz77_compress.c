@@ -1,4 +1,5 @@
 #include "lz77.c.h"
+#include <stdio.h>
 
 static void build_pairs(lz77_t* lz)
 {
@@ -47,7 +48,7 @@ static void build_pairs(lz77_t* lz)
                 if (pr->length <= length)
                 {
                     pr->length = length;
-                    pr->offset = wp - win_pos - length;
+                    pr->offset = cp - wp;
                     pr->ch = *cp;
                 }
                 
@@ -61,7 +62,7 @@ static void build_pairs(lz77_t* lz)
         if (length != 0)
         {
             pr->length = length;
-            pr->offset = wp - win_pos - length;
+            pr->offset = cp - wp;
             pr->ch = *cp;
         }
 
@@ -76,6 +77,18 @@ static void build_pairs(lz77_t* lz)
     }
 
     lz->max_win_sz = cur_win_sz;
+}
+
+static void print_tree(lz77_t* lz)
+{
+    pair_t* pos;
+
+    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    {
+        //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
+    }
+
+    //fflush(stdout);
 }
 
 static uchar* generate(lz77_t* lz, int* ret_sz)
@@ -176,6 +189,7 @@ char* zip_lz77_compress(uchar* data, int sz, int* ret_sz)
     lz->nbyte_uncompressed = sz;
 
     build_pairs(lz);
+    print_tree(lz);
     generate(lz, ret_sz);
     result = (char*)lz->bytes_compressed;
 
