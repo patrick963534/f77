@@ -8,7 +8,7 @@ KS_API char* ks_path_basename(char* buf, int sz, const char* file)
 {
     const char *p, *s;
     char* k;
-    int i = sz - 1;
+    int i = sz;
 
     s = file;
     for (p = file; *p != 0; p++)
@@ -35,7 +35,7 @@ KS_API char* ks_path_folder(char* buf, int sz, const char* file)
 {
     const char *p, *e;
     char* k;
-    int i = sz - 1;
+    int i = sz;
 
     e = file;
     for (p = file; *p != 0; p++)
@@ -59,7 +59,7 @@ KS_API char* ks_path_extention(char* buf, int sz, const char* file)
 {
     const char *p, *s;
     char* k;
-    int i = sz - 1;
+    int i = sz;
 
     s = file;
     for (p = file; *p != 0; p++)
@@ -75,7 +75,7 @@ KS_API char* ks_path_extention(char* buf, int sz, const char* file)
     k = buf;
     p = s;
 
-    while (p && p < file && --i > 0)
+    while (p && *p != 0 && --i > 0)
         *k++ = *p++;
 
     *k = '\0';
@@ -87,7 +87,7 @@ KS_API char* ks_path_without_ext(char* buf, int sz, const char* file)
 {
     const char *p, *e;
     char* k;
-    int i = sz - 1;
+    int i = sz;
 
     e = file;
     for (p = file; *p != 0; p++)
@@ -118,7 +118,7 @@ KS_API char* ks_path_join(char* buf, int sz, const char* folder, const char* fil
 {
     const char *p;
     char* k;
-    int i = sz - 1;
+    int i = sz;
 
     k = buf;
     p = folder;
@@ -126,7 +126,10 @@ KS_API char* ks_path_join(char* buf, int sz, const char* folder, const char* fil
     for (k = buf, p = folder; *p != 0 && i > 0; k++, p++, i--)
         *k = *p;
 
-    for (k--, i++; !Is_Seperator(*k) && i < sz; k--, i++);
+    for (k--, i++; Is_Seperator(*k) && i < sz; k--, i++);
+
+    k++;
+    i--;
 
     if (i > 0)
     {
