@@ -12,7 +12,6 @@ int main(int argc, char** argv)
 {
     ks_director_init("Hello World", 320, 240, argc, argv);
 
-
     ks_utest_start();
 
     ks_director_run(ks_scene_new(sizeof(ks_scene_t)));

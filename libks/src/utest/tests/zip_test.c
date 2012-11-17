@@ -2,7 +2,6 @@
 #include <ks/log.h>
 #include <stdlib.h>
 #include <string.h>
-#include "test_data.h"
 #include "ks/helper.h"
 
 static void testing(const char* data, int sz, ks_zip_type_e type)
@@ -17,7 +16,7 @@ static void testing(const char* data, int sz, ks_zip_type_e type)
     if (uret != sz)
     {
         ks_log("%s, (%d, %d)", "not the same size.", uret, sz);
-        return;
+        goto fail;
     }
 
     for (i = 0; i < uret; i++)
@@ -25,11 +24,14 @@ static void testing(const char* data, int sz, ks_zip_type_e type)
         if (data[i] != udata[i])
         {
             ks_log("%s : %d", "not the same content.", i);
-            return;
+            goto fail;
         }
     }
 
     return;
+fail:
+    free(udata);
+    free(cdata);
 }
 
 static void test_hufman_1()
@@ -92,6 +94,22 @@ static void test_lz77_3()
     data = ks_helper_file_read_all(buf, &sz);
 
     testing(data, sz, ks_zip_type_lz77);
+
+    free(data);
+}
+
+static void test_lz77_4()
+{
+    int     sz;
+    char*   data;
+    char    buf[256];
+
+    ks_helper_path_join_relative_app(buf, sizeof(buf), "libks.exe");
+    data = ks_helper_file_read_all(buf, &sz);
+
+    testing(data, sz, ks_zip_type_lz77);
+
+    free(data);
 }
 
 void ks_utest_zip_test()
@@ -103,4 +121,5 @@ void ks_utest_zip_test()
     test_lz77_1();
     test_lz77_2();
     test_lz77_3();
+    test_lz77_4();
 }

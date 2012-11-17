@@ -35,6 +35,13 @@ static int build_header(lz77_t* lz)
 
 void lz77_delete(lz77_t* lz)
 {
+    pair_t *pos, *n;
+
+    ks_list_for_each_entry_safe(pos, n, &lz->pairs, pair_t, e)
+    {
+        free(pos);
+    }
+
     free(lz);
 }
 
