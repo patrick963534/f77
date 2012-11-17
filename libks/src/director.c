@@ -8,6 +8,8 @@
 #include <ks/constants.h>
 #include <string.h>
 
+#include "environment.c.h"
+
 static ks_director_t* director;
 
 static void director_update()
@@ -26,7 +28,7 @@ static void destruct(ks_director_t* me)
     ks_container_destruct((ks_container_t*)me);
 }
 
-KS_API void ks_director_init(const char* title, int w, int h)
+KS_API void ks_director_init(const char* title, int w, int h, int argc, char** argv)
 {
     director = (ks_director_t*)ks_container_new(sizeof(*director));
     director->destruct = (ks_destruct_f)destruct;
@@ -34,6 +36,7 @@ KS_API void ks_director_init(const char* title, int w, int h)
     director->height = h;
     strcpy(director->title, title);
 
+    ks_environment_init(argc, argv, (ks_container_t*)director);
     ks_system_init((ks_container_t*)director);
 }
 

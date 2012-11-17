@@ -8,11 +8,11 @@
 #include <ks/scene.h>
 #include "utest/utest.h"
 
-int main()
+int main(int argc, char** argv)
 {
     ks_utest_start();
 
-    ks_director_init("Hello World", 320, 240);
+    ks_director_init("Hello World", 320, 240, argc, argv);
     ks_director_run(ks_scene_new(sizeof(ks_scene_t)));
     return 0;
 }

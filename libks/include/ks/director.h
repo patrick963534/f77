@@ -15,7 +15,7 @@ typedef struct ks_director_t
 
 } ks_director_t;
 
-KS_API void             ks_director_init(const char* title, int w, int h);
+KS_API void             ks_director_init(const char* title, int w, int h, int argc, char** argv);
 KS_API void             ks_director_run(ks_scene_t* scene);
 KS_API ks_director_t*   ks_director_instance();
 
