@@ -3,7 +3,7 @@
 
 #include <ks/defs.h>
 
-KS_API char*   ks_path_basename(char* buf, int sz, const char* file);
+KS_API char*   ks_path_basename(char* buf, int i, const char* file);
 KS_API char*   ks_path_folder(char* buf, int sz, const char* file);
 KS_API char*   ks_path_extention(char* buf, int sz, const char* file);
 KS_API char*   ks_path_without_ext(char* buf, int sz, const char* file);
