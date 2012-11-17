@@ -37,7 +37,6 @@ KS_API void ks_director_init(const char* title, int w, int h, int argc, char** a
     strcpy(director->title, title);
 
     ks_environment_init(argc, argv, (ks_container_t*)director);
-    ks_system_init((ks_container_t*)director);
 }
 
 KS_API void ks_director_run(ks_scene_t* scene)
@@ -46,6 +45,8 @@ KS_API void ks_director_run(ks_scene_t* scene)
     ks_event_t e;
     int ellapse = 0;
     int count = 0;
+
+    ks_system_init((ks_container_t*)director);
 
     ks_log("%d\n", sizeof(long int));
 

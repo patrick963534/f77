@@ -27,7 +27,10 @@ solution "libks"
 			  "platform/src/gles2/**.c", 
 			  "src/**.h", "src/**.c" }
 	  
-	  prebuildcommands {'@xcopy /Y "$(InputDir)\\..\\..\\deps\\win32\\lib\\*.dll" "$(InputDir)\\..\\bin\\" 1>NUL 2>&1'}
+	  prebuildcommands {
+	                    '@xcopy /Y "$(InputDir)\\..\\..\\deps\\win32\\lib\\*.dll" "$(InputDir)\\..\\bin\\" 1>NUL 2>&1',
+	                    '@xcopy /Y "$(InputDir)\\..\\..\\res\\*" "$(InputDir)\\..\\bin\\" 1>NUL 2>&1',
+	                    }
  
       configuration "Debug"
          defines { "DEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }

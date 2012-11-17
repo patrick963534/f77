@@ -1,5 +1,8 @@
 #include <ks/helper.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include "ks/environment.h"
+#include "ks/path.h"
 
 KS_API void ks_helper_int_to_bytes(char* buf, int val)
 {
@@ -29,10 +32,11 @@ KS_API int ks_helper_file_get_length(const char* file)
     return len;
 }
 
-KS_API int ks_helper_file_read_all(char* buf, int sz, const char* file)
+KS_API char* ks_helper_file_read_all(const char* file, int* ret_sz)
 {
     FILE*   fp;
     int     len;
+    char*   data;
 
     fp = fopen(file, "rb");
     if (!fp)
@@ -41,11 +45,14 @@ KS_API int ks_helper_file_read_all(char* buf, int sz, const char* file)
     fseek(fp, 0, SEEK_END);
     len = ftell(fp);
 
+    data = malloc(len);
+    *ret_sz = len;
+
     fseek(fp, 0, SEEK_SET);
-    fread(buf, sz, 1, fp);
+    fread(data, len, 1, fp);
     fclose(fp);
 
-    return len < sz ? len : sz;
+    return data;
 }
 
 KS_API int ks_helper_file_exist(const char* file)
@@ -62,4 +69,14 @@ KS_API int ks_helper_file_exist(const char* file)
     }
 
     return ret;
+}
+
+KS_API char* ks_helper_path_join_relative_app(char* buf, int sz, const char* filename)
+{
+    char folder[256];
+
+    ks_path_folder(folder, sizeof(folder), ks_environment_app_filepath());
+    ks_path_join(buf, sz, folder, filename);
+
+    return buf;
 }

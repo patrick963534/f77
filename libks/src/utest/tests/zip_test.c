@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "test_data.h"
+#include "ks/helper.h"
 
 static void testing(const char* data, int sz, ks_zip_type_e type)
 {
@@ -83,8 +84,12 @@ static void test_lz77_2()
 
 static void test_lz77_3()
 {
-    int sz;
-    const char* data = ks_utest_test_data_get_code_file(&sz);
+    int     sz;
+    char*   data;
+    char    buf[256];
+
+    ks_helper_path_join_relative_app(buf, sizeof(buf), "test_data_1.c");
+    data = ks_helper_file_read_all(buf, &sz);
 
     testing(data, sz, ks_zip_type_lz77);
 }
