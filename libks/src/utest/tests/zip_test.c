@@ -2,26 +2,16 @@
 #include <ks/log.h>
 #include <stdlib.h>
 #include <string.h>
+#include "test_data.h"
 
-static void test_hufman_1()
+static void testing(const char* data, int sz, ks_zip_type_e type)
 {
-    char* data;
     char* cdata;
     char* udata;
-    int cret, uret, sz, i;
+    int cret, uret, i;
 
-    sz = 65536;
-    data = malloc(sz);
-
-    srand(0);
-
-    for (i = 0; i < sz; i++)
-        data[i] = rand() % 26;
-
-    data[0] = 12;
-
-    cdata = ks_zip_compress(data, sz, &cret, ks_zip_type_hufman);
-    udata = ks_zip_uncompress(cdata, cret, &uret, ks_zip_type_hufman);
+    cdata = ks_zip_compress(data, sz, &cret, type);
+    udata = ks_zip_uncompress(cdata, cret, &uret, type);
 
     if (uret != sz)
     {
@@ -37,102 +27,66 @@ static void test_hufman_1()
             return;
         }
     }
+
+    return;
+}
+
+static void test_hufman_1()
+{
+    int i;
+    int sz = 65536;
+    char* data = malloc(sz);
+
+    for (i = 0; i < sz; i++)
+        data[i] = rand() % 26;
+
+    testing(data, sz, ks_zip_type_hufman);
+
+    free(data);
 }
 
 static void test_hufman_2()
 {
     const char* data = "aabdakliaeaaaiesaasdfeawfasdfadfasdfadfaefeafagafdfaefsdfadfa";
-    int sz;
+    int sz = strlen(data) + 1;
 
-    ks_zip_compress(data, strlen(data) + 1, &sz, ks_zip_type_hufman);
+    testing(data, sz, ks_zip_type_hufman);
 }
 
 static void test_hufman_3()
 {
     const char* data = "good morning.";
-    const char* udata;
-    const char* cdata;
-    int         i, usz, csz;
 
-    cdata = ks_zip_compress(data, strlen(data) + 1, &csz, ks_zip_type_hufman);
-    udata = ks_zip_uncompress(cdata, csz, &usz, ks_zip_type_hufman);
-
-    if (strlen(data) + 1 != (unsigned int)usz)
-    {
-        ks_log("%s, (%d, %d)", "not the same size.", csz, usz);
-        return;
-    }
-
-    for (i = 0; i < usz; i++)
-    {
-        if (data[i] != udata[i])
-        {
-            ks_log("%s : %d", "not the same content.", i);
-            return;
-        }
-    }
+    testing(data, strlen(data) + 1, ks_zip_type_hufman);
 }
 
 static void test_lz77_1()
 {
-    char *cdata, *udata;
     const char* data = "good good study and day day up.";
-    int sz = strlen(data) + 1;
-    int cret, uret, i;
 
-    cdata = ks_zip_compress(data, sz, &cret, ks_zip_type_lz77);
-    udata = ks_zip_uncompress(cdata, cret, &uret, ks_zip_type_lz77);
-
-    if (sz != uret)
-    {
-        ks_log("%s, (%d, %d)", "not the same size.", sz, uret);
-        return;
-    }
-
-    for (i = 0; i < uret; i++)
-    {
-        if (data[i] != udata[i])
-        {
-            ks_log("%s : %d", "not the same content.", i);
-            return;
-        }
-    }
+    testing(data, strlen(data) + 1, ks_zip_type_lz77);
 }
 
 static void test_lz77_2()
 {
-    char* data;
-    char* cdata;
-    char* udata;
-    int cret, uret, sz, i;
-
-    sz = 65536;
-    data = malloc(sz);
-
-    srand(0);
+    int i;
+    int sz = 65536;
+    char* data = malloc(sz);
 
     for (i = 0; i < sz; i++)
         data[i] = rand() % 26;
 
-    data[0] = 12;
+    testing(data, sz, ks_zip_type_lz77);
 
-    cdata = ks_zip_compress(data, sz, &cret, ks_zip_type_lz77);
-    udata = ks_zip_uncompress(cdata, cret, &uret, ks_zip_type_lz77);
+    free(data);
+}
 
-    if (uret != sz)
-    {
-        ks_log("%s, (%d, %d)", "not the same size.", uret, sz);
-        return;
-    }
+static void test_lz77_3()
+{
+    int sz;
+    const char* data = ks_utest_test_data_get_code_file(&sz);
 
-    for (i = 0; i < uret; i++)
-    {
-        if (data[i] != udata[i])
-        {
-            ks_log("%s : %d", "not the same content.", i);
-            return;
-        }
-    }
+    testing(data, sz, ks_zip_type_lz77);
 }
 
 void ks_utest_zip_test()
@@ -143,4 +97,5 @@ void ks_utest_zip_test()
 
     test_lz77_1();
     test_lz77_2();
+    test_lz77_3();
 }
