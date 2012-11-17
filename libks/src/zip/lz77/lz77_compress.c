@@ -167,6 +167,7 @@ static uchar* generate(lz77_t* lz, int* ret_sz)
 char* zip_lz77_compress(uchar* data, int sz, int* ret_sz)
 {
     lz77_t* lz;
+    char* result;
 
     lz = calloc(1, sizeof(*lz));
     ks_list_init(&lz->pairs);
@@ -176,6 +177,9 @@ char* zip_lz77_compress(uchar* data, int sz, int* ret_sz)
 
     build_pairs(lz);
     generate(lz, ret_sz);
+    result = (char*)lz->bytes_compressed;
 
-    return (char*)lz->bytes_compressed;
+    lz77_delete(lz);
+
+    return result;
 }

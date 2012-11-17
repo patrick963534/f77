@@ -33,6 +33,11 @@ static int build_header(lz77_t* lz)
     return (bits + 8 - 1) / 8;
 }
 
+void lz77_delete(lz77_t* lz)
+{
+    free(lz);
+}
+
 uchar* lz77_header_save(lz77_t* lz)
 {
     lz->nbyte_compressed =  build_header(lz);

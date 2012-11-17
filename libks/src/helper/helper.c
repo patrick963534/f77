@@ -35,8 +35,31 @@ KS_API int ks_helper_file_read_all(char* buf, int sz, const char* file)
     int     len;
 
     fp = fopen(file, "rb");
-    len = fread(buf, sz, 1, fp);
+    if (!fp)
+        return 0;
+
+    fseek(fp, 0, SEEK_END);
+    len = ftell(fp);
+
+    fseek(fp, 0, SEEK_SET);
+    fread(buf, sz, 1, fp);
     fclose(fp);
 
-    return len;
+    return len < sz ? len : sz;
+}
+
+KS_API int ks_helper_file_exist(const char* file)
+{
+    FILE* fp;
+    int   ret = 0;
+
+    fp = fopen(file, "rb");
+
+    if (fp)
+    {
+        ret = 1;
+        fclose(fp);
+    }
+
+    return ret;
 }

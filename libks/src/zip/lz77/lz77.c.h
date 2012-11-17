@@ -40,6 +40,7 @@ typedef struct lz77_t
 
 } lz77_t;
 
+void            lz77_delete(lz77_t* lz);
 unsigned char*  lz77_header_save(lz77_t* lz);
 unsigned char*  lz77_header_load(lz77_t* lz);
 

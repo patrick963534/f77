@@ -1,6 +1,6 @@
 #include "lz77.c.h"
 
-static void generate(lz77_t* lz)
+static void generate(lz77_t* lz, int* ret_sz)
 {
     uchar* bytes_uncompress;
     uchar* win_pos;
@@ -98,11 +98,14 @@ static void generate(lz77_t* lz)
         if (bytes_uncompress - lz->bytes_uncompressed > MAX_WIN_SZ)
             win_pos = bytes_uncompress - MAX_WIN_SZ;
     }
+
+    *ret_sz = lz->nbyte_uncompressed;
 }
 
 char* zip_lz77_uncompress(const char* data, int sz, int* ret_sz)
 {
     lz77_t* lz;
+    char*   result;
 
     lz = calloc(1, sizeof(*lz));
     ks_list_init(&lz->pairs);
@@ -110,9 +113,10 @@ char* zip_lz77_uncompress(const char* data, int sz, int* ret_sz)
     lz->bytes_compressed = (uchar*)data;
     lz->nbyte_compressed = sz;
 
-    generate(lz);
+    generate(lz, ret_sz);
+    result = (char*)lz->bytes_uncompressed;
 
-    *ret_sz = lz->nbyte_uncompressed;
+    lz77_delete(lz);    
 
-    return (char*)lz->bytes_uncompressed;
+    return result;
 }
