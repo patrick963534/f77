@@ -24,7 +24,7 @@ static void generate(lz77_t* lz, int* ret_sz)
     nbyte = 0;
     b     = bytes[nbyte];  
 
-    while (nbyte < lz->nbyte_compressed)
+    while (nbyte < lz->nbyte_compressed_content)
     {
         int is_pair = ((b >> (7 - nbit)) & 0x1);
         int to;

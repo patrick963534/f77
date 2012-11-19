@@ -66,6 +66,7 @@ uchar* lz77_header_load(lz77_t* lz)
 
     ks_helper_bytes_to_int((char*)&data[1], &lz->nbyte_uncompressed);
     lz->bytes_uncompressed = calloc(1, lz->nbyte_uncompressed);
+    lz->nbyte_compressed_content = lz->nbyte_compressed - 5;
 
     return &data[5];
 }

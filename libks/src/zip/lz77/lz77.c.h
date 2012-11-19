@@ -37,6 +37,7 @@ typedef struct lz77_t
 
     unsigned char*  bytes_compressed;
     int             nbyte_compressed;
+    int             nbyte_compressed_content;
 
 } lz77_t;
 
