@@ -30,16 +30,16 @@ static void build_pairs(lz77_t* lz)
             {
                 length++;
                 cp++;
-
+            }
+            else if (length != 0 || wp + 1 == win_pos + cur_win_sz)
+            {
                 if (length >= pr->length)
                 {
                     pr->length = length;
-                    pr->offset = cp - wp - 1;
+                    pr->offset = cp - wp;
                     pr->ch = *cp;
                 }
-            }
-            else if (length != 0)
-            {
+
                 length = 0;
                 cp = cur;
             }
