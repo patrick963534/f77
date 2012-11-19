@@ -10,7 +10,7 @@ static void generate(lz77_t* lz, int* ret_sz)
     int    length_bits;
     int    nbit;
     int    nbyte;
-    int    i;
+    int    i, j;
     uchar  b;
 
     bytes = lz77_header_load(lz);
@@ -85,9 +85,11 @@ static void generate(lz77_t* lz, int* ret_sz)
                 }
             }
 
-            for (i = 0; i < t_length; i++)
+            for (i = 0, j = 0; i < t_length; i++)
             {
-                bytes_uncompress[i] = *(bytes_uncompress - t_offset + i);
+                bytes_uncompress[i] = *(bytes_uncompress - t_offset + j);
+                if (++j == t_offset)
+                    j = 0;
             }
 
             bytes_uncompress += t_length;

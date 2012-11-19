@@ -112,6 +112,13 @@ static void test_lz77_4()
     free(data);
 }
 
+static void test_lz77_5()
+{
+    const char* data = "good good good good good good study.";
+
+    testing(data, strlen(data) + 1, ks_zip_type_lz77);
+}
+
 void ks_utest_zip_test()
 {
     test_hufman_3();
@@ -122,4 +129,5 @@ void ks_utest_zip_test()
     test_lz77_2();
     test_lz77_3();
     test_lz77_4();
+    test_lz77_5();
 }
