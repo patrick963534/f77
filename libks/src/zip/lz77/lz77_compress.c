@@ -42,16 +42,16 @@ static void build_pairs(lz77_t* lz)
             {
                 length++;
                 cp++;
+
+                if (length >= pr->length)
+                {
+                    pr->length = length;
+                    pr->offset = cp - wp - 1;
+                    pr->ch = *cp;
+                }
             }
             else if (length != 0)
             {
-                if (pr->length <= length)
-                {
-                    pr->length = length;
-                    pr->offset = cp - wp;
-                    pr->ch = *cp;
-                }
-                
                 length = 0;
                 cp = cur;
             }
@@ -59,16 +59,9 @@ static void build_pairs(lz77_t* lz)
             wp++;
         }
 
-        if (length != 0)
-        {
-            pr->length = length;
-            pr->offset = cp - wp;
-            pr->ch = *cp;
-        }
-
-        cur += pr->length + 1;
-
+        cur        += pr->length + 1;
         cur_win_sz += pr->length + 1;
+
         if (cur_win_sz > MAX_WIN_SZ)
         {
             cur_win_sz = MAX_WIN_SZ;
