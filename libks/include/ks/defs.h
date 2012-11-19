@@ -1,6 +1,10 @@
 #ifndef __KS_DEFS_H__
 #define __KS_DEFS_H__
 
+#include <assert.h>
+
+#define ks_assert(v, msg)   do { if(!(v)) assert(!(msg)); } while(0)
+
 #define KS_API          extern
 
 #define ks_max(a, b)    ((a) > (b) ? (a) : (b))
