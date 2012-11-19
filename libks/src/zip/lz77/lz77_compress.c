@@ -16,6 +16,7 @@ static void build_pairs(lz77_t* lz)
     {
         uchar* cp = cur;
         uchar* wp = win_pos;
+        uchar* wp_end = win_pos + cur_win_sz;
         int length = 0;
 
         pr = calloc(1, sizeof(*pr));
@@ -24,27 +25,27 @@ static void build_pairs(lz77_t* lz)
         ks_list_add_tail(&lz->pairs, &pr->e);
         lz->npair++;
         
-        while (wp < win_pos + cur_win_sz)
+        while (wp < wp_end)
         {
-            if (*wp == *cp)
+            while (*wp == *cp && wp < wp_end && cp < end)
             {
                 length++;
                 cp++;
+                wp++;
             }
-            else if (length != 0 || wp + 1 == win_pos + cur_win_sz)
+
+            if (length > pr->length)
             {
-                if (length >= pr->length)
-                {
-                    pr->length = length;
-                    pr->offset = cp - wp;
-                    pr->ch = *cp;
-                }
-
-                length = 0;
-                cp = cur;
+                pr->length = length;
+                pr->offset = cp - wp;
+                pr->ch = *cp;
             }
+            
+            if (length == 0)
+                wp++;
 
-            wp++;
+            cp = cur;
+            length = 0;
         }
 
         cur        += pr->length + 1;
@@ -66,10 +67,10 @@ static void print_tree(lz77_t* lz)
 
     ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
     {
-        //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
+        printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
     }
 
-    //fflush(stdout);
+    fflush(stdout);
 }
 
 static uchar* generate(lz77_t* lz, int* ret_sz)
