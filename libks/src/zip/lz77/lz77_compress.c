@@ -6,14 +6,11 @@ static void build_pairs(lz77_t* lz)
     pair_t *pr;
     uchar  *win_pos;
     uchar  *cur, *end;
+    int     cur_win_sz = 0;
 
-    uchar* data       = lz->bytes_uncompressed;
-    int    sz         = lz->nbyte_uncompressed;
-    int    cur_win_sz = 0;
-
-    cur     = data;
-    end     = data + sz;
-    win_pos = data;
+    cur     = lz->bytes_uncompressed;
+    end     = lz->bytes_uncompressed + lz->nbyte_uncompressed;
+    win_pos = lz->bytes_uncompressed;
 
     while (cur < end)
     {
@@ -69,10 +66,10 @@ static void print_tree(lz77_t* lz)
 
     ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
     {
-        printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
+        //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
     }
 
-    fflush(stdout);
+    //fflush(stdout);
 }
 
 static uchar* generate(lz77_t* lz, int* ret_sz)
