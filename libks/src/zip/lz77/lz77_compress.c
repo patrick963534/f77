@@ -12,6 +12,9 @@ static void build_pairs(lz77_t* lz)
     end     = lz->bytes_uncompressed + lz->nbyte_uncompressed;
     win_pos = lz->bytes_uncompressed;
 
+    lz->pairs = calloc(lz->nbyte_uncompressed, sizeof(lz->pairs[0]));
+    lz->npair = 0;
+
     while (cur < end)
     {
         uchar* cp = cur;
@@ -19,10 +22,8 @@ static void build_pairs(lz77_t* lz)
         uchar* wp_end = win_pos + cur_win_sz;
         int length = 0;
 
-        pr = calloc(1, sizeof(*pr));
+        pr = &lz->pairs[lz->npair];
         pr->ch = *cp;
-        ks_list_init(&pr->e);
-        ks_list_add_tail(&lz->pairs, &pr->e);
         lz->npair++;
         
         while (wp < wp_end)
@@ -81,13 +82,15 @@ static void build_pairs(lz77_t* lz)
 static void print_tree(lz77_t* lz)
 {
     pair_t* pos;
+    int i;
 
-    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    for (i = 0; i < lz->npair; i++)
     {
-        //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
+        pos = &lz->pairs[i];
+        printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
     }
 
-    //fflush(stdout);
+    fflush(stdout);
 }
 
 static uchar* generate(lz77_t* lz, int* ret_sz)
@@ -99,7 +102,7 @@ static uchar* generate(lz77_t* lz, int* ret_sz)
     int     nbit;
     int     nbyte;
     uchar   b;
-    int     i;
+    int     i, np;
 
     bytes = (uchar*)lz77_header_save(lz);
     offset_bits = lz->offset_bits;
@@ -108,9 +111,11 @@ static uchar* generate(lz77_t* lz, int* ret_sz)
     nbyte = 0;
     b     = 0;
     
-    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    for (np = 0; np < lz->npair; np++)
     {
-        uchar ch = pos->ch;
+        uchar ch;
+        pos = &lz->pairs[np];
+        ch = pos->ch;
 
         if (pos->length != 0)
             b += 1 << (7 - nbit);
@@ -182,8 +187,6 @@ char* zip_lz77_compress(uchar* data, int sz, int* ret_sz)
     char* result;
 
     lz = calloc(1, sizeof(*lz));
-    ks_list_init(&lz->pairs);
-
     lz->bytes_uncompressed = (uchar*)data;
     lz->nbyte_uncompressed = sz;
 

@@ -110,8 +110,6 @@ char* zip_lz77_uncompress(const char* data, int sz, int* ret_sz)
     char*   result;
 
     lz = calloc(1, sizeof(*lz));
-    ks_list_init(&lz->pairs);
-
     lz->bytes_compressed = (uchar*)data;
     lz->nbyte_compressed = sz;
 

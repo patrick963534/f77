@@ -15,8 +15,6 @@ typedef unsigned char   uchar;
 
 typedef struct pair_t
 {
-    ks_list_t e;
-
     int             offset;
     int             length;
     unsigned char   ch;
@@ -26,7 +24,7 @@ typedef struct lz77_t
 {
     int         max_win_sz;
 
-    ks_list_t   pairs;
+    pair_t*     pairs;
     int         npair;
 
     int         offset_bits;

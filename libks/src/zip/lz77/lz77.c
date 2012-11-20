@@ -9,8 +9,10 @@ static int build_header(lz77_t* lz)
     int     length = 0;
     int     i;
 
-    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    for (i = 0; i < lz->npair; i++)
     {
+        pos = &lz->pairs[i];
+
         if (pos->offset > offset)
             offset = pos->offset;
 
@@ -23,8 +25,10 @@ static int build_header(lz77_t* lz)
 
     pair_bit_sz = lz->offset_bits + lz->length_bits;
 
-    ks_list_for_each_entry(pos, &lz->pairs, pair_t, e)
+    for (i = 0; i < lz->npair; i++)
     {
+        pos = &lz->pairs[i];
+
         bits += 1 + 8;
         if (pos->length != 0)
             bits += pair_bit_sz;
@@ -35,13 +39,7 @@ static int build_header(lz77_t* lz)
 
 void lz77_delete(lz77_t* lz)
 {
-    pair_t *pos, *n;
-
-    ks_list_for_each_entry_safe(pos, n, &lz->pairs, pair_t, e)
-    {
-        free(pos);
-    }
-
+    free(lz->pairs);
     free(lz);
 }
 
