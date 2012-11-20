@@ -15,27 +15,27 @@ typedef unsigned char   uchar;
 
 typedef struct pair_t
 {
-    int             offset;
-    int             length;
-    unsigned char   ch;
+    int   offset;
+    int   length;
+    uchar ch;
 } pair_t;
 
 typedef struct lz77_t
 {
-    int         max_win_sz;
+    int     max_win_sz;
 
-    pair_t*     pairs;
-    int         npair;
+    pair_t* pairs;
+    int     npair;
 
-    int         offset_bits;
-    int         length_bits;
+    int     offset_bits;
+    int     length_bits;
 
-    unsigned char*  bytes_uncompressed;
-    int             nbyte_uncompressed;
+    uchar*  bytes_uncompressed;
+    int     nbyte_uncompressed;
 
-    unsigned char*  bytes_compressed;
-    int             nbyte_compressed;
-    int             nbyte_compressed_content;
+    uchar*  bytes_compressed;
+    int     nbyte_compressed;
+    int     nbyte_compressed_content;
 
 } lz77_t;
 

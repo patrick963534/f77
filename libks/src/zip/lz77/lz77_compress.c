@@ -87,10 +87,10 @@ static void print_tree(lz77_t* lz)
     for (i = 0; i < lz->npair; i++)
     {
         pos = &lz->pairs[i];
-        printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
+        //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
     }
 
-    fflush(stdout);
+/*    fflush(stdout);*/
 }
 
 static uchar* generate(lz77_t* lz, int* ret_sz)
