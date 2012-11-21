@@ -35,7 +35,7 @@ static void build_pairs(lz77_t* lz)
                 wp++;
             }
 
-            if (length > pr->length)
+            if (length >= pr->length)
             {
                 pr->length = length;
                 pr->offset = cp - wp;
@@ -90,7 +90,7 @@ static void print_tree(lz77_t* lz)
         //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
     }
 
-/*    fflush(stdout);*/
+    //fflush(stdout);
 }
 
 static uchar* generate(lz77_t* lz, int* ret_sz)
