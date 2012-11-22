@@ -28,6 +28,9 @@ static void testing(const char* data, int sz, ks_zip_type_e type)
         }
     }
 
+    free(udata);
+    free(cdata);
+
     return;
 fail:
     free(udata);
@@ -119,6 +122,13 @@ static void test_lz77_5()
     testing(data, strlen(data) + 1, ks_zip_type_lz77);
 }
 
+static void test_deflate_draft_1()
+{
+    const char* data = "good morning.";
+
+    testing(data, strlen(data) + 1, ks_zip_type_deflate_draft);
+}
+
 void ks_utest_zip_test()
 {
     test_hufman_3();
@@ -130,4 +140,6 @@ void ks_utest_zip_test()
     test_lz77_3();
     test_lz77_4();
     test_lz77_5();
+
+    test_deflate_draft_1();
 }

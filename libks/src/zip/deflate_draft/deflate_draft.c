@@ -3,6 +3,8 @@
 // GPL-1 and GPL-2 license. May be used in closed source freeware by contacting author
 
 #include <string.h>
+#include <ks/defs.h>
+#include <stdlib.h>
 #include "deflate_draft.h"
 
 //*****************************************************************************************'
@@ -124,16 +126,18 @@ void encode_matchlen(unsigned int matchlen)
 		
 		if(code < 280)
 		{
+            extra = matchlen - lens[i];
+
 			code = revbits(code, 7);
-			extra = matchlen - lens[i];
 			code |= (extra << 7);
 			out(code, 7 + lext[i]);
 		}
 		else
 		{
+            extra = matchlen - lens[i];	
+
 			code = code + 192 - 280;
 			code = revbits(code, 8);
-			extra = matchlen - lens[i];	
 			code |= (extra << 8);
 			out(code, 8 + lext[i]);
 		}
@@ -351,4 +355,17 @@ unsigned int end_zip(unsigned char *destination)
 	return 22 + central_dir_size;
 }
 
+char* zip_deflate_draft_compress(const char* data, int sz, int* ret_sz)
+{
+    char* dst = calloc(1, sz * 2);
+    *ret_sz = deflate((unsigned char*)data, (unsigned char*)dst, 0, sz, 0);
+    return dst;
+}
 
+char* zip_deflate_draft_uncompress(const char* data, int sz, int* ret_sz)
+{
+    ks_unused(data);
+    ks_unused(sz);
+    ks_unused(ret_sz);
+    return NULL;
+}
