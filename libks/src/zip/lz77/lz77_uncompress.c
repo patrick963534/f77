@@ -3,7 +3,7 @@
 static void generate(lz77_t* lz, int* ret_sz)
 {
     uchar* bytes_uncompress;
-    uchar* win_pos;
+    uchar* bytes_uncompress_end;
 
     uchar* bytes;
     int    offset_bits;
@@ -15,8 +15,9 @@ static void generate(lz77_t* lz, int* ret_sz)
 
     bytes = lz77_header_load(lz);
 
-    bytes_uncompress = lz->bytes_uncompressed;
-    win_pos          = bytes_uncompress;
+    bytes_uncompress        = lz->bytes_uncompressed;
+    bytes_uncompress_end    = bytes_uncompress + lz->nbyte_uncompressed;
+
     offset_bits = lz->offset_bits;
     length_bits = lz->length_bits;
 
@@ -24,7 +25,7 @@ static void generate(lz77_t* lz, int* ret_sz)
     nbyte = 0;
     b     = bytes[nbyte];  
 
-    while (nbyte < lz->nbyte_compressed_content)
+    while (nbyte < lz->nbyte_compressed_content && bytes_uncompress < bytes_uncompress_end)
     {
         int is_pair = ((b >> (7 - nbit)) & 0x1);
         int to;
@@ -96,9 +97,6 @@ static void generate(lz77_t* lz, int* ret_sz)
         }
 
         *bytes_uncompress++ = (uchar)to;
-
-        if (bytes_uncompress - lz->bytes_uncompressed > MAX_WIN_SZ)
-            win_pos = bytes_uncompress - MAX_WIN_SZ;
     }
 
     *ret_sz = lz->nbyte_uncompressed;

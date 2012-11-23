@@ -5,7 +5,7 @@
 
 KS_API void ks_print_log(const char *type, const char *format, ...);
 
-#define ks_log(format, ...) ks_print_log("Info", format, __VA_ARGS__) 
-#define ks_logE(format, ...) ks_print_log("Error", format, __VA_ARGS__) 
+#define ks_log(...) ks_print_log("Info", __VA_ARGS__) 
+#define ks_logE(...) ks_print_log("Error", __VA_ARGS__) 
 
 #endif
