@@ -7,12 +7,13 @@ static void build_pairs(lz77_t* lz)
     uchar  *win_pos;
     uchar  *cur, *end;
     int     cur_win_sz = 0;
+    int     pair_count = 1024;
 
     cur     = lz->bytes_uncompressed;
     end     = lz->bytes_uncompressed + lz->nbyte_uncompressed;
     win_pos = lz->bytes_uncompressed;
 
-    lz->pairs = calloc(lz->nbyte_uncompressed, sizeof(lz->pairs[0]));
+    lz->pairs = calloc(pair_count, sizeof(lz->pairs[0]));
     lz->npair = 0;
 
     while (cur < end)
@@ -21,6 +22,12 @@ static void build_pairs(lz77_t* lz)
         uchar* wp = win_pos;
         uchar* wp_end = win_pos + cur_win_sz;
         int length = 0;
+
+        if (lz->npair == pair_count)
+        {
+            pair_count = pair_count * 4;
+            lz->pairs = realloc(lz->pairs, pair_count * sizeof(lz->pairs[0]));
+        }
 
         pr = &lz->pairs[lz->npair];
         pr->ch = *cp;
