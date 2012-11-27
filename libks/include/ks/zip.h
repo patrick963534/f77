@@ -7,6 +7,7 @@ typedef enum ks_zip_type_e
 {
     ks_zip_type_hufman,
     ks_zip_type_lz77,
+    ks_zip_type_deflate,
     ks_zip_type_deflate_draft,
 } ks_zip_type_e;
 
