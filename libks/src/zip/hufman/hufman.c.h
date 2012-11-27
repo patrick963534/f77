@@ -5,7 +5,7 @@
 #include "hufman.h"
 
 #define LEAF_MAX    256
-#define NODE_MAX    512
+#define NODE_MAX    1024
 
 typedef struct node_t
 {
@@ -61,7 +61,8 @@ typedef struct compression_data_t
 } compression_data_t;
 
 int     node_comparer(const void* v1, const void* v2);
-void    build_tree(hufman_t* hm);
+void    build_dynamic_tree(hufman_t* hm);
+void    build_static_tree(hufman_t* hm);
 void    deep_search_build_codes(hufman_t* hm, const node_t* n, int level);
 void    delete_hm(hufman_t* hm);
 

@@ -89,7 +89,7 @@ char* zip_hufman_uncompress(const char* data, int sz, int* ret_sz)
     hm = calloc(1, sizeof(*hm));
 
     udata = reader_head(hm, (unsigned char*)data);
-    build_tree(hm);
+    build_dynamic_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
     udata = uncompress(hm, udata, sz, ret_sz);
     delete_hm(hm);

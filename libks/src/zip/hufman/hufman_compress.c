@@ -116,7 +116,7 @@ char* zip_hufman_compress(const char* data, int sz, int* ret_sz)
     udata = (unsigned char*)data;
 
     reader_head(hm, udata, sz);
-    build_tree(hm);
+    build_dynamic_tree(hm);
     deep_search_build_codes(hm, hm->root, 0);
     result = compress_data(hm, udata, sz, ret_sz);
     delete_hm(hm);
