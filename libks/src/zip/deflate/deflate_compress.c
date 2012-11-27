@@ -185,9 +185,10 @@ char* zip_deflate_compress(const char* data, int sz, int* ret_sz)
     char* dst;
     
     dst  = calloc(1, sz * 2);
-    bits = deflate((uchar*)data, (uchar*)dst, 0, sz, 0);
+    bits = deflate((uchar*)data, (uchar*)&dst[4], 0, sz, 0);
     nbyte = (bits + 8 - 1) / 8;
 
+    *((int*)dst) = nbyte;
     *ret_sz = nbyte;
 
     return dst;

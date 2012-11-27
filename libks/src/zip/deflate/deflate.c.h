@@ -1,10 +1,12 @@
 #ifndef __KS_ZIP_DEFLATE_C_H__
 #define __KS_ZIP_DEFLATE_C_H__
 
+#define LEAF_MAX    256
+
 typedef unsigned char uchar;
 typedef unsigned int  uint;
 
-static const unsigned short int encoding[256] = {
+static const unsigned short int encoding[LEAF_MAX] = {
     12, 140, 76, 204, 44, 172, 108, 236, 28, 156, 92, 220, 60, 188, 124, 252, 2, 130, 66, 194, 34, 162,
     98, 226, 18, 146, 82, 210, 50, 178, 114, 242, 10, 138, 74, 202, 42, 170, 106, 234, 26, 154, 90, 218,
     58, 186, 122, 250, 6, 134, 70, 198, 38, 166, 102, 230, 22, 150, 86, 214, 54, 182, 118, 246, 14, 142
