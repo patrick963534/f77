@@ -78,10 +78,7 @@ static void encode_offset(uint offset)
 
 static void encode_literal(uint lit)
 {
-	if(lit < 144)
-		out(encoding[lit], 8);
-	else
-		out(encoding[lit], 9);
+    out(encoding[lit].bits, encoding[lit].nbit);
 }
 
 static void encode_matchlen(uint matchlen)
@@ -181,15 +178,13 @@ static uint deflate(uchar *source, uchar *destination, uint bitoffset, uint size
 char* zip_deflate_compress(const char* data, int sz, int* ret_sz)
 {
     int bits;
-    int nbyte;
     char* dst;
     
     dst  = calloc(1, sz * 2);
     bits = deflate((uchar*)data, (uchar*)&dst[4], 0, sz, 0);
-    nbyte = (bits + 8 - 1) / 8;
 
-    *((int*)dst) = nbyte;
-    *ret_sz = nbyte;
+    *((int*)dst) = sz;
+    *ret_sz = (bits + 8 - 1) / 8 + 4;
 
     return dst;
 }

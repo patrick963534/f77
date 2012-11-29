@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <ks/defs.h>
+#include <ks/log.h>
 #include <stdlib.h>
 #include "deflate_draft.h"
 
@@ -357,8 +358,11 @@ unsigned int end_zip(unsigned char *destination)
 
 char* zip_deflate_draft_compress(const char* data, int sz, int* ret_sz)
 {
+    int bits;
     char* dst = calloc(1, sz * 2);
-    *ret_sz = deflate((unsigned char*)data, (unsigned char*)dst, 0, sz, 0);
+    bits = deflate((unsigned char*)data, (unsigned char*)dst, 0, sz, 0);
+
+    *ret_sz = (bits + 8 - 1) / 8;
     return dst;
 }
 

@@ -1,5 +1,6 @@
 #include "deflate.c.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct node_t
 {
@@ -28,8 +29,8 @@ static node_t* build_static_tree()
 
     for (i = 0; i < LEAF_MAX; i++)
     {
-        int bits = encoding[i];
-        int nbit = encoding[i] < 144 ? 8 : 9;
+        int bits = encoding[i].bits;
+        int nbit = encoding[i].nbit;
         node_t* cur = root;
 
         for (j = 0; j < nbit; j++)
@@ -147,7 +148,7 @@ char* zip_deflate_uncompress(const char* data, int sz, int* ret_sz)
 
     nbyte = *ret_sz = *((int*)data);
     dst   = calloc(1, nbyte);
-    uncompress(&data[4], sz, dst, nbyte);
+    uncompress(&data[4], sz - 4, dst, nbyte);
 
     return dst;
 }
