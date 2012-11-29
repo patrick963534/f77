@@ -99,7 +99,9 @@ static char* compress_data(hufman_t* hm, const unsigned char* data, int sz, int 
             }
         }
     }
-    bytes[ibyte] = b;
+
+    if (ibit != 0)
+        bytes[ibyte] = b;
 
     *ret_sz = hm->compress_data_sz;
 
