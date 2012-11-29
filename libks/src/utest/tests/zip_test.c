@@ -44,7 +44,7 @@ static void test_hufman_1()
     char* data = malloc(sz);
 
     for (i = 0; i < sz; i++)
-        data[i] = rand() % 26;
+        data[i] = rand() % 256;
 
     testing(data, sz, ks_zip_type_hufman);
 
@@ -64,6 +64,20 @@ static void test_hufman_3()
     const char* data = "good morning.";
 
     testing(data, strlen(data) + 1, ks_zip_type_hufman);
+}
+
+static void test_hufman_4()
+{
+    int i;
+    int sz = 256;
+    char* data = malloc(sz);
+
+    for (i = 0; i < sz; i++)
+        data[i] = (char)i;
+
+    testing(data, sz, ks_zip_type_hufman);
+
+    free(data);
 }
 
 static void test_lz77_1()
@@ -126,14 +140,15 @@ static void test_deflate_draft_1()
 {
     const char* data = "good morning.";
 
-    testing(data, strlen(data) + 1, ks_zip_type_deflate_draft);
+    testing(data, strlen(data) + 1, ks_zip_type_deflate);
 }
 
 void ks_utest_zip_test()
 {
-    test_hufman_3();
     test_hufman_1();
     test_hufman_2();
+    test_hufman_3();
+    test_hufman_4();
 
     test_lz77_1();
     test_lz77_2();
