@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define LEAF_MAX 256
+
 typedef struct node_t
 {
     int             pt;
@@ -29,8 +31,8 @@ static node_t* build_static_tree()
 
     for (i = 0; i < LEAF_MAX; i++)
     {
-        int bits = encoding[i].bits;
-        int nbit = encoding[i].nbit;
+        int bits = static_huffman_cache->code_bits[i];
+        int nbit = static_huffman_cache->code_nbit[i];
         node_t* cur = root;
 
         for (j = 0; j < nbit; j++)

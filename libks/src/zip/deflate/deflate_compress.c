@@ -16,30 +16,6 @@ static void out(uint data, uint len)
 	g_bitoffset += len;
 }
 
-static uint revbits(uint n, int numbits)
-{
-	static const uchar rev5[32] = {
-        0, 16, 8, 24, 4, 20, 12, 28, 2, 18, 
-        10, 26, 6, 22, 14, 30, 1, 17, 9, 25, 
-        5, 21, 13, 29, 3, 19, 11, 27, 7, 23, 15, 31
-    };
-
-	uint i, result = 0;
-	if(numbits == 5)
-		return rev5[n];
-	else
-	{
-		for (i = numbits; i; --i)
-		{
-			result <<= 1;
-			if (n & 1)
-			result |= 1;
-			n >>= 1;
-		}
-		return result;
-	}
-}
-
 static void encode_offset(uint offset)
 {
 	static uint o;
@@ -78,10 +54,10 @@ static void encode_offset(uint offset)
 
 static void encode_literal(uint lit)
 {
-    out(encoding[lit].bits, encoding[lit].nbit);
+    out(static_huffman_cache->code_bits[lit], static_huffman_cache->code_nbit[lit]);
 }
 
-static void encode_matchlen(uint matchlen)
+static void get_length_code(uint matchlen)
 {
 	uint extra, i, code;
     static const unsigned short lens[29] = {
@@ -137,6 +113,8 @@ static uint deflate(uchar *source, uchar *destination, uint bitoffset, uint size
 	out(last, 1); // last block?
 	out(1, 2); // block type 01
 
+    deflate_init_all_cache();
+
 	if(size > 0)
 	{
 		encode_literal(*src);
@@ -159,7 +137,7 @@ static uint deflate(uchar *source, uchar *destination, uint bitoffset, uint size
 			while(src + n <= last_source_byte && *(o + n) == *(src + n) && n < 257)
 				n++;
 				
-			encode_matchlen(n);
+			get_length_code(n);
 			encode_offset((uint)(src - o));
 			src += n;
 		}
