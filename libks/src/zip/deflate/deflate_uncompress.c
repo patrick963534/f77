@@ -61,15 +61,18 @@ static void uncompress(const char* src, int sz, char* dst, int dst_sz)
             if (offset_cache->nbit_code_to_val[code] == code_bits)
             {
                 int offset = offset_cache->code_to_val[code];
-                int i;
+                int i, j;
                 code = 0;
                 code_bits = 0;
 
-                for (i = 0; i < length; i++)
+                for (i = 0, j = 0; i < length; i++)
                 {
-                    *p = p[i + offset];
-                    p++;
-                }
+                    p[i] = *(p - offset + j);
+                    if (++j == offset)
+                        j = 0;
+                }                
+
+                p += length;
 
                 length = 0;
             }

@@ -143,6 +143,20 @@ static void test_deflate_draft_1()
     testing(data, strlen(data) + 1, ks_zip_type_deflate);
 }
 
+static void test_deflate_draft_2()
+{
+    const char* data = "oooooooooooooooooooooooooooooo.";
+
+    testing(data, strlen(data) + 1, ks_zip_type_deflate);
+}
+
+static void test_deflate_draft_3()
+{
+    const char* data = "good good good good good good study.";
+
+    testing(data, strlen(data) + 1, ks_zip_type_deflate);
+}
+
 void ks_utest_zip_test()
 {
     test_hufman_1();
@@ -157,4 +171,6 @@ void ks_utest_zip_test()
     test_lz77_5();
 
     test_deflate_draft_1();
+    test_deflate_draft_2();
+    test_deflate_draft_3();
 }
