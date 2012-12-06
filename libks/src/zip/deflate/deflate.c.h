@@ -13,6 +13,7 @@ typedef struct cache_t
     int*    code_nbit;
 
     int*    code_to_val;
+    uchar*  nbit_code_to_val;
     int     num_code_to_val;
 } cache_t;
 

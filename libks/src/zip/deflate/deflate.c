@@ -36,14 +36,16 @@ cache_t* deflate_generate_cache(int ncode, int num_code_to_val, void (*get_code)
     me->code_bits = calloc(me->ncode, sizeof(me->code_bits[0]));
     me->code_nbit = calloc(me->ncode, sizeof(me->code_nbit[0]));
 
-    me->num_code_to_val = num_code_to_val;
-    me->code_to_val = calloc(me->num_code_to_val, sizeof(me->code_to_val[0]));
+    me->num_code_to_val  = num_code_to_val;
+    me->nbit_code_to_val = calloc(me->num_code_to_val, sizeof(me->nbit_code_to_val[0]));
+    me->code_to_val      = calloc(me->num_code_to_val, sizeof(me->code_to_val[0]));
 
     max_code = 0;
     for (i = 0; i < me->ncode; i++)
     {
         get_code(i, &me->code_bits[i], &me->code_nbit[i]);
         me->code_to_val[me->code_bits[i]] = i;
+        me->nbit_code_to_val[me->code_bits[i]] = (uchar)me->code_nbit[i];
 
         if (max_code < me->code_bits[i])
             max_code = me->code_bits[i];

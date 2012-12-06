@@ -3,6 +3,7 @@
 #include <ks/defs.h>
 #include <ks/log.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 static uint     g_bitoffset;
 static uchar*   g_dst;
