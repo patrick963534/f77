@@ -15,16 +15,16 @@ solution "libpng"
       targetdir ( "bin" )
       libdirs {  }
       links { }
-      includedirs { "include", "../zlib/include" }
+      includedirs { "include" }
       
       files { "include/**.h", "src/**.h", "src/**.c" }
 	  
 	  prebuildcommands {}
  
       configuration "Debug"
-         defines { "DEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
+         defines { "WINDOWS", "HAVE_VSNPRINTF", "DEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
          flags { "Symbols", "ExtraWarnings" }
  
       configuration "Release"
-         defines { "NDEBUG" }
+         defines { "WINDOWS", "NDEBUG" }
          flags { "Optimize" }     
