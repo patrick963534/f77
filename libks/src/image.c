@@ -8,18 +8,18 @@
 
 typedef struct cached_image_t
 { 
-    unsigned char*  pixels;
-    char*           file;
-    int             w;
-    int             h;
+    char* pixels;
+    char* file;
+    int   w;
+    int   h;
 
-    ks_list_t       item;
-    int             ref_count;
+    ks_list_t item;
+    int       ref_count;
 } cached_image_t;
 
 static ks_list_t head = {&head, &head};
 
-static unsigned char* load_bvg_image(const char* file, int* width, int* height)
+static char* load_bvg_image(const char* file, int* width, int* height)
 {
     ks_unused(file);
     ks_unused(width);
@@ -28,7 +28,7 @@ static unsigned char* load_bvg_image(const char* file, int* width, int* height)
     return 0;
 }
 
-static void save_bvg_image(const char* dst, unsigned char* pixels, int w, int h)
+static void save_bvg_image(const char* dst, char* pixels, int w, int h)
 {
     ks_unused(dst);
     ks_unused(pixels);

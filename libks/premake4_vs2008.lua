@@ -14,7 +14,7 @@ solution "libks"
       location ( "build" )
       targetdir ( "bin" )
       libdirs { "../deps/win32/lib" }
-      links { "libEGL", "libGLESv2"}
+      links { "libEGL", "libGLESv2", "zlib", "libpng" }
       includedirs { "platform/include", "include", "../deps/win32/include" }
       
       files { "include/**.h", 
