@@ -22,27 +22,19 @@ static void read_png_file(const char* file_name)
     /* open file and test for it being a png */
     FILE *fp = fopen(file_name, "rb");
     if (!fp)
-        printf("[read_png_file] File %s could not be opened for reading", file_name);
-    fread(header, 1, 8, fp);
-    if (png_sig_cmp(header, 0, 8))
-        printf("[read_png_file] File %s is not recognized as a PNG file", file_name);
+        goto fail;
 
     /* initialize stuff */
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
     if (!png_ptr)
-        printf("[read_png_file] png_create_read_struct failed");
+        goto fail;
 
     info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr)
-        printf("[read_png_file] png_create_info_struct failed");
-
-    if (setjmp(png_jmpbuf(png_ptr)))
-        printf("[read_png_file] Error during init_io");
+       goto fail;
 
     png_init_io(png_ptr, fp);
-    png_set_sig_bytes(png_ptr, 8);
-
     png_read_info(png_ptr, info_ptr);
 
     width = png_get_image_width(png_ptr, info_ptr);
@@ -52,11 +44,6 @@ static void read_png_file(const char* file_name)
 
     number_of_passes = png_set_interlace_handling(png_ptr);
     png_read_update_info(png_ptr, info_ptr);
-
-
-    /* read file */
-    if (setjmp(png_jmpbuf(png_ptr)))
-        printf("[read_png_file] Error during read_image");
 
     row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * height);
 
@@ -71,6 +58,11 @@ static void read_png_file(const char* file_name)
     png_read_image(png_ptr, row_pointers);
 
     fclose(fp);
+
+fail:
+    printf("fail to load image file: %s", file_name);
+    fflush(stdout);
+    return;
 }
 
 
