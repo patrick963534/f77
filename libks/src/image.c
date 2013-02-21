@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "img/img_loader.h"
+
 typedef struct cached_image_t
 { 
     char* pixels;
@@ -59,7 +61,7 @@ static cached_image_t* cached_image_load(const char* file)
     if (!img)
     {
         img             = (cached_image_t*)calloc(1, sizeof(*img));
-        img->pixels     = load_bvg_image(file, &img->w, &img->h);
+        img->pixels     = ks_img_loader_load(file, &img->w, &img->h);
         img->file       = strdup(file);
         img->ref_count  = 1;
 
