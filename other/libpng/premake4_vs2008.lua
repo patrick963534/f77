@@ -9,13 +9,13 @@ solution "libpng"
  
    -- A project defines one build target
    project "libpng"
-      kind "ConsoleApp"
+      kind "StaticLib"
       language "C"
       location ( "build" )
       targetdir ( "bin" )
-      libdirs {  }
+      libdirs { }
       links { }
-      includedirs { "include" }
+      includedirs { "include", "../zlib/include" }
       
       files { "include/**.h", "src/**.h", "src/**.c" }
 	  

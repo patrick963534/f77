@@ -9,7 +9,7 @@ solution "zlib"
  
    -- A project defines one build target
    project "zlib"
-      kind "ConsoleApp"
+      kind "StaticLib"
       language "C"
       location ( "build" )
       targetdir ( "bin" )
@@ -22,7 +22,7 @@ solution "zlib"
 	  prebuildcommands {}
  
       configuration "Debug"
-         defines { "DEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
+         defines { "WINDOWS", "HAVE_VSNPRINTF", "DEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
          flags { "Symbols", "ExtraWarnings" }
  
       configuration "Release"
