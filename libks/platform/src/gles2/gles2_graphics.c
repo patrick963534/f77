@@ -124,8 +124,11 @@ static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip
 
     clip_x = ks_max(0, clip_x);
     clip_y = ks_max(0, clip_y);
-    clip_w = ks_min(img->width - clip_x, clip_w);
-    clip_h = ks_min(img->width - clip_y, clip_h);
+    clip_x = ks_min(img->width,  clip_x);
+    clip_y = ks_min(img->height, clip_y);
+
+    clip_w = ks_min(img->width  - clip_x, clip_w);
+    clip_h = ks_min(img->height - clip_y, clip_h);
 
     generate_vec_coords(vecCoords, x, y, clip_w, clip_h);
     generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
