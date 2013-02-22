@@ -66,18 +66,64 @@ static GLuint CreateTexture2D(ks_image_t* img)
     return textureId;
 }
 
-static void draw(ks_image_t* img, int x, int y, int w, int h)
+static void generate_vec_coords(GLfloat* vecCoords, int x, int y, int clip_w, int clip_h)
+{
+    int all_w = ks_director_instance()->width;
+    int all_h = ks_director_instance()->height;
+    int org_offx = -all_w;
+    int org_offy = -all_h;
+    
+    float factor = 1.0f;
+    float minX = (x + org_offx) / (float)all_w;
+    float minY = (y + org_offy) / (float)all_h;
+    float maxX = (x + clip_w + org_offx) / (float)all_w;
+    float maxY = (y + clip_h + org_offy) / (float)all_h;
+
+    vecCoords[0] = minX * factor;
+    vecCoords[1] = maxY * factor;
+    vecCoords[2] = 0;
+
+    vecCoords[3] = minX * factor;
+    vecCoords[4] = minY * factor;
+    vecCoords[5] = 0;
+
+    vecCoords[6] = maxX * factor;
+    vecCoords[7] = minY * factor;
+    vecCoords[8] = 0;
+
+    vecCoords[9]  = maxX * factor;
+    vecCoords[10] = maxY * factor;
+    vecCoords[11] = 0;
+}
+
+static void generate_tex_coords(GLfloat* texCoords, int clip_x, int clip_y, int clip_w, int clip_h, int all_w, int all_h)
+{
+    float minX = (clip_x) / (float)all_w;
+    float minY = (clip_y) / (float)all_h;
+    float maxX = (clip_x + clip_w) / (float)all_w;
+    float maxY = (clip_y + clip_h) / (float)all_h;
+
+    texCoords[0] = minX;
+    texCoords[1] = minY;
+
+    texCoords[2] = minX;
+    texCoords[3] = maxY;
+
+    texCoords[4] = maxX;
+    texCoords[5] = maxY;
+
+    texCoords[6] = maxX;
+    texCoords[7] = minY;
+}
+
+static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
 {
     GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
-    GLfloat vVertices[] = {-0.5f,  0.5f, 0.0f, // Position 0
-                            0.0f,  0.0f,       // TexCoord 0 
-                           -0.5f, -0.5f, 0.0f, // Position 1
-                            0.0f,  1.0f,       // TexCoord 1
-                            0.5f, -0.5f, 0.0f, // Position 2
-                            1.0f,  1.0f,       // TexCoord 2
-                            0.5f,  0.5f, 0.0f, // Position 3
-                            1.0f,  0.0f        // TexCoord 3
-    };
+    GLfloat vecCoords[12] = {-1.0f,  1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f};
+    GLfloat texCoords[8] = {0.0f,  0.0f, 0.0f,  1.0f, 1.0f,  1.0f, 1.0f,  0.0f };
+
+    generate_vec_coords(vecCoords, x, y, clip_w, clip_h);
+    generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
 
     if (g->tex_render.texture_id == 0)
         g->tex_render.texture_id = CreateTexture2D(img);
@@ -98,8 +144,8 @@ static void draw(ks_image_t* img, int x, int y, int w, int h)
 
     glUseProgram(g->tex_render.program);
 
-    glVertexAttribPointer(g->tex_render.positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), vVertices);
-    glVertexAttribPointer(g->tex_render.texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), &vVertices[3]);
+    glVertexAttribPointer(g->tex_render.positionLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
+    glVertexAttribPointer(g->tex_render.texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
 
     glEnableVertexAttribArray(g->tex_render.positionLoc);
     glEnableVertexAttribArray(g->tex_render.texCoordLoc);
@@ -109,13 +155,6 @@ static void draw(ks_image_t* img, int x, int y, int w, int h)
     glUniform1i(g->tex_render.samplerLoc, 0);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
-
-    ks_unused(img);
-    ks_unused(x);
-    ks_unused(y);
-    ks_unused(w);
-    ks_unused(h);
-    //test_draw();
 }
 
 static void destruct(graphics_t* me)

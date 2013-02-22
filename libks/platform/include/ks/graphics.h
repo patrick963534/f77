@@ -9,7 +9,7 @@
 typedef struct ks_sys_graphics_interface_t
 {
     int     nothing;
-    void    (*draw)(ks_image_t* img, int x, int y, int w, int h);
+    void    (*draw)(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h);
 } ks_sys_graphics_interface_t;
 
 #define ks_extends_graphics() \
@@ -26,7 +26,7 @@ ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance();
 KS_API void ks_graphics_init(ks_container_t* container);
 KS_API ks_graphics_t* ks_graphics_instance();
 
-KS_API void ks_graphics_draw(ks_image_t* img, int x, int y, int w, int h);
+KS_API void ks_graphics_draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h);
 KS_API void ks_graphics_flush();
 
 #endif

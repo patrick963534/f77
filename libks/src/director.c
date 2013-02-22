@@ -6,6 +6,8 @@
 #include <ks/graphics.h>
 #include <ks/log.h>
 #include <ks/constants.h>
+#include <ks/helper.h>
+
 #include <string.h>
 
 #include "environment.c.h"
@@ -28,7 +30,7 @@ static void director_draw()
         img = ks_image_load(buf, NULL);
     }
 
-    ks_graphics_draw(img, 0, 0, 0, 0);
+    ks_graphics_draw(img, 0, 0, 0, 0, img->width, img->height);
     ks_system_flush();
 }
 
