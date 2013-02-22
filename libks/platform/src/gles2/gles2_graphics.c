@@ -29,6 +29,9 @@ typedef struct graphics_t
 } graphics_t;
 
 static graphics_t* g = 0;
+static GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
+static GLfloat vecCoords[12];
+static GLfloat texCoords[8];
 
 static GLuint CreateSimpleTexture2D()
 {
@@ -116,12 +119,9 @@ static void generate_tex_coords(GLfloat* texCoords, int clip_x, int clip_y, int 
     texCoords[7] = minY;
 }
 
-static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
-{
-    GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
-    GLfloat vecCoords[12] = {-1.0f,  1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f};
-    GLfloat texCoords[8] = {0.0f,  0.0f, 0.0f,  1.0f, 1.0f,  1.0f, 1.0f,  0.0f };
 
+static void setup_model(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
+{
     clip_x = ks_max(0, clip_x);
     clip_y = ks_max(0, clip_y);
     clip_x = ks_min(img->width,  clip_x);
@@ -133,6 +133,17 @@ static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip
     generate_vec_coords(vecCoords, x, y, clip_w, clip_h);
     generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
 
+    glVertexAttribPointer(g->tex_render.positionLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
+    glVertexAttribPointer(g->tex_render.texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
+
+    glEnableVertexAttribArray(g->tex_render.positionLoc);
+    glEnableVertexAttribArray(g->tex_render.texCoordLoc);
+}
+
+static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
+{
+    setup_model(img, x, y, clip_x, clip_y, clip_w, clip_h);
+
     if (g->tex_render.texture_id == 0)
         g->tex_render.texture_id = CreateTexture2D(img);
 
@@ -141,22 +152,6 @@ static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip
 
     glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    if (g->tex_render.program == 0)
-    {
-        g->tex_render.program = ks_gles2_shader_program_for(ks_gles2_program_type_texture);
-        g->tex_render.positionLoc = glGetAttribLocation(g->tex_render.program, "a_position");
-        g->tex_render.texCoordLoc = glGetAttribLocation(g->tex_render.program, "a_texCoord");
-        g->tex_render.samplerLoc = glGetUniformLocation(g->tex_render.program, "s_texture");
-    }
-
-    glUseProgram(g->tex_render.program);
-
-    glVertexAttribPointer(g->tex_render.positionLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
-    glVertexAttribPointer(g->tex_render.texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
-
-    glEnableVertexAttribArray(g->tex_render.positionLoc);
-    glEnableVertexAttribArray(g->tex_render.texCoordLoc);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
@@ -195,6 +190,12 @@ KS_API void ks_graphics_init(ks_container_t* container)
         ks_container_add(container, (ks_object_t*)g);
 
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+
+    g->tex_render.program = ks_gles2_shader_program_for(ks_gles2_program_type_texture);
+    g->tex_render.positionLoc = glGetAttribLocation(g->tex_render.program, "a_position");
+    g->tex_render.texCoordLoc = glGetAttribLocation(g->tex_render.program, "a_texCoord");
+    g->tex_render.samplerLoc = glGetUniformLocation(g->tex_render.program, "s_texture");
+    glUseProgram(g->tex_render.program);
 }
 
 KS_API ks_graphics_t* ks_graphics_instance()
