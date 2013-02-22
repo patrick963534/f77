@@ -14,7 +14,7 @@ solution "libks"
       location ( "build" )
       targetdir ( "bin" )
       libdirs { "/usr/lib" }
-      links { "rt", "EGL", "X11", "GLESv2" }
+      links { "rt", "EGL", "X11", "GLESv2", "png" }
       includedirs { "include", "platform/include" }
 
 	  files { "include/**.h", 
