@@ -51,6 +51,21 @@ static GLuint CreateSimpleTexture2D()
     return textureId;
 }
 
+static GLuint CreateTexture2D(ks_image_t* img)
+{
+    GLuint textureId;
+
+    // Use tightly packed data
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->width, img->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    return textureId;
+}
+
 static void draw(ks_image_t* img, int x, int y, int w, int h)
 {
     GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
@@ -65,7 +80,7 @@ static void draw(ks_image_t* img, int x, int y, int w, int h)
     };
 
     if (g->tex_render.texture_id == 0)
-        g->tex_render.texture_id = CreateSimpleTexture2D();
+        g->tex_render.texture_id = CreateTexture2D(img);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);

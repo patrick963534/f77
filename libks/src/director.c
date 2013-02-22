@@ -11,6 +11,7 @@
 #include "environment.c.h"
 
 static ks_director_t* director;
+static ks_image_t* img;
 
 static void director_update()
 {
@@ -19,7 +20,15 @@ static void director_update()
 
 static void director_draw()
 {
-    ks_graphics_draw(NULL, 0, 0, 0, 0);
+    if (!img)
+    {
+        char buf[256];
+
+        ks_helper_path_join_relative_app(buf, sizeof(buf), "img.png");
+        img = ks_image_load(buf, NULL);
+    }
+
+    ks_graphics_draw(img, 0, 0, 0, 0);
     ks_system_flush();
 }
 

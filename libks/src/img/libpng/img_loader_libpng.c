@@ -1,7 +1,7 @@
 #include "img_loader_libpng.h"
 #include <ks/log.h>
-#include <png.h>
 #include <stdlib.h>
+#include <png.h>
 
 static void save_to_ppm(int width, int height, png_bytep * row_pointers) 
 {
@@ -58,6 +58,8 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
         row_pointers[i] = (png_byte*)&info->pixels[i * info->width * 4];
 
     png_read_image(png_ptr, row_pointers);
+
+    // TODO: free the libpng object, ex: png_ptr, info_ptr etc.
 
     fclose(fp);
 }

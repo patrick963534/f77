@@ -67,7 +67,7 @@ static cached_image_t* cached_image_load(const char* file)
         img->pixels     = img_data.pixels;
         img->w          = img_data.width;
         img->h          = img_data.height;
-        img->file       = strdup(file);
+        img->file       = ks_strdup(file);
         img->ref_count  = 1;
 
         ks_list_init(&img->item);
