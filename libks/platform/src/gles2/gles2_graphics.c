@@ -18,6 +18,7 @@ typedef struct tex_program_t
     GLint       positionLoc;
     GLint       texCoordLoc;
     GLint       samplerLoc;
+    ks_image_t* img;
 
 } tex_program_t;
 
@@ -122,8 +123,14 @@ static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip
 {
     setup_model(img, x, y, clip_x, clip_y, clip_w, clip_h);
 
-    if (g->tex_render.texture_id == 0)
+    if (g->tex_render.img != img)
+    {
+        if (g->tex_render.texture_id != 0)
+            glDeleteTextures(1, &g->tex_render.texture_id);
+
         g->tex_render.texture_id = CreateTexture2D(img);
+        g->tex_render.img = img;
+    }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
