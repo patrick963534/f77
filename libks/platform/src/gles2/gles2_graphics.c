@@ -33,27 +33,6 @@ static GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
 static GLfloat vecCoords[12];
 static GLfloat texCoords[8];
 
-static GLuint CreateSimpleTexture2D()
-{
-    GLuint textureId;
-
-    GLubyte pixels[4 * 4] = { 255,   0,   0, 255,  // Red
-                              0, 255,   0,   0,  // Green
-                              0,   0, 255,   255,  // Blue
-                              255, 255,   0, 255,  // Yellow
-    };
-
-    // Use tightly packed data
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    return textureId;
-}
-
 static GLuint CreateTexture2D(ks_image_t* img)
 {
     GLuint textureId;
@@ -118,7 +97,6 @@ static void generate_tex_coords(GLfloat* texCoords, int clip_x, int clip_y, int 
     texCoords[6] = maxX;
     texCoords[7] = minY;
 }
-
 
 static void setup_model(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
 {
