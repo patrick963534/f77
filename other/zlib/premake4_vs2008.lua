@@ -26,5 +26,5 @@ solution "zlib"
          flags { "Symbols", "ExtraWarnings" }
  
       configuration "Release"
-         defines { "NDEBUG" }
+         defines { "WINDOWS", "HAVE_VSNPRINTF", "NDEBUG", "_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
          flags { "Optimize" }     

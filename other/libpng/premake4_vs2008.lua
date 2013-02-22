@@ -26,5 +26,5 @@ solution "libpng"
          flags { "Symbols", "ExtraWarnings" }
  
       configuration "Release"
-         defines { "WINDOWS", "NDEBUG" }
+         defines { "WINDOWS", "HAVE_VSNPRINTF", "NDEBUG"£¬"_CRT_SECURE_NO_DEPRECATE", "_CRT_NONSTDC_NO_DEPRECATE" }
          flags { "Optimize" }     
