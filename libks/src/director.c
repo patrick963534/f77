@@ -30,7 +30,7 @@ static void director_draw()
         img = ks_image_load(buf, NULL);
     }
 
-    ks_graphics_draw(img, 0, 0, 0, 0, img->width, img->height);
+    ks_graphics_draw(img, 50, 130, 0, 0, img->width, img->height);
     ks_system_flush();
 }
 
@@ -77,7 +77,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
         
         count++;
 
-        ks_time_sleep(32);
+        //ks_time_sleep(1);
 
         director_update();
         director_draw();
