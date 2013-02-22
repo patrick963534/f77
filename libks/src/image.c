@@ -9,7 +9,7 @@
 #include "img/img_loader.h"
 
 typedef struct cached_image_t
-{ 
+{
     char* pixels;
     char* file;
     int   w;
@@ -20,23 +20,6 @@ typedef struct cached_image_t
 } cached_image_t;
 
 static ks_list_t head = {&head, &head};
-
-static char* load_bvg_image(const char* file, int* width, int* height)
-{
-    ks_unused(file);
-    ks_unused(width);
-    ks_unused(height);
-
-    return 0;
-}
-
-static void save_bvg_image(const char* dst, char* pixels, int w, int h)
-{
-    ks_unused(dst);
-    ks_unused(pixels);
-    ks_unused(w);
-    ks_unused(h);
-}
 
 static cached_image_t* cached_image_search(const char* file)
 {
@@ -73,7 +56,7 @@ static cached_image_t* cached_image_load(const char* file)
         ks_list_init(&img->item);
         ks_list_add_tail(&head, &img->item);
     }
-    
+
     return img;
 }
 
@@ -99,7 +82,8 @@ KS_API void ks_image_destruct(ks_image_t* me)
 
 KS_API void ks_image_save(ks_image_t* me, const char* file)
 {
-    save_bvg_image(file, me->pixels, me->width, me->height);
+    ks_unused(me);
+    ks_unused(file);
 }
 
 KS_API ks_image_t* ks_image_load(const char* file, ks_container_t* container)

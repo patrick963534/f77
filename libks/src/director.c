@@ -77,7 +77,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
         
         count++;
 
-        //ks_time_sleep(1);
+        ks_time_sleep(1);
 
         director_update();
         director_draw();
