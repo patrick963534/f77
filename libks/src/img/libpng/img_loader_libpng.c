@@ -1,77 +1,63 @@
 #include "img_loader_libpng.h"
+#include <ks/log.h>
 #include <png.h>
 #include <stdlib.h>
 
-#define PNG_DEBUG 3
-
-int x, y;
-
-int width, height, rowbytes;
-png_byte color_type;
-png_byte bit_depth;
-
-png_structp png_ptr;
-png_infop info_ptr;
-int number_of_passes;
-png_bytep * row_pointers;
-
-static void read_png_file(const char* file_name)
+static void save_to_ppm(int width, int height, png_bytep * row_pointers) 
 {
-    unsigned char header[8];    // 8 is the maximum size that can be checked
+    FILE* save_fp = fopen("tt.ppm", "wb");
+    char* buffer = malloc(width * 3);
+    int i, j;
 
-    /* open file and test for it being a png */
-    FILE *fp = fopen(file_name, "rb");
-    if (!fp)
-        goto fail;
+    fprintf(save_fp, "P6 %d %d 255 ", width, height);
 
-    /* initialize stuff */
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            buffer[j * 3]    = row_pointers[i][j * 4];
+            buffer[j * 3+ 1] = row_pointers[i][j * 4 + 1];
+            buffer[j * 3+ 2] = row_pointers[i][j * 4 + 2];
+        }
+
+        fwrite(buffer, 1, width * 3, save_fp);
+    }
+
+    fclose(save_fp);
+}
+
+void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
+{
+    png_structp png_ptr;
+    png_infop   info_ptr;
+    png_bytep*  row_pointers;
+    FILE* fp;    
+    int i;
+
+    if (NULL == (fp = fopen(file, "rb")))
+    {
+        ks_log("can not find file: %s", file);
+        return;
+    }    
+
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
-    if (!png_ptr)
-        goto fail;
-
     info_ptr = png_create_info_struct(png_ptr);
-    if (!info_ptr)
-       goto fail;
-
     png_init_io(png_ptr, fp);
     png_read_info(png_ptr, info_ptr);
 
-    width = png_get_image_width(png_ptr, info_ptr);
-    height = png_get_image_height(png_ptr, info_ptr);
-    color_type = png_get_color_type(png_ptr, info_ptr);
-    bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+    info->width = png_get_image_width(png_ptr, info_ptr);
+    info->height = png_get_image_height(png_ptr, info_ptr);
 
-    number_of_passes = png_set_interlace_handling(png_ptr);
-    png_read_update_info(png_ptr, info_ptr);
+    if (png_get_bit_depth(png_ptr, info_ptr) == 16) 
+        return;
 
-    row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * height);
+    row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * info->height);
+    info->pixels = malloc(info->width * info->height * 4);
 
-    if (bit_depth == 16)
-        rowbytes = width*8;
-    else
-        rowbytes = width*4;
-
-    for (y=0; y<height; y++)
-        row_pointers[y] = (png_byte*) malloc(rowbytes);
+    for (i = 0; i < info->height; ++i)
+        row_pointers[i] = (png_byte*)&info->pixels[i * info->width * 4];
 
     png_read_image(png_ptr, row_pointers);
 
     fclose(fp);
-
-fail:
-    printf("fail to load image file: %s", file_name);
-    fflush(stdout);
-    return;
-}
-
-
-char* ks_img_loader_libpng_load(const char* file, int* w, int* h)
-{
-    read_png_file(file);
-
-    *w = width;
-    *h = height;
-
-    return NULL;
 }

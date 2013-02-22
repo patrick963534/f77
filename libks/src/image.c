@@ -60,8 +60,13 @@ static cached_image_t* cached_image_load(const char* file)
 
     if (!img)
     {
+        so_img_loader_data_t img_data;
+        so_img_loader_load(file, &img_data);
+
         img             = (cached_image_t*)calloc(1, sizeof(*img));
-        img->pixels     = ks_img_loader_load(file, &img->w, &img->h);
+        img->pixels     = img_data.pixels;
+        img->w          = img_data.width;
+        img->h          = img_data.height;
         img->file       = strdup(file);
         img->ref_count  = 1;
 

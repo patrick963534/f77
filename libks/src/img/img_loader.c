@@ -1,7 +1,7 @@
 #include "img_loader.h"
 #include "libpng/img_loader_libpng.h"
 
-char* ks_img_loader_load(const char* file, int* w, int* h)
+void so_img_loader_load(const char* file, so_img_loader_data_t* info)
 {
-    return ks_img_loader_libpng_load(file, w, h);
+    return so_img_loader_libpng_load(file, info);
 }
