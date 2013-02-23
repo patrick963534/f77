@@ -28,7 +28,6 @@ static void director_draw()
 
         ks_helper_path_join_relative_app(buf, sizeof(buf), "img.png");
         img = ks_image_load(buf, NULL);
-        ks_log("image size: %d, %d", img->width, img->height);
     }
 
     ks_graphics_load_identity();

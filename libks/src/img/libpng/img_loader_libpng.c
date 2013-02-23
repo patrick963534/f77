@@ -59,7 +59,7 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
 
     png_read_image(png_ptr, row_pointers);
 
-    // TODO: free the libpng object, ex: png_ptr, info_ptr etc.
+    ks_log("load image: %s, with size(%d, %d)", file, info->width, info->height);
 
     fclose(fp);
 }
