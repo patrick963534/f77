@@ -9,6 +9,8 @@
 
 #include "gles2_shader.h"
 
+#define Pos_Stack_Size  256
+
 // Maybe it's better to use 'Renderer' for different 'program'.
 typedef struct tex_program_t
 {
@@ -36,7 +38,7 @@ typedef struct graphics_t
     tex_program_t tex_render;
 
     draw_pos_t  pos;
-    draw_pos_t  pos_stack[256];
+    draw_pos_t  pos_stack[Pos_Stack_Size];
     int top;
 } graphics_t;
 
@@ -60,8 +62,10 @@ static GLuint CreateTexture2D(ks_image_t* img)
     return textureId;
 }
 
-static void generate_vec_coords(GLfloat* vecCoords, int x, int y, int clip_w, int clip_h)
+static void generate_vec_coords(GLfloat* vecCoords, int clip_w, int clip_h)
 {
+    int x = g->pos.x;
+    int y = g->pos.y;
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
     int org_offx = -all_w;
@@ -109,7 +113,7 @@ static void generate_tex_coords(GLfloat* texCoords, int clip_x, int clip_y, int 
     texCoords[7] = minY;
 }
 
-static void setup_model(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
+static void setup_model(ks_image_t* img, int clip_x, int clip_y, int clip_w, int clip_h)
 {
     clip_x = ks_max(0, clip_x);
     clip_y = ks_max(0, clip_y);
@@ -119,7 +123,7 @@ static void setup_model(ks_image_t* img, int x, int y, int clip_x, int clip_y, i
     clip_w = ks_min(img->width  - clip_x, clip_w);
     clip_h = ks_min(img->height - clip_y, clip_h);
 
-    generate_vec_coords(vecCoords, x, y, clip_w, clip_h);
+    generate_vec_coords(vecCoords, clip_w, clip_h);
     generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
 
     glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
@@ -129,9 +133,9 @@ static void setup_model(ks_image_t* img, int x, int y, int clip_x, int clip_y, i
     glEnableVertexAttribArray(g->tex_render.texCoord_loc);
 }
 
-static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
+static void draw(ks_image_t* img, int clip_x, int clip_y, int clip_w, int clip_h)
 {
-    setup_model(img, x, y, clip_x, clip_y, clip_w, clip_h);
+    setup_model(img, clip_x, clip_y, clip_w, clip_h);
 
     if (g->tex_render.img != img)
     {
@@ -166,6 +170,9 @@ static void graphics_translate(int x, int y)
 
 static void graphics_push()
 {
+    if (g->top >= Pos_Stack_Size - 1)
+        ks_assert(0, "The graphics pos stack already is full.");
+
     g->pos_stack[++g->top] = g->pos;
 }
 
@@ -175,6 +182,12 @@ static void graphics_pop()
         ks_assert(0, "The graphics pos stack already be emtpy.");
 
     g->pos = g->pos_stack[g->top--];
+}
+
+static void graphics_load_identity()
+{
+    g->pos.x = 0;
+    g->pos.y = 0;
 }
 
 static void destruct(graphics_t* me)
@@ -193,6 +206,7 @@ static ks_sys_graphics_interface_t interfaces = {
     graphics_translate,
     graphics_pop,
     graphics_push,
+    graphics_load_identity,
 };
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
