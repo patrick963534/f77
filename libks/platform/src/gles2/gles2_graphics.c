@@ -68,13 +68,12 @@ static void generate_vec_coords(GLfloat* vecCoords, int clip_w, int clip_h)
     int y = g->pos.y;
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
-    int org_offx = -all_w;
-    int org_offy = -all_h;
+    float factor = 0.5f; // The default value is 2.0f. Value 0.5f means scale down 4 times.
 
-    float minX = (x + org_offx) / (float)all_w;
-    float minY = (y + org_offy) / (float)all_h;
-    float maxX = (x + clip_w + org_offx) / (float)all_w;
-    float maxY = (y + clip_h + org_offy) / (float)all_h;
+    float minX = x * factor / (float)all_w - 1.0f;
+    float minY = y * factor / (float)all_h - 1.0f;
+    float maxX = minX + clip_w * factor / (float)all_w;
+    float maxY = minY + clip_h * factor / (float)all_h;
 
     vecCoords[0] = minX;
     vecCoords[1] = maxY;

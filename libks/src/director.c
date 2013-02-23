@@ -32,7 +32,7 @@ static void director_draw()
 
     ks_graphics_load_identity();
     ks_graphics_clear_screen();
-    ks_graphics_translate(0, 150);
+    ks_graphics_translate(50, 200);
     ks_graphics_draw(img, 0, 0, img->width, img->height);
     ks_system_flush();
 }
