@@ -1,7 +1,6 @@
 #include <ks/scene.h>
 #include <ks/list.h>
 #include <stdlib.h>
-#include "ks/container.h"
 #include "ks/object.h"
 
 KS_API ks_scene_t* ks_scene_new(int sz)
