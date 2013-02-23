@@ -56,26 +56,25 @@ static void generate_vec_coords(GLfloat* vecCoords, int x, int y, int clip_w, in
     int org_offx = -all_w;
     int org_offy = -all_h;
 
-    float factor = 1.0f;
     float minX = (x + org_offx) / (float)all_w;
     float minY = (y + org_offy) / (float)all_h;
     float maxX = (x + clip_w + org_offx) / (float)all_w;
     float maxY = (y + clip_h + org_offy) / (float)all_h;
 
-    vecCoords[0] = minX * factor;
-    vecCoords[1] = maxY * factor;
+    vecCoords[0] = minX;
+    vecCoords[1] = maxY;
     vecCoords[2] = 0;
 
-    vecCoords[3] = minX * factor;
-    vecCoords[4] = minY * factor;
+    vecCoords[3] = minX;
+    vecCoords[4] = minY;
     vecCoords[5] = 0;
 
-    vecCoords[6] = maxX * factor;
-    vecCoords[7] = minY * factor;
+    vecCoords[6] = maxX;
+    vecCoords[7] = minY;
     vecCoords[8] = 0;
 
-    vecCoords[9]  = maxX * factor;
-    vecCoords[10] = maxY * factor;
+    vecCoords[9]  = maxX;
+    vecCoords[10] = maxY;
     vecCoords[11] = 0;
 }
 
@@ -177,8 +176,6 @@ KS_API void ks_graphics_init(ks_object_t* container)
 
     if (container)
         ks_object_add(container, (ks_object_t*)g);
-
-
 
     glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
 
