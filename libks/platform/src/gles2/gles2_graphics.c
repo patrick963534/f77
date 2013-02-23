@@ -15,18 +15,29 @@ typedef struct tex_program_t
     GLuint      program;
 
     GLuint      texture_id;
-    GLint       positionLoc;
-    GLint       texCoordLoc;
-    GLint       samplerLoc;
+    GLint       position_loc;
+    GLint       texCoord_loc;
+    GLint       sample_loc;
+    GLint       mvp_loc;
     ks_image_t* img;
 
 } tex_program_t;
+
+typedef struct draw_pos_t
+{
+    int x;
+    int y;
+} draw_pos_t;
 
 typedef struct graphics_t
 {
     ks_extends_graphics();
 
     tex_program_t tex_render;
+
+    draw_pos_t  pos;
+    draw_pos_t  pos_stack[256];
+    int top;
 } graphics_t;
 
 static graphics_t* g = 0;
@@ -111,11 +122,11 @@ static void setup_model(ks_image_t* img, int x, int y, int clip_x, int clip_y, i
     generate_vec_coords(vecCoords, x, y, clip_w, clip_h);
     generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
 
-    glVertexAttribPointer(g->tex_render.positionLoc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
-    glVertexAttribPointer(g->tex_render.texCoordLoc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
+    glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
+    glVertexAttribPointer(g->tex_render.texCoord_loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
 
-    glEnableVertexAttribArray(g->tex_render.positionLoc);
-    glEnableVertexAttribArray(g->tex_render.texCoordLoc);
+    glEnableVertexAttribArray(g->tex_render.position_loc);
+    glEnableVertexAttribArray(g->tex_render.texCoord_loc);
 }
 
 static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h)
@@ -136,7 +147,7 @@ static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
-    glUniform1i(g->tex_render.samplerLoc, 0);
+    glUniform1i(g->tex_render.sample_loc, 0);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }
@@ -145,6 +156,25 @@ static void clear_screen()
 {
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+static void graphics_translate(int x, int y)
+{
+    g->pos.x += x;
+    g->pos.y += y;
+}
+
+static void graphics_push()
+{
+    g->pos_stack[++g->top] = g->pos;
+}
+
+static void graphics_pop()
+{
+    if (g->top < 0)
+        ks_assert(0, "The graphics pos stack already be emtpy.");
+
+    g->pos = g->pos_stack[g->top--];
 }
 
 static void destruct(graphics_t* me)
@@ -160,6 +190,9 @@ static ks_sys_graphics_interface_t interfaces = {
     0,
     draw,
     clear_screen,
+    graphics_translate,
+    graphics_pop,
+    graphics_push,
 };
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
@@ -171,8 +204,9 @@ KS_API void ks_graphics_init(ks_object_t* container)
 {
     g = (graphics_t*)ks_object_new(sizeof(*g));
     g->destruct = (ks_destruct_f)destruct;
-    g->klass = ks_sys_graphics_interface_instance();
-    g->tname = "gles2_graphics";
+    g->klass    = ks_sys_graphics_interface_instance();
+    g->tname    = "gles2_graphics";
+    g->top      = -1;
 
     if (container)
         ks_object_add(container, (ks_object_t*)g);
@@ -180,9 +214,10 @@ KS_API void ks_graphics_init(ks_object_t* container)
     glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
 
     g->tex_render.program = ks_gles2_shader_program_for(ks_gles2_program_type_texture);
-    g->tex_render.positionLoc = glGetAttribLocation(g->tex_render.program, "a_position");
-    g->tex_render.texCoordLoc = glGetAttribLocation(g->tex_render.program, "a_texCoord");
-    g->tex_render.samplerLoc = glGetUniformLocation(g->tex_render.program, "s_texture");
+    g->tex_render.position_loc = glGetAttribLocation(g->tex_render.program, "a_position");
+    g->tex_render.texCoord_loc = glGetAttribLocation(g->tex_render.program, "a_texCoord");
+    g->tex_render.sample_loc = glGetUniformLocation(g->tex_render.program, "s_texture");
+    g->tex_render.mvp_loc = glGetUniformLocation(g->tex_render.program, "m_mvp");
     glUseProgram(g->tex_render.program);
 }
 
