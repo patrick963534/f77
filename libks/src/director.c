@@ -30,6 +30,7 @@ static void director_draw()
         img = ks_image_load(buf, NULL);
     }
 
+    ks_graphics_clear_screen();
     ks_graphics_draw(img, 50, 130, 0, 0, img->width, img->height);
     ks_system_flush();
 }

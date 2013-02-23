@@ -7,7 +7,12 @@ KS_API void ks_graphics_draw(ks_image_t* img, int x, int y, int clip_x, int clip
     ks_graphics_instance()->klass->draw(img, x, y, clip_x, clip_y, clip_w, clip_h);
 }
 
+KS_API void ks_graphics_clear_screen()
+{
+    ks_graphics_instance()->klass->clear_screen();
+}
+
 KS_API void ks_graphics_flush()
 {
-    
+
 }

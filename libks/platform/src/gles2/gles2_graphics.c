@@ -135,14 +135,17 @@ static void draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
 
-    glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
     glUniform1i(g->tex_render.samplerLoc, 0);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+}
+
+static void clear_screen()
+{
+    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 static void destruct(graphics_t* me)
@@ -157,6 +160,7 @@ static void destruct(graphics_t* me)
 static ks_sys_graphics_interface_t interfaces = {
     0,
     draw,
+    clear_screen,
 };
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
@@ -174,7 +178,9 @@ KS_API void ks_graphics_init(ks_object_t* container)
     if (container)
         ks_object_add(container, (ks_object_t*)g);
 
-    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+
+
+    glViewport(0, 0, ks_director_instance()->width, ks_director_instance()->height);
 
     g->tex_render.program = ks_gles2_shader_program_for(ks_gles2_program_type_texture);
     g->tex_render.positionLoc = glGetAttribLocation(g->tex_render.program, "a_position");

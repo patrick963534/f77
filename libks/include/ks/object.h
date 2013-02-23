@@ -10,9 +10,9 @@ typedef void (*ks_destruct_f)(void* o);
     int             magic;              \
     int             heap;               \
     char*           tname;              \
-    ks_destruct_f   destruct;           \
     ks_list_t       object_children;    \
-    ks_list_t       object_sibling
+    ks_list_t       object_sibling;     \
+    ks_destruct_f   destruct
 
 typedef struct ks_object_t
 {
