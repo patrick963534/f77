@@ -7,7 +7,7 @@ KS_API ks_scene_t* ks_scene_new(int sz)
 {
     ks_scene_t* me;
 
-    me              = (ks_scene_t*)calloc(1, ks_max(sz, sizeof(*me)));
+    me              = (ks_scene_t*)ks_object_new(sizeof(*me));
     me->destruct    = (ks_destruct_f)ks_scene_destruct;
     me->tname       = "ks_scene";
 
