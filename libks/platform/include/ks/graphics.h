@@ -4,7 +4,7 @@
 #include <ks/defs.h>
 #include <ks/object.h>
 #include <ks/image.h>
-#include <ks/container.h>
+#include <ks/object.h>
 
 typedef struct ks_sys_graphics_interface_t
 {
@@ -23,7 +23,7 @@ typedef struct ks_graphics_t
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance();
 
-KS_API void ks_graphics_init(ks_container_t* container);
+KS_API void ks_graphics_init(ks_object_t* container);
 KS_API ks_graphics_t* ks_graphics_instance();
 
 KS_API void ks_graphics_draw(ks_image_t* img, int x, int y, int clip_x, int clip_y, int clip_w, int clip_h);

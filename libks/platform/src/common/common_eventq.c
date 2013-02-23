@@ -70,7 +70,7 @@ ks_sys_eventq_interface_t* ks_sys_eventq_interface_instance()
     return &interfaces;
 }
 
-KS_API void ks_eventq_init(ks_container_t* container)
+KS_API void ks_eventq_init(ks_object_t* container)
 {
     eventq             = (eventq_t*)ks_object_new(sizeof(*eventq));
     eventq->destruct   = (ks_destruct_f)destruct;
@@ -79,7 +79,7 @@ KS_API void ks_eventq_init(ks_container_t* container)
     ks_list_init(&eventq->events);
 
     if (container)
-        ks_container_add(container, (ks_object_t*)eventq);
+        ks_object_add(container, (ks_object_t*)eventq);
 }
 
 KS_API ks_sys_eventq_t* ks_eventq_instance()

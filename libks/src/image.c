@@ -1,5 +1,5 @@
 #include <ks/image.h>
-#include <ks/container.h>
+#include <ks/object.h>
 #include <ks/libc.h>
 #include <ks/list.h>
 
@@ -86,7 +86,7 @@ KS_API void ks_image_save(ks_image_t* me, const char* file)
     ks_unused(file);
 }
 
-KS_API ks_image_t* ks_image_load(const char* file, ks_container_t* container)
+KS_API ks_image_t* ks_image_load(const char* file, ks_object_t* container)
 {
     ks_image_t* me;
     cached_image_t* img;
@@ -102,7 +102,7 @@ KS_API ks_image_t* ks_image_load(const char* file, ks_container_t* container)
     me->height   = img->h;
 
     if (container)
-        ks_container_add(container, (ks_object_t*)me);
+        ks_object_add(container, (ks_object_t*)me);
 
     return me;
 }

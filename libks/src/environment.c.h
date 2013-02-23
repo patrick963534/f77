@@ -3,7 +3,7 @@
 
 #include <ks/environment.h>
 #include <ks/object.h>
-#include <ks/container.h>
+#include <ks/object.h>
 
 typedef struct ks_environment_t
 {
@@ -12,6 +12,6 @@ typedef struct ks_environment_t
     char*   app_path;
 } ks_environment_t;
 
-void ks_environment_init(int argc, char** argv, ks_container_t* container);
+void ks_environment_init(int argc, char** argv, ks_object_t* container);
 
 #endif

@@ -9,7 +9,7 @@
 
 #include "gles2_shader.h"
 
-// Maybe it's better to use 'Renderer' for different 'program'. 
+// Maybe it's better to use 'Renderer' for different 'program'.
 typedef struct tex_program_t
 {
     GLuint      program;
@@ -55,7 +55,7 @@ static void generate_vec_coords(GLfloat* vecCoords, int x, int y, int clip_w, in
     int all_h = ks_director_instance()->height;
     int org_offx = -all_w;
     int org_offy = -all_h;
-    
+
     float factor = 1.0f;
     float minX = (x + org_offx) / (float)all_w;
     float minY = (y + org_offy) / (float)all_h;
@@ -164,7 +164,7 @@ ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
     return &interfaces;
 }
 
-KS_API void ks_graphics_init(ks_container_t* container)
+KS_API void ks_graphics_init(ks_object_t* container)
 {
     g = (graphics_t*)ks_object_new(sizeof(*g));
     g->destruct = (ks_destruct_f)destruct;
@@ -172,7 +172,7 @@ KS_API void ks_graphics_init(ks_container_t* container)
     g->tname = "gles2_graphics";
 
     if (container)
-        ks_container_add(container, (ks_object_t*)g);
+        ks_object_add(container, (ks_object_t*)g);
 
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 

@@ -36,18 +36,18 @@ static void director_draw()
 
 static void destruct(ks_director_t* me)
 {
-    ks_container_destruct((ks_container_t*)me);
+    ks_object_destruct((ks_object_t*)me);
 }
 
 KS_API void ks_director_init(const char* title, int w, int h, int argc, char** argv)
 {
-    director = (ks_director_t*)ks_container_new(sizeof(*director));
+    director = (ks_director_t*)ks_object_new(sizeof(*director));
     director->destruct = (ks_destruct_f)destruct;
     director->width = w;
     director->height = h;
     strcpy(director->title, title);
 
-    ks_environment_init(argc, argv, (ks_container_t*)director);
+    ks_environment_init(argc, argv, (ks_object_t*)director);
 }
 
 KS_API void ks_director_run(ks_scene_t* scene)
@@ -57,7 +57,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
     int ellapse = 0;
     int count = 0;
 
-    ks_system_init((ks_container_t*)director);
+    ks_system_init((ks_object_t*)director);
 
     ks_log("%d\n", sizeof(long int));
 
@@ -66,7 +66,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
     while (count < 10000)
     {
         ks_system_update_message();
-        
+
         if (ks_eventq_pop(&e))
         {
             if (e.type == ks.types.KEY_DOWN && e.key.code == ks.keys.Escape)
@@ -74,7 +74,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
 
             continue;
         }
-        
+
         count++;
 
         ks_time_sleep(1);

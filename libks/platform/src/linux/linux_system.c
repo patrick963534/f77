@@ -18,7 +18,7 @@
 typedef struct system_t
 {
     ks_extends_system();
-    
+
     EGLNativeWindowType     hwnd;
     EGLDisplay              display;
     EGLContext              context;
@@ -61,8 +61,8 @@ static int init_window()
 
     swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask | KeyReleaseMask;
 
-    win = XCreateWindow(x_display, root, 0, 0, 
-                        ks_director_instance()->width, 
+    win = XCreateWindow(x_display, root, 0, 0,
+                        ks_director_instance()->width,
                         ks_director_instance()->height, 0,
                         CopyFromParent, InputOutput,
                         CopyFromParent, CWEventMask, &swa);
@@ -88,7 +88,7 @@ static int init_window()
     xev.xclient.format       = 32;
     xev.xclient.data.l[0]    = 1;
     xev.xclient.data.l[1]    = 0;
-    XSendEvent(x_display, DefaultRootWindow(x_display), 
+    XSendEvent(x_display, DefaultRootWindow(x_display),
                0, SubstructureNotifyMask, &xev);
 
     sys->hwnd = (EGLNativeWindowType)win;
@@ -124,21 +124,21 @@ static int init_egl()
 
     if (!eglGetConfigs(display, NULL, 0, &numConfigs))
         goto fail;
- 
+
     if (!eglChooseConfig(display, attribList, &config, 1, &numConfigs))
         goto fail;
- 
+
     surface = eglCreateWindowSurface(display, config, sys->hwnd, NULL);
     if (surface == EGL_NO_SURFACE)
         goto fail;
- 
+
     context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
     if (context == EGL_NO_CONTEXT)
         goto fail;
-    
+
     if (!eglMakeCurrent(display, surface, surface, context))
         goto fail;
-    
+
     sys->display = display;
     sys->surface = surface;
     sys->context = context;
@@ -170,11 +170,11 @@ static void update_messages()
     XEvent xe;
     ks_event_t e;
 
-    while (XPending(sys->x_display)) 
+    while (XPending(sys->x_display))
     {
         XNextEvent(sys->x_display, &xe);
 
-        if (xe.type == ButtonPress) 
+        if (xe.type == ButtonPress)
         {
             ks_log("%s", "button down");
         }
@@ -213,17 +213,17 @@ static ks_sys_system_interface_t interfaces = {
     flush,
 };
 
-KS_API void ks_system_init(ks_container_t* container)
+KS_API void ks_system_init(ks_object_t* container)
 {
     sys             = (system_t*)ks_object_new(sizeof(*sys));
     sys->destruct   = (ks_destruct_f)destruct;
     sys->klass      = &interfaces;
 
     if (container)
-        ks_container_add(container, (ks_object_t*)sys);
+        ks_object_add(container, (ks_object_t*)sys);
 
     create_window();
-    
+
     ks_graphics_init(container);
     ks_eventq_init(container);
 }

@@ -6,21 +6,38 @@
 
 typedef void (*ks_destruct_f)(void* o);
 
-#define ks_extends_object()     \
-    int             magic;      \
-    int             heap;       \
-    char*           tname;      \
-    ks_destruct_f   destruct;   \
-    ks_list_t       element     /* Object can be added as children, but can NOT add children. */
-    
+#define ks_extends_object()             \
+    int             magic;              \
+    int             heap;               \
+    char*           tname;              \
+    ks_destruct_f   destruct;           \
+    ks_list_t       object_children;    \
+    ks_list_t       object_sibling
+
 typedef struct ks_object_t
 {
     ks_extends_object();
 } ks_object_t;
 
-KS_API void         ks_object_delete(void* o);
-
 KS_API ks_object_t* ks_object_new(int sz);
+
+KS_API void         ks_object_delete(void* o);
 KS_API void         ks_object_destruct(ks_object_t* me_);
+
+KS_API void         ks_object_delete_children(ks_object_t* me);
+KS_API void         ks_object_add(ks_object_t* me, ks_object_t* o);
+KS_API void         ks_object_remove(ks_object_t* o);
+
+#define ks_object_for_each(pos, n, object, type)    \
+    for (pos = ks_list_entry(object->object_children.next, type, object_sibling),   \
+           n = ks_list_entry(pos->object_sibling.next, type, object_sibling);          \
+         &pos->object_sibling != (&object->object_children);                            \
+         pos =n, n = ks_list_entry(n->object_sibling.next, type, object_sibling))
+
+#define ks_object_for_each_reverse(pos, n, object, type)    \
+    for (pos = ks_list_entry(object->object_children.prev, type, object_sibling),   \
+           n = ks_list_entry(pos->object_sibling.prev, type, object_sibling);          \
+         &pos->object_sibling != (&object->object_children);                            \
+         pos =n, n = ks_list_entry(n->object_sibling.prev, type, object_sibling))
 
 #endif

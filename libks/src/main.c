@@ -10,6 +10,8 @@
 
 int main(int argc, char** argv)
 {
+    ks_log("object size: %d", sizeof(ks_object_t));
+    ks_log("list size: %d", sizeof(ks_list_t));
     ks_director_init("Hello World", 320, 240, argc, argv);
 
     ks_utest_start();
