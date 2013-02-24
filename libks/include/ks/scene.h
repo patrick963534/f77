@@ -2,11 +2,11 @@
 #define __KS_SCENE_H__
 
 #include <ks/defs.h>
-#include <ks/object.h>
+#include <ks/node.h>
 
 typedef struct ks_scene_t
 {
-    ks_extends_object();
+    ks_extends_node();
 
 } ks_scene_t;
 
