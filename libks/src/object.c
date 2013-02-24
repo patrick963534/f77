@@ -1,4 +1,5 @@
 #include <ks/object.h>
+#include <ks/log.h>
 #include <ks/list.h>
 #include <stdlib.h>
 
@@ -7,7 +8,6 @@
 KS_API void ks_object_destruct(ks_object_t* me)
 {
     ks_object_delete_children(me);
-    ks_unused(me);
 }
 
 KS_API ks_object_t* ks_object_new(int sz)

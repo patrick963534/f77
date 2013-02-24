@@ -2,7 +2,7 @@
 #include <ks/object.h>
 #include <ks/libc.h>
 #include <ks/list.h>
-
+#include <ks/log.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -66,6 +66,7 @@ static void cached_image_remove(const char* file)
 
     if (img && --img->ref_count <= 0)
     {
+        ks_log("free image: %s", img->file);
         ks_list_remove(&img->item);
         free(img->pixels);
         free(img->file);
@@ -76,7 +77,6 @@ static void cached_image_remove(const char* file)
 KS_API void ks_image_destruct(ks_image_t* me)
 {
     cached_image_remove(me->file);
-
     ks_object_destruct((ks_object_t*)me);
 }
 
@@ -94,7 +94,7 @@ KS_API ks_image_t* ks_image_load(const char* file, ks_object_t* container)
     img = cached_image_load(file);
 
     me           = (ks_image_t*)ks_object_new(sizeof(*me));
-    me->tname    = "image";
+    me->tname    = "ks_image";
     me->destruct = (ks_destruct_f)ks_image_destruct;
     me->file     = img->file;
     me->pixels   = img->pixels;

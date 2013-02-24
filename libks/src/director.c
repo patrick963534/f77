@@ -70,6 +70,7 @@ static void director_draw()
 
 static void destruct(ks_director_t* me)
 {
+    ks_object_delete(director->scene);
     ks_object_destruct((ks_object_t*)me);
 }
 
