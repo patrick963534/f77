@@ -49,7 +49,9 @@ void so_node_draw(ks_node_t* me)
 
     children = sort_children(me, &count);
     for (i = 0; i < count; ++i)
+    {
         so_node_draw(children[i]);
+    }
 
     if (me->draw)
         me->draw(me);
@@ -61,12 +63,38 @@ void so_node_draw(ks_node_t* me)
 
 void so_node_step(ks_node_t* me, int delta)
 {
+    ks_node_t *pos, *n;
 
+    ks_node_for_each(pos, n, me, ks_node_t)
+    {
+        if (ks_node_has_child(pos))
+            so_node_step(pos, delta);
+
+        if (pos->step)
+            pos->step(pos, delta);
+    }
 }
 
-void so_node_msgs(ks_node_t* me, ks_event_t* e)
+int so_node_msgs(ks_node_t* me, ks_event_t* e)
 {
+    ks_node_t** children;
+    int count, i;
 
+    children = sort_children(me, &count);
+    for (i = 0; i < count; ++i)
+    {
+        if (so_node_msgs(children[i], e))
+            goto return_true;
+    }
+
+    if (me->msgs && me->msgs(me, e))
+        goto return_true;
+
+    return 0;
+
+return_true:
+    free(children);
+    return 1;
 }
 
 KS_API void ks_node_destruct(ks_node_t* me)
@@ -115,4 +143,7 @@ KS_API void ks_node_remove(ks_node_t* me)
     me->parent = NULL;
 }
 
-
+KS_API int ks_node_has_child(ks_node_t* me)
+{
+    return !ks_list_empty(&me->node_children);
+}
