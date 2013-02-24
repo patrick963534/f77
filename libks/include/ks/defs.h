@@ -6,6 +6,7 @@
 #define ks_assert(v, msg)   do { if(!(v)) assert(!(msg)); } while(0)
 
 #define KS_API          extern
+#define KS_INLINE       inline
 
 #define ks_max(a, b)    ((a) > (b) ? (a) : (b))
 #define ks_min(a, b)    ((a) < (b) ? (a) : (b))

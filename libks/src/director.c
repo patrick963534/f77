@@ -15,6 +15,21 @@
 
 static ks_director_t* director;
 
+static void calculate_fps(int delta)
+{
+    static int count = 0;
+    static int ellapse = 0;
+
+    count++;
+    ellapse += delta;
+    if (ellapse > 1000)
+    {
+        ks_log("FPS: %d ", count);
+        ellapse = 0;
+        count = 0;
+    }
+}
+
 static void director_event(ks_event_t* e)
 {
     if (so_node_msgs((ks_node_t*)director->scene, e))
@@ -27,6 +42,20 @@ static void director_event(ks_event_t* e)
 static void director_update(int delta)
 {
     so_node_step((ks_node_t*)director->scene, delta);
+}
+
+static KS_INLINE int calc_delta()
+{
+    static ks_time_t t1 = 0;
+    ks_time_t t2 = ks_time_now();
+
+    if (t1 == 0)
+        t1 = ks_time_now();
+
+    int delta = ks_time_differ_in_msec(t2, t1);
+    t1 = t2;
+
+    return delta;
 }
 
 static void director_draw()
@@ -57,15 +86,11 @@ KS_API void ks_director_init(const char* title, int w, int h, int argc, char** a
 
 KS_API void ks_director_run(ks_scene_t* scene)
 {
-    ks_time_t t1, t2;
     ks_event_t e;
-    int ellapse = 0;
-    int count = 0;
-    int delta = 0;
+    int delta;
 
     ks_system_init((ks_object_t*)director);
 
-    t1 = ks_time_now();
     director->scene = scene;
 
     while (!director->end)
@@ -78,22 +103,11 @@ KS_API void ks_director_run(ks_scene_t* scene)
             continue;
         }
 
-        t2 = ks_time_now();
-        delta = ks_time_differ_in_msec(t2, t1);
-        t1 = t2;
-
+        delta = calc_delta();
         director_update(delta);
         director_draw();
 
-        count++;
-        ellapse += delta;
-        if (ellapse > 1000)
-        {
-            ks_log("FPS: %d ", count);
-            ellapse = 0;
-            count = 0;
-        }
-
+        calculate_fps(delta);
         ks_time_sleep(1);
     }
 
