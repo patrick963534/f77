@@ -21,7 +21,7 @@ typedef struct tex_program_t
     GLint       texCoord_loc;
     GLint       sample_loc;
     GLint       mvp_loc;
-    ks_image_t* img;
+    const char* img_file;
 
 } tex_program_t;
 
@@ -62,7 +62,7 @@ static GLuint CreateTexture2D(ks_image_t* img)
     return textureId;
 }
 
-static void generate_vec_coords(GLfloat* vecCoords, int offx, int offy, int clip_w, int clip_h)
+static void generate_vec_coords(int offx, int offy, int clip_w, int clip_h)
 {
     int x = g->pos.x + offx;
     int y = g->pos.y + offy;
@@ -92,7 +92,7 @@ static void generate_vec_coords(GLfloat* vecCoords, int offx, int offy, int clip
     vecCoords[11] = 0;
 }
 
-static void generate_tex_coords(GLfloat* texCoords, int clip_x, int clip_y, int clip_w, int clip_h, int all_w, int all_h)
+static void generate_tex_coords(int clip_x, int clip_y, int clip_w, int clip_h, int all_w, int all_h)
 {
     float minX = (clip_x) / (float)all_w;
     float minY = (clip_y) / (float)all_h;
@@ -122,27 +122,22 @@ static void setup_model(ks_image_t* img, int offx, int offy, int clip_x, int cli
     clip_w = ks_min(img->width  - clip_x, clip_w);
     clip_h = ks_min(img->height - clip_y, clip_h);
 
-    generate_vec_coords(vecCoords, offx, offy, clip_w, clip_h);
-    generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
-
-    glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
-    glVertexAttribPointer(g->tex_render.texCoord_loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
-
-    glEnableVertexAttribArray(g->tex_render.position_loc);
-    glEnableVertexAttribArray(g->tex_render.texCoord_loc);
+    generate_vec_coords(offx, offy, clip_w, clip_h);
+    generate_tex_coords(clip_x, clip_y, clip_w, clip_h, img->width, img->height);
 }
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
     setup_model(img, offx, offy, clip_x, clip_y, clip_w, clip_h);
 
-    if (g->tex_render.img != img)
+    if (g->tex_render.img_file != img->file)
     {
         if (g->tex_render.texture_id != 0)
             glDeleteTextures(1, &g->tex_render.texture_id);
 
         g->tex_render.texture_id = CreateTexture2D(img);
-        g->tex_render.img = img;
+        g->tex_render.img_file = img->file;
+        ks_log("create texture");
     }
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -232,6 +227,12 @@ KS_API void ks_graphics_init(ks_object_t* container)
     g->tex_render.sample_loc = glGetUniformLocation(g->tex_render.program, "s_texture");
     g->tex_render.mvp_loc = glGetUniformLocation(g->tex_render.program, "m_mvp");
     glUseProgram(g->tex_render.program);
+
+    glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
+    glVertexAttribPointer(g->tex_render.texCoord_loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
+
+    glEnableVertexAttribArray(g->tex_render.position_loc);
+    glEnableVertexAttribArray(g->tex_render.texCoord_loc);
 }
 
 KS_API ks_graphics_t* ks_graphics_instance()
