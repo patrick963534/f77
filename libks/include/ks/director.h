@@ -14,6 +14,7 @@ typedef struct ks_director_t
     int         height;
 
     ks_scene_t* scene;
+    int         end;
 
 } ks_director_t;
 
