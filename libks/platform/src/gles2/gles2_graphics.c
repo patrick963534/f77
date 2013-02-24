@@ -62,10 +62,10 @@ static GLuint CreateTexture2D(ks_image_t* img)
     return textureId;
 }
 
-static void generate_vec_coords(GLfloat* vecCoords, int clip_w, int clip_h)
+static void generate_vec_coords(GLfloat* vecCoords, int offx, int offy, int clip_w, int clip_h)
 {
-    int x = g->pos.x;
-    int y = g->pos.y;
+    int x = g->pos.x + offx;
+    int y = g->pos.y + offy;
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
     float factor = 0.5f; // The default value is 2.0f. Value 0.5f means scale down 4 times.
@@ -112,7 +112,7 @@ static void generate_tex_coords(GLfloat* texCoords, int clip_x, int clip_y, int 
     texCoords[7] = minY;
 }
 
-static void setup_model(ks_image_t* img, int clip_x, int clip_y, int clip_w, int clip_h)
+static void setup_model(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
     clip_x = ks_max(0, clip_x);
     clip_y = ks_max(0, clip_y);
@@ -122,7 +122,7 @@ static void setup_model(ks_image_t* img, int clip_x, int clip_y, int clip_w, int
     clip_w = ks_min(img->width  - clip_x, clip_w);
     clip_h = ks_min(img->height - clip_y, clip_h);
 
-    generate_vec_coords(vecCoords, clip_w, clip_h);
+    generate_vec_coords(vecCoords, offx, offy, clip_w, clip_h);
     generate_tex_coords(texCoords, clip_x, clip_y, clip_w, clip_h, img->width, img->height);
 
     glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
@@ -132,9 +132,9 @@ static void setup_model(ks_image_t* img, int clip_x, int clip_y, int clip_w, int
     glEnableVertexAttribArray(g->tex_render.texCoord_loc);
 }
 
-static void draw(ks_image_t* img, int clip_x, int clip_y, int clip_w, int clip_h)
+static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
-    setup_model(img, clip_x, clip_y, clip_w, clip_h);
+    setup_model(img, offx, offy, clip_x, clip_y, clip_w, clip_h);
 
     if (g->tex_render.img != img)
     {

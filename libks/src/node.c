@@ -1,5 +1,6 @@
 #include <ks/node.h>
 #include <ks/graphics.h>
+#include <ks/log.h>
 #include <stdlib.h>
 #include "node.c.h"
 
@@ -23,6 +24,7 @@ static ks_node_t** sort_children(ks_node_t* node, int* count)
         sz++;
     }
 
+    *count = sz;
     if (sz == 0)
         return NULL;
 
@@ -69,6 +71,7 @@ void so_node_msgs(ks_node_t* me, ks_event_t* e)
 
 KS_API void ks_node_destruct(ks_node_t* me)
 {
+    ks_node_delete_children(me);
     ks_object_destruct((ks_object_t*)me);
 }
 
@@ -82,6 +85,9 @@ KS_API ks_node_t* ks_node_new(int sz, ks_node_t* parent)
 
     ks_list_init(&me->node_children);
     ks_list_init(&me->node_sibling);
+
+    if (parent)
+        ks_node_add(parent, me);
 
     return me;
 }

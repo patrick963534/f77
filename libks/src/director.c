@@ -11,9 +11,9 @@
 #include <string.h>
 
 #include "environment.c.h"
+#include "node.c.h"
 
 static ks_director_t* director;
-static ks_image_t* img;
 
 static void director_update()
 {
@@ -22,18 +22,11 @@ static void director_update()
 
 static void director_draw()
 {
-    if (!img)
-    {
-        char buf[256];
-
-        ks_helper_path_join_relative_app(buf, sizeof(buf), "img.png");
-        img = ks_image_load(buf, NULL);
-    }
-
     ks_graphics_load_identity();
     ks_graphics_clear_screen();
-    ks_graphics_translate(50, 200);
-    ks_graphics_draw(img, 0, 0, img->width, img->height);
+
+    so_node_draw((ks_node_t*)director->scene);
+
     ks_system_flush();
 }
 
@@ -62,9 +55,8 @@ KS_API void ks_director_run(ks_scene_t* scene)
 
     ks_system_init((ks_object_t*)director);
 
-    ks_log("%d\n", sizeof(long int));
-
     t1 = ks_time_now();
+    director->scene = scene;
 
     while (count < 10000)
     {

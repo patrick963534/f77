@@ -13,6 +13,8 @@ typedef struct ks_director_t
     int         width;
     int         height;
 
+    ks_scene_t* scene;
+
 } ks_director_t;
 
 KS_API void             ks_director_init(const char* title, int w, int h, int argc, char** argv);
