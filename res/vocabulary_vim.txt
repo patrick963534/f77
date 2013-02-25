@@ -201,6 +201,7 @@ carry
 cat
 catch
 ceiling
+chair
 chat
 chart
 cheat
@@ -222,6 +223,7 @@ city
 class
 clean
 click
+climb
 clock
 clone
 close
@@ -252,9 +254,11 @@ creation
 cross
 crossing
 cry
+cup
     curse
 cursor
 cur
+cut
     cyan
     cybernate
 cycle
@@ -361,6 +365,7 @@ examination
 eye
 fact
 factor
+factory
 fade
 fail
 faith
@@ -373,3 +378,63 @@ father
 fault
 fax
 february
+fear
+fee
+feed
+feel
+feet
+fiber
+field
+fifteen
+fifty
+fight
+file
+filename
+fill
+film
+final
+    finance
+    financial
+find
+fine
+finger
+finish
+    finite
+fire
+fit
+fitness
+fix
+flag
+    flame
+flat
+flip
+floor
+flower
+fly
+fog
+follow
+foot
+football
+for
+forbid
+forbidden
+force
+foregound
+form
+fork
+forward
+fox
+frame
+France
+Franch
+fridge
+fruit
+    fry
+fuck
+full
+fun
+funny
+fur
+further
+furniture
+future
