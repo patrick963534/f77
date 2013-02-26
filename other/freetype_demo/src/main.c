@@ -48,7 +48,14 @@ static void test(const char *text, int nWidth, int nHeight, const char * pFontNa
         iError = FT_Load_Glyph(face, FT_Get_Char_Index(face, *pText), FT_LOAD_RENDER);
         CHECK_RETURN(iError);
 
-        bitmap = &face->glyph->bitmap;
+        if (*pText == ' ')
+        {
+            offx += face->glyph->metrics.horiAdvance >> 6;
+            pText++;
+            continue;;
+        }
+
+        bitmap = &face->glyph->bitmap;       
 
         for (i = 0; i < bitmap->rows; ++i) 
         {
@@ -91,6 +98,6 @@ fail:
 
 int main()
 {
-    test("Hello World", 20, 20, "E:\\arial.ttf", 30);
+    test("Hello World, looks good. How do you think?", 20, 20, "E:\\arial.ttf", 30);
     return 0;
 }
