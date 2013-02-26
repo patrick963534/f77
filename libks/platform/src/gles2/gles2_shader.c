@@ -11,6 +11,7 @@ typedef struct program_t
 static program_t tex_program = {
     "attribute vec4 a_position;   \n"
     "attribute vec2 a_texCoord;   \n"
+    "uniform mat4 m_mvp;          \n"
     "varying vec2 v_texCoord;     \n"
     "void main()                  \n"
     "{                            \n"
@@ -85,7 +86,7 @@ GLuint ks_gles2_shader_program_from(const char* vs_str, const char* fs_str)
 
     // Check the link status
     glGetProgramiv(p, GL_LINK_STATUS, &linked);
-    if (!linked) 
+    if (!linked)
     {
         GLint infoLen = 0;
         glGetProgramiv(p, GL_INFO_LOG_LENGTH, &infoLen);

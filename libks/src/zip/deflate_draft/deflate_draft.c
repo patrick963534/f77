@@ -61,7 +61,7 @@ static void encode_offset(unsigned int offset)
 			0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
 			7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
 			12, 12, 13, 13};
-	        
+
    		unsigned int i, extra, i2, offset;
 		for(offset = 1; offset <= 32768; offset++)
 		{
@@ -70,15 +70,15 @@ static void encode_offset(unsigned int offset)
 
 			i2 = revbits(i, 5);
 			extra = offset - dists[i];
-			i2 |= (extra << 5);	
-		
+			i2 |= (extra << 5);
+
 			offset_cache[offset] = i2 | ((dext[i] + 5) << 24);
 		}
 		is_init = 1;
 	}
 	o = offset_cache[offset];
-	out(o & 0xffffff, o >> 24); 
- 
+	out(o & 0xffffff, o >> 24);
+
 }
 
 static void encode_literal(unsigned int lit)
@@ -112,7 +112,7 @@ static void get_length_code(unsigned int matchlen)
     static const unsigned short lext[29] = {
         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
         3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
-        
+
 	static const unsigned short matchlens[11] = {0, 0, 0, 64, 32, 96, 16, 80, 48, 112, 8};
 
 	if(matchlen <= 10)
@@ -124,7 +124,7 @@ static void get_length_code(unsigned int matchlen)
 		for(i = 0; i < 29 && matchlen >= lens[i]; i++);
 		i--;
 		code = i + 254 + 3; // 257...285 i1 = CODE
-		
+
 		if(code < 280)
 		{
             extra = matchlen - lens[i];
@@ -135,7 +135,7 @@ static void get_length_code(unsigned int matchlen)
 		}
 		else
 		{
-            extra = matchlen - lens[i];	
+            extra = matchlen - lens[i];
 
 			code = code + 192 - 280;
 			code = revbits(code, 8);
@@ -148,8 +148,6 @@ static void get_length_code(unsigned int matchlen)
 
 unsigned int deflate(unsigned char *source, unsigned char *destination, unsigned int bitoffset, unsigned int size, unsigned int last)
 {
-	static unsigned int i;
-
 	unsigned char *src = source;
 	unsigned char *last_source_byte = source + size - 1;
 
@@ -167,18 +165,18 @@ unsigned int deflate(unsigned char *source, unsigned char *destination, unsigned
 	{
 		unsigned int hash, fetch;
 		unsigned char *o;
-		
+
 		fetch = *((unsigned int *)src);
 		hash = ((fetch >> 11) ^ fetch) & 0x1fff;
 		o = hashtable[hash];
 		hashtable[hash] = src;
-		
+
 		if(o >= src - 32768 && o < src && o > source && src < last_source_byte - 1 && ((fetch^(*(unsigned int*)o)) & 0xffffff) == 0)
 		{
 			unsigned int n = 3;
 			while(src + n <= last_source_byte && *(o + n) == *(src + n) && n < 257)
 				n++;
-				
+
 			get_length_code(n);
 			encode_offset((unsigned int)(src - o));
 			src += n;
@@ -189,7 +187,7 @@ unsigned int deflate(unsigned char *source, unsigned char *destination, unsigned
 			src++;
 		}
 	}
-	
+
 	out(0, 7); // end of block
 
 	return bitoffset2;
@@ -253,7 +251,7 @@ unsigned int add_file(char *filename)
 	file_compressed_len = 0;
 	num_files++;
 	remain = 0;
-	
+
 	first_data_add = 1;
 
 	return 30 + strlen((char*)fn); // local file header size
@@ -296,7 +294,7 @@ unsigned int add_data(char *source, char *destination, unsigned int size, unsign
 	k = crc32((unsigned char*)source, size, k);
 	ret = deflate((unsigned char*)source, (unsigned char*)destination, remain, size, eof);
 	remain = ret & 0x7;
-	
+
 	if(eof == 0)
 		ret = ret >> 3;
 	else
@@ -309,7 +307,7 @@ unsigned int add_data(char *source, char *destination, unsigned int size, unsign
 	if(eof == 1)
 	{
 		// add to central directory
-		k = ~k; 
+		k = ~k;
 		cds = central_dir + central_dir_size; //destination + ret;
 		*(unsigned int*)cds = 0x02014b50;
 		*(unsigned short int*)(cds + 4) = 20; // made by 2.0
@@ -320,7 +318,7 @@ unsigned int add_data(char *source, char *destination, unsigned int size, unsign
 		*(unsigned short int*)(cds + 14) = 0; // date
 		*(unsigned int*)(cds + 16) = k;  // crc32
 		*(unsigned int*)(cds + 20) = file_compressed_len; // comp size
-		*(unsigned int*)(cds + 24) = file_source_len; // decomp size	
+		*(unsigned int*)(cds + 24) = file_source_len; // decomp size
 		*(unsigned short int*)(cds + 28) = (unsigned short int)strlen((char*)fn); // file name len
 		*(unsigned short int*)(cds + 30) = 0; // ext field len
 		*(unsigned short int*)(cds + 32) = 0; // file comment len
@@ -339,20 +337,20 @@ unsigned int add_data(char *source, char *destination, unsigned int size, unsign
 	return ret;
 }
 unsigned int end_zip(unsigned char *destination)
-{	
+{
 	char *endof;
 	// end of central directory
 	memcpy(destination, central_dir, central_dir_size);
 	endof = (char*)destination + central_dir_size;
 	*(unsigned int*)endof = 0x06054b50;
 	*(unsigned short int*)(endof + 4) = 0;
-	*(unsigned short int*)(endof + 6) = 0;	
-	*(unsigned short int*)(endof + 8) = (unsigned short int)num_files;	
-	*(unsigned short int*)(endof + 10) = (unsigned short int)num_files;	
+	*(unsigned short int*)(endof + 6) = 0;
+	*(unsigned short int*)(endof + 8) = (unsigned short int)num_files;
+	*(unsigned short int*)(endof + 10) = (unsigned short int)num_files;
 	*(unsigned int*)(endof + 12) = central_dir_size; // size of the central directory
-	*(unsigned int*)(endof + 16) = central_dir_offset; // offset of start of central directory 
-	*(unsigned short int*)(endof + 20) = 0;	// comment len		
-	
+	*(unsigned int*)(endof + 16) = central_dir_offset; // offset of start of central directory
+	*(unsigned short int*)(endof + 20) = 0;	// comment len
+
 	return 22 + central_dir_size;
 }
 

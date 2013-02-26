@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <png.h>
 
-static void save_to_ppm(int width, int height, png_bytep * row_pointers) 
+void so_img_loader_libpng_save(const char* pixels, int width, int height)
 {
     FILE* save_fp = fopen("tt.ppm", "wb");
     char* buffer = malloc(width * 3);
@@ -15,9 +15,9 @@ static void save_to_ppm(int width, int height, png_bytep * row_pointers)
     {
         for (j = 0; j < width; j++)
         {
-            buffer[j * 3]    = row_pointers[i][j * 4];
-            buffer[j * 3+ 1] = row_pointers[i][j * 4 + 1];
-            buffer[j * 3+ 2] = row_pointers[i][j * 4 + 2];
+            buffer[j * 3]    = pixels[i * width * 4 + j * 4];
+            buffer[j * 3+ 1] = pixels[i * width * 4 + j * 4 + 1];
+            buffer[j * 3+ 2] = pixels[i * width * 4 + j * 4 + 2];
         }
 
         fwrite(buffer, 1, width * 3, save_fp);
@@ -31,14 +31,14 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
     png_structp png_ptr;
     png_infop   info_ptr;
     png_bytep*  row_pointers;
-    FILE* fp;    
+    FILE* fp;
     int i;
 
     if (NULL == (fp = fopen(file, "rb")))
     {
         ks_log("can not find file: %s", file);
         return;
-    }    
+    }
 
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     info_ptr = png_create_info_struct(png_ptr);
@@ -48,7 +48,7 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
     info->width = png_get_image_width(png_ptr, info_ptr);
     info->height = png_get_image_height(png_ptr, info_ptr);
 
-    if (png_get_bit_depth(png_ptr, info_ptr) == 16) 
+    if (png_get_bit_depth(png_ptr, info_ptr) == 16)
         return;
 
     row_pointers = (png_bytep*) malloc(sizeof(png_bytep) * info->height);
@@ -59,7 +59,7 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
 
     png_read_image(png_ptr, row_pointers);
 
-    // TODO: free the libpng object, ex: png_ptr, info_ptr etc.
+    ks_log("load image: %s, with size(%d, %d)", file, info->width, info->height);
 
     fclose(fp);
 }

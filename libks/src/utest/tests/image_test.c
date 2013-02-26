@@ -1,6 +1,7 @@
 #include "path_test.h"
 #include <ks/image.h>
 #include <ks/log.h>
+#include <ks/helper.h>
 #include <string.h>
 
 static void image_load_test()

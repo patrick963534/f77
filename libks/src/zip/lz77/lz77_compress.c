@@ -32,7 +32,7 @@ static void build_pairs(lz77_t* lz)
         pr = &lz->pairs[lz->npair];
         pr->ch = *cp;
         lz->npair++;
-        
+
         while (wp < wp_end)
         {
             while (*wp == *cp && wp < wp_end && cp < end)
@@ -65,7 +65,7 @@ static void build_pairs(lz77_t* lz)
                     }
                 }
             }
-            
+
             if (length == 0)
                 wp++;
 
@@ -88,12 +88,12 @@ static void build_pairs(lz77_t* lz)
 
 static void print_tree(lz77_t* lz)
 {
-    pair_t* pos;
+    //pair_t* pos;
     int i;
 
     for (i = 0; i < lz->npair; i++)
     {
-        pos = &lz->pairs[i];
+        //pos = &lz->pairs[i];
         //printf("(%2d, %2d) %c \n", pos->offset, pos->length, pos->ch);
     }
 
@@ -117,7 +117,7 @@ static uchar* generate(lz77_t* lz, int* ret_sz)
     nbit  = 0;
     nbyte = 0;
     b     = 0;
-    
+
     for (np = 0; np < lz->npair; np++)
     {
         uchar ch;
@@ -126,7 +126,7 @@ static uchar* generate(lz77_t* lz, int* ret_sz)
 
         if (pos->length != 0)
             b += 1 << (7 - nbit);
-        
+
         nbit++;
         if (nbit == 8)
         {

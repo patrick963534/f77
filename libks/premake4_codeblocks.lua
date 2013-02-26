@@ -1,6 +1,6 @@
 if not _PREMAKE_VERSION then
    os.execute('premake4 --file=premake4_linux.lua clean')
-   os.execute('premake4 --file=premake4_linux.lua gmake')
+   os.execute('premake4 --file=premake4_linux.lua codeblocks')
    return
 end
 

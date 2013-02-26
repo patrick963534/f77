@@ -36,8 +36,6 @@ KS_API void ks_list_remove(ks_list_t* node)
 
     prev->next = next;
     next->prev = prev;
-
-    ks_log("list_remove");
 }
 
 KS_API void ks_list_remove_init(ks_list_t* node)

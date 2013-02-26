@@ -3,7 +3,7 @@
 
 #include <ks/defs.h>
 #include <ks/object.h>
-#include <ks/container.h>
+#include <ks/object.h>
 
 typedef struct ks_sys_system_interface_t
 {
@@ -20,7 +20,7 @@ typedef struct ks_system_t
     ks_extends_system();
 } ks_system_t;
 
-KS_API void ks_system_init(ks_container_t* container);
+KS_API void ks_system_init(ks_object_t* container);
 KS_API ks_system_t* ks_system_instance();
 
 KS_API void ks_system_flush();

@@ -3,7 +3,7 @@
 
 #include <ks/defs.h>
 #include <ks/object.h>
-#include <ks/container.h>
+#include <ks/object.h>
 #include <ks/event.h>
 
 typedef struct ks_sys_eventq_interface_t
@@ -24,7 +24,7 @@ typedef struct ks_sys_eventq_t
 
 ks_sys_eventq_interface_t* ks_sys_eventq_interface_instance();
 
-KS_API void ks_eventq_init(ks_container_t* container);
+KS_API void ks_eventq_init(ks_object_t* container);
 KS_API ks_sys_eventq_t* ks_eventq_instance();
 
 KS_API void ks_eventq_endqueue(const ks_event_t* e);

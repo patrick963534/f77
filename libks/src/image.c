@@ -1,15 +1,15 @@
 #include <ks/image.h>
-#include <ks/container.h>
+#include <ks/object.h>
 #include <ks/libc.h>
 #include <ks/list.h>
-
+#include <ks/log.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "img/img_loader.h"
 
 typedef struct cached_image_t
-{ 
+{
     char* pixels;
     char* file;
     int   w;
@@ -20,23 +20,6 @@ typedef struct cached_image_t
 } cached_image_t;
 
 static ks_list_t head = {&head, &head};
-
-static char* load_bvg_image(const char* file, int* width, int* height)
-{
-    ks_unused(file);
-    ks_unused(width);
-    ks_unused(height);
-
-    return 0;
-}
-
-static void save_bvg_image(const char* dst, char* pixels, int w, int h)
-{
-    ks_unused(dst);
-    ks_unused(pixels);
-    ks_unused(w);
-    ks_unused(h);
-}
 
 static cached_image_t* cached_image_search(const char* file)
 {
@@ -73,7 +56,7 @@ static cached_image_t* cached_image_load(const char* file)
         ks_list_init(&img->item);
         ks_list_add_tail(&head, &img->item);
     }
-    
+
     return img;
 }
 
@@ -83,6 +66,7 @@ static void cached_image_remove(const char* file)
 
     if (img && --img->ref_count <= 0)
     {
+        ks_log("free image: %s", img->file);
         ks_list_remove(&img->item);
         free(img->pixels);
         free(img->file);
@@ -93,16 +77,16 @@ static void cached_image_remove(const char* file)
 KS_API void ks_image_destruct(ks_image_t* me)
 {
     cached_image_remove(me->file);
-
     ks_object_destruct((ks_object_t*)me);
 }
 
 KS_API void ks_image_save(ks_image_t* me, const char* file)
 {
-    save_bvg_image(file, me->pixels, me->width, me->height);
+    ks_unused(me);
+    ks_unused(file);
 }
 
-KS_API ks_image_t* ks_image_load(const char* file, ks_container_t* container)
+KS_API ks_image_t* ks_image_load(const char* file, ks_object_t* container)
 {
     ks_image_t* me;
     cached_image_t* img;
@@ -110,7 +94,7 @@ KS_API ks_image_t* ks_image_load(const char* file, ks_container_t* container)
     img = cached_image_load(file);
 
     me           = (ks_image_t*)ks_object_new(sizeof(*me));
-    me->tname    = "image";
+    me->tname    = "ks_image";
     me->destruct = (ks_destruct_f)ks_image_destruct;
     me->file     = img->file;
     me->pixels   = img->pixels;
@@ -118,7 +102,7 @@ KS_API ks_image_t* ks_image_load(const char* file, ks_container_t* container)
     me->height   = img->h;
 
     if (container)
-        ks_container_add(container, (ks_object_t*)me);
+        ks_object_add(container, (ks_object_t*)me);
 
     return me;
 }
