@@ -8,20 +8,17 @@
 #define HEIGHT      600
 #define PIXEL_SZ    3
 
-static void test(const char *text, int nWidth, int nHeight, const char * pFontName, int fontSize) 
+static void test(const int *text, const char * pFontName, int fontSize) 
 {
     FT_Face face;
     FT_Error iError;
     FT_Library library;
     FT_Bitmap* bitmap;
 
-    const char* pText = text;
+    const int* pText = text;
     char* m_pData;
     int offx = 0;
     int i, j;
-
-    int iCurXCursor, iCurYCursor;
-    int bRet = 0;
 
     FT_Init_FreeType(&library);
 
@@ -83,6 +80,8 @@ static void test(const char *text, int nWidth, int nHeight, const char * pFontNa
         pText++;
     }
 
+    FT_Done_Face(face);
+
     {
         FILE* save_fp = fopen("E:\\ft_result.ppm", "wb");
         fprintf(save_fp, "P6 %d %d 255 ", WIDTH, HEIGHT);
@@ -98,6 +97,12 @@ fail:
 
 int main()
 {
-    test("Hello World, looks good. How do you think?", 20, 20, "E:\\arial.ttf", 30);
+    int ustring[128];
+    const char* text = "Hello World, looks good. How do you think? 你好";
+
+    u8_toucs(ustring, sizeof(ustring), text, strlen(text) + 1);
+
+    test(ustring, "E:\\msyh.ttf", 30);
+    //test("Hello World, looks good. How do you think?", "E:\\arial.ttf", 30);
     return 0;
 }
