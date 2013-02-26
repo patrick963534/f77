@@ -26,28 +26,32 @@ static const char trailingBytesForUTF8[256] = {
 
 KS_API int ks_u8_to_ucs(unsigned *dest, int sz, char *src, int srcsz)
 {
-    unsigned ch;
     char *src_end = src + srcsz;
+    unsigned ch;
     int nb;
     int i=0;
 
-    while (i < sz-1) {
+    while (i < sz-1) 
+    {
         nb = trailingBytesForUTF8[(uchar)*src];
-        if (srcsz == -1) {
+        if (srcsz == -1) 
+        {
             if (*src == 0)
                 goto done_toucs;
         }
-        else {
+        else 
+        {
             if (src + nb >= src_end)
                 goto done_toucs;
         }
+
         ch = 0;
-        switch (nb) {
-            /* these fall through deliberately */
-        case 3: ch += (uchar)*src++; ch <<= 6;
-        case 2: ch += (uchar)*src++; ch <<= 6;
-        case 1: ch += (uchar)*src++; ch <<= 6;
-        case 0: ch += (uchar)*src++;
+        switch (nb) 
+        {
+            case 3: ch += (uchar)*src++; ch <<= 6;
+            case 2: ch += (uchar)*src++; ch <<= 6;
+            case 1: ch += (uchar)*src++; ch <<= 6;
+            case 0: ch += (uchar)*src++;
         }
         ch -= offsetsFromUTF8[nb];
         dest[i++] = ch;
