@@ -32,7 +32,7 @@ KS_API int ks_u8_to_ucs(unsigned *dest, int sz, char *src, int srcsz)
     int i=0;
 
     while (i < sz-1) {
-        nb = trailingBytesForUTF8[(unsigned char)*src];
+        nb = trailingBytesForUTF8[(uchar)*src];
         if (srcsz == -1) {
             if (*src == 0)
                 goto done_toucs;
@@ -44,10 +44,10 @@ KS_API int ks_u8_to_ucs(unsigned *dest, int sz, char *src, int srcsz)
         ch = 0;
         switch (nb) {
             /* these fall through deliberately */
-        case 3: ch += (unsigned char)*src++; ch <<= 6;
-        case 2: ch += (unsigned char)*src++; ch <<= 6;
-        case 1: ch += (unsigned char)*src++; ch <<= 6;
-        case 0: ch += (unsigned char)*src++;
+        case 3: ch += (uchar)*src++; ch <<= 6;
+        case 2: ch += (uchar)*src++; ch <<= 6;
+        case 1: ch += (uchar)*src++; ch <<= 6;
+        case 0: ch += (uchar)*src++;
         }
         ch -= offsetsFromUTF8[nb];
         dest[i++] = ch;
@@ -141,9 +141,10 @@ KS_API unsigned ks_u8_next_ucs(char *s, int *i)
     unsigned ch = 0;
     int sz = 0;
 
-    do {
+    do 
+    {
         ch <<= 6;
-        ch += (unsigned char)s[(*i)++];
+        ch += (uchar)s[(*i)++];
         sz++;
     } while (s[*i] && !isutf(s[*i]));
     ch -= offsetsFromUTF8[sz-1];
@@ -151,19 +152,19 @@ KS_API unsigned ks_u8_next_ucs(char *s, int *i)
     return ch;
 }
 
-KS_API char *ks_u8_chr(char *s, unsigned ch, int *charn)
+KS_API char* ks_u8_chr(char* s, unsigned ch, int* charn)
 {
-    int i = 0, lasti=0;
-    unsigned c;
+    int i = 0, lasti = 0;
 
     *charn = 0;
-    while (s[i]) {
-        c = ks_u8_next_ucs(s, &i);
-        if (c == ch) {
+    while (s[i]) 
+    {
+        if (ch == ks_u8_next_ucs(s, &i))
             return &s[lasti];
-        }
+        
         lasti = i;
         (*charn)++;
     }
+
     return NULL;
 }
