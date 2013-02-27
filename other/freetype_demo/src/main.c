@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "ft2build.h"
+#include "utf8.h"
 #include FT_FREETYPE_H
 #include FT_TYPES_H
 
@@ -95,12 +96,22 @@ fail:
     printf("test fail.");
 }
 
+static int read_text_from_file(const char* file, char* buf, int sz)
+{
+    int len = 0;
+    FILE* fp = fopen(file, "rb");
+    len = fread(buf, 1, sz, fp);
+    fclose(fp);
+    return len;
+}
+
 int main()
 {
+    char buf[1024];
     int ustring[128];
-    const char* text = "Hello World, looks good. How do you think? 你好";
+    int len = read_text_from_file("E:\\text.txt", buf, sizeof(buf));
 
-    u8_toucs(ustring, sizeof(ustring), text, strlen(text) + 1);
+    ks_u8_to_ucs((unsigned*)ustring, sizeof(ustring), buf, len);
 
     test(ustring, "E:\\msyh.ttf", 30);
     //test("Hello World, looks good. How do you think?", "E:\\arial.ttf", 30);
