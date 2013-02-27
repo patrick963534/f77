@@ -76,7 +76,7 @@ static void test(const int *text, const char * pFontName, int fontSize)
             }
         }
 
-        offx += (face->glyph->metrics.horiBearingX + face->glyph->metrics.width) >> 6;
+        offx += (face->glyph->metrics.horiAdvance >> 6);
 
         pText++;
     }
