@@ -24,9 +24,9 @@ static const char trailingBytesForUTF8[256] = {
     2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
 };
 
-KS_API int ks_u8_to_ucs(unsigned *dest, int sz, char *src, int srcsz)
+KS_API int ks_u8_to_ucs(unsigned *dest, int sz, const char *src, int srcsz)
 {
-    char *src_end = src + srcsz;
+    const char *src_end = src + srcsz;
     unsigned ch;
     int nb;
     int i=0;
@@ -61,7 +61,7 @@ KS_API int ks_u8_to_ucs(unsigned *dest, int sz, char *src, int srcsz)
     return i;
 }
 
-KS_API int ks_u8_from_ucs(char *dest, int sz, unsigned *src, int srcsz)
+KS_API int ks_u8_from_ucs(char *dest, int sz, const unsigned *src, int srcsz)
 {
     unsigned ch;
     int i = 0;
