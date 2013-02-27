@@ -44,15 +44,16 @@ static void director_update(int delta)
     so_node_step((ks_node_t*)director->scene, delta);
 }
 
-static KS_INLINE int calc_delta()
+static int calc_delta()
 {
     static ks_time_t t1 = 0;
     ks_time_t t2 = ks_time_now();
+    int delta;
 
     if (t1 == 0)
         t1 = ks_time_now();
 
-    int delta = ks_time_differ_in_msec(t2, t1);
+    delta = ks_time_differ_in_msec(t2, t1);
     t1 = t2;
 
     return delta;

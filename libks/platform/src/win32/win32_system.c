@@ -214,14 +214,14 @@ static ks_sys_system_interface_t interfaces = {
     flush,
 };
 
-KS_API void ks_system_init(ks_container_t* container)
+KS_API void ks_system_init(ks_object_t* container)
 {
     sys             = (system_t*)ks_object_new(sizeof(*sys));
     sys->destruct   = (ks_destruct_f)destruct;
     sys->klass      = &interfaces;
 
     if (container)
-        ks_container_add(container, (ks_object_t*)sys);
+        ks_object_add(container, (ks_object_t*)sys);
 
     create_window();
 

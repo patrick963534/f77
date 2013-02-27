@@ -39,6 +39,8 @@ static int msgs(ks_node_t* me, ks_event_t* e)
             ks_log("arrow right");
     }
 
+    ks_unused(me);
+
     return 0;
 }
 
