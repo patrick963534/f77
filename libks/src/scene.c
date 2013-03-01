@@ -4,12 +4,7 @@
 #include <ks/object.h>
 #include <ks/node.h>
 #include <ks/event.h>
-
-typedef struct z_node_t
-{
-    ks_list_t   list;
-    ks_node_t*  node;
-} z_node_t;
+#include <ks/graphics.h>
 
 static void node_draw(ks_node_t* me)
 {
