@@ -2,7 +2,6 @@
 #include <ks/graphics.h>
 #include <ks/log.h>
 #include <stdlib.h>
-#include "node.c.h"
 
 KS_API void ks_node_destruct(ks_node_t* me)
 {

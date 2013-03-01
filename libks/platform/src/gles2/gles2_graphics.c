@@ -3,7 +3,7 @@
 #include <ks/defs.h>
 #include <ks/log.h>
 #include <ks/image.h>
-
+#include <ks/system.h>
 #include <GLES2/gl2.h>
 #include <stdlib.h>
 
@@ -201,6 +201,7 @@ static ks_sys_graphics_interface_t interfaces = {
     graphics_pop,
     graphics_push,
     graphics_load_identity,
+    ks_system_flush,
 };
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()

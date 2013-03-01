@@ -15,6 +15,7 @@ typedef struct ks_sys_graphics_interface_t
     void    (*pop)();
     void    (*push)();
     void    (*load_identity)();
+    void    (*flush)();
 } ks_sys_graphics_interface_t;
 
 #define ks_extends_graphics() \
