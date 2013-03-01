@@ -11,7 +11,7 @@ static void node_draw(ks_node_t* me)
     ks_node_t *pos, *n;
 
     ks_graphics_push();
-    ks_graphics_translate(me->x, me->y);
+    ks_graphics_translate(me->x, me->y, me->z);
 
     ks_node_for_each(pos, n, me, ks_node_t)
     {

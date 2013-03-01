@@ -29,6 +29,7 @@ typedef struct draw_pos_t
 {
     int x;
     int y;
+    int z;
 } draw_pos_t;
 
 typedef struct graphics_t
@@ -72,6 +73,7 @@ static void generate_vec_coords(GLfloat* p, int offx, int offy, int clip_w, int 
 {
     int x = g->pos.x + offx;
     int y = g->pos.y + offy;
+    GLfloat z = (GLfloat)g->pos.z;
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
     float factor = 0.5f; // The default value is 2.0f. Value 0.5f means scale down 4 times.
@@ -81,10 +83,10 @@ static void generate_vec_coords(GLfloat* p, int offx, int offy, int clip_w, int 
     float maxX = minX + clip_w * factor / (float)all_w;
     float maxY = minY + clip_h * factor / (float)all_h;
 
-    p[0] = minX; p[1]  = maxY; p[2]  = 0;
-    p[3] = minX; p[4]  = minY; p[5]  = 0;
-    p[6] = maxX; p[7]  = minY; p[8]  = 0;
-    p[9] = maxX; p[10] = maxY; p[11] = 0;
+    p[0] = minX; p[1]  = maxY; p[2]  = z;
+    p[3] = minX; p[4]  = minY; p[5]  = z;
+    p[6] = maxX; p[7]  = minY; p[8]  = z;
+    p[9] = maxX; p[10] = maxY; p[11] = z;
 }
 
 static void generate_tex_coords(GLfloat* p, int clip_x, int clip_y, int clip_w, int clip_h, int all_w, int all_h)
@@ -135,13 +137,6 @@ static void real_draw()
     glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
     glVertexAttribPointer(g->tex_render.texCoord_loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
-    glUniform1i(g->tex_render.sample_loc, 0);
-
     glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_SHORT, indices);
 
     verCoords_count = 0;
@@ -151,6 +146,9 @@ static void real_draw()
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
+    if (verCoords_count == Vertex_Max_Count * 6)
+        real_draw();
+
     setup_model(img, offx, offy, clip_x, clip_y, clip_w, clip_h);
 
     if (g->tex_render.img_file != img->file)
@@ -163,9 +161,16 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
         g->tex_render.texture_id = CreateTexture2D(img);
         g->tex_render.img_file = img->file;
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
+        glUniform1i(g->tex_render.sample_loc, 0);
+
         ks_log("create texture");
     }
-
 }
 
 static void clear_screen()
@@ -174,10 +179,11 @@ static void clear_screen()
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-static void graphics_translate(int x, int y)
+static void graphics_translate(int x, int y, int z)
 {
     g->pos.x += x;
     g->pos.y += y;
+    g->pos.z += z;
 }
 
 static void graphics_push()

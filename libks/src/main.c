@@ -30,16 +30,14 @@ static int msgs(ks_node_t* me, ks_event_t* e)
     if (e->type == ks.types.KEY_DOWN)
     {
         if (e->key.code == ks.keys.Up)
-            ks_log("arrow up");
+            me->y += 20;
         else if (e->key.code == ks.keys.Down)
-            ks_log("arrow down");
+            me->y -= 20;
         else if (e->key.code == ks.keys.Left)
-            ks_log("arrow left");
+            me->x -= 20;
         else if (e->key.code == ks.keys.Right)
-            ks_log("arrow right");
+            me->x += 20;
     }
-
-    ks_unused(me);
 
     return 0;
 }
@@ -58,9 +56,9 @@ static ks_scene_t* create_scene()
     me       = ks_scene_new(sizeof(*me));
     me->msgs = msgs;
 
-    actor0 = ks_actor_new(buf, sizeof(*actor0), (ks_node_t*)me);
-    actor1 = ks_actor_new(buf, sizeof(*actor1), (ks_node_t*)me);
-    actor2 = ks_actor_new(buf, sizeof(*actor2), (ks_node_t*)me);
+    actor0 = ks_actor_new(buf, (ks_node_t*)me);
+    actor1 = ks_actor_new(buf, (ks_node_t*)me);
+    actor2 = ks_actor_new(buf, (ks_node_t*)me);
 
     actor0->x = 0;
     actor1->x = 400;

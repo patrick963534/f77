@@ -22,9 +22,9 @@ KS_API void ks_graphics_flush()
     ks_graphics_instance()->klass->flush();
 }
 
-KS_API void ks_graphics_translate(int x, int y)
+KS_API void ks_graphics_translate(int x, int y, int z)
 {
-    ks_graphics_instance()->klass->translate(x, y);
+    ks_graphics_instance()->klass->translate(x, y, z);
 }
 
 KS_API void ks_graphics_pop()

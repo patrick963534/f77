@@ -14,7 +14,7 @@ typedef struct ks_actor_t
     ks_extends_actor();
 } ks_actor_t;
 
-KS_API ks_actor_t*  ks_actor_new(const char* conf, int sz, ks_node_t* parent);
+KS_API ks_actor_t*  ks_actor_new(const char* conf, ks_node_t* parent);
 KS_API void         ks_actor_destruct(ks_actor_t* me);
 
 #endif
