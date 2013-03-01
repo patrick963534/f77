@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "environment.c.h"
-#include "node.c.h"
+#include "scene.c.h"
 
 static ks_director_t* director;
 
@@ -39,23 +39,10 @@ static void director_event(ks_event_t* e)
         director->end = 1;
 }
 
-static void node_step(ks_node_t* me, int delta)
-{
-    ks_node_t *pos, *n;
-
-    ks_node_for_each(pos, n, me, ks_node_t)
-    {
-        if (ks_node_has_child(pos))
-            node_step(pos, delta);
-
-        if (pos->step)
-            pos->step(pos, delta);
-    }
-}
 
 static void director_update(int delta)
 {
-    node_step((ks_node_t*)director->scene, delta);
+    so_scene_step(director->scene, delta);
 }
 
 static int calc_delta()
@@ -73,30 +60,12 @@ static int calc_delta()
     return delta;
 }
 
-static void node_draw(ks_node_t* me)
-{
-    ks_node_t *pos, *n;
-
-    ks_graphics_push();
-    ks_graphics_translate(me->x, me->y);
-
-    ks_node_for_each(pos, n, me, ks_node_t)
-    {
-        node_draw(pos);
-    }
-
-    if (me->draw)
-        me->draw(me);
-
-    ks_graphics_pop();
-}
-
 static void director_draw()
 {
     ks_graphics_load_identity();
     ks_graphics_clear_screen();
 
-    node_draw((ks_node_t*)director->scene);
+    so_scene_draw(director->scene);
 
     ks_system_flush();
 }
@@ -142,7 +111,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
         director_draw();
 
         calculate_fps(delta);
-        ks_time_sleep(1);
+        //ks_time_sleep(1);
     }
 
     ks_object_delete(director);
