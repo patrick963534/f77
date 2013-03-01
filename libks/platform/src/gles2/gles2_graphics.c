@@ -42,10 +42,16 @@ typedef struct graphics_t
     int top;
 } graphics_t;
 
+#define Vertex_Max_Count    2048
+
 static graphics_t* g = 0;
-static GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
-static GLfloat vecCoords[12];
-static GLfloat texCoords[8];
+static GLushort indices[Vertex_Max_Count * 6];
+static GLfloat vecCoords[Vertex_Max_Count * 12];
+static GLfloat texCoords[Vertex_Max_Count * 8];
+
+static int verCoords_count = 0;
+static int texCoords_count = 0;
+static int indices_count = 0;
 
 static GLuint CreateTexture2D(ks_image_t* img)
 {
@@ -62,7 +68,7 @@ static GLuint CreateTexture2D(ks_image_t* img)
     return textureId;
 }
 
-static void generate_vec_coords(int offx, int offy, int clip_w, int clip_h)
+static void generate_vec_coords(GLfloat* p, int offx, int offy, int clip_w, int clip_h)
 {
     int x = g->pos.x + offx;
     int y = g->pos.y + offy;
@@ -75,45 +81,31 @@ static void generate_vec_coords(int offx, int offy, int clip_w, int clip_h)
     float maxX = minX + clip_w * factor / (float)all_w;
     float maxY = minY + clip_h * factor / (float)all_h;
 
-    vecCoords[0] = minX;
-    vecCoords[1] = maxY;
-    vecCoords[2] = 0;
-
-    vecCoords[3] = minX;
-    vecCoords[4] = minY;
-    vecCoords[5] = 0;
-
-    vecCoords[6] = maxX;
-    vecCoords[7] = minY;
-    vecCoords[8] = 0;
-
-    vecCoords[9]  = maxX;
-    vecCoords[10] = maxY;
-    vecCoords[11] = 0;
+    p[0] = minX; p[1]  = maxY; p[2]  = 0;
+    p[3] = minX; p[4]  = minY; p[5]  = 0;
+    p[6] = maxX; p[7]  = minY; p[8]  = 0;
+    p[9] = maxX; p[10] = maxY; p[11] = 0;
 }
 
-static void generate_tex_coords(int clip_x, int clip_y, int clip_w, int clip_h, int all_w, int all_h)
+static void generate_tex_coords(GLfloat* p, int clip_x, int clip_y, int clip_w, int clip_h, int all_w, int all_h)
 {
     float minX = (clip_x) / (float)all_w;
     float minY = (clip_y) / (float)all_h;
     float maxX = (clip_x + clip_w) / (float)all_w;
     float maxY = (clip_y + clip_h) / (float)all_h;
 
-    texCoords[0] = minX;
-    texCoords[1] = minY;
-
-    texCoords[2] = minX;
-    texCoords[3] = maxY;
-
-    texCoords[4] = maxX;
-    texCoords[5] = maxY;
-
-    texCoords[6] = maxX;
-    texCoords[7] = minY;
+    p[0] = minX; p[1] = minY;
+    p[2] = minX; p[3] = maxY;
+    p[4] = maxX; p[5] = maxY;
+    p[6] = maxX; p[7] = minY;
 }
 
 static void setup_model(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
+    static GLushort base_indices[] = {0, 1, 2, 0, 2, 3};
+    GLushort base = (GLushort)(indices_count * 4 / 6);
+    int i = 0;
+
     clip_x = ks_max(0, clip_x);
     clip_y = ks_max(0, clip_y);
     clip_x = ks_min(img->width,  clip_x);
@@ -122,8 +114,39 @@ static void setup_model(ks_image_t* img, int offx, int offy, int clip_x, int cli
     clip_w = ks_min(img->width  - clip_x, clip_w);
     clip_h = ks_min(img->height - clip_y, clip_h);
 
-    generate_vec_coords(offx, offy, clip_w, clip_h);
-    generate_tex_coords(clip_x, clip_y, clip_w, clip_h, img->width, img->height);
+    generate_vec_coords(&vecCoords[verCoords_count], offx, offy, clip_w, clip_h);
+    generate_tex_coords(&texCoords[texCoords_count], clip_x, clip_y, clip_w, clip_h, img->width, img->height);
+
+    for (i = 0; i < 6; i++)
+    {
+        indices[indices_count + i] = base_indices[i] + base;
+    }
+
+    verCoords_count += 12;
+    texCoords_count += 8;
+    indices_count += 6;
+}
+
+static void real_draw()
+{
+    if (indices_count == 0)
+        return;
+
+    glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
+    glVertexAttribPointer(g->tex_render.texCoord_loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
+    glUniform1i(g->tex_render.sample_loc, 0);
+
+    glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_SHORT, indices);
+
+    verCoords_count = 0;
+    texCoords_count = 0;
+    indices_count = 0;
 }
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
@@ -133,21 +156,16 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
     if (g->tex_render.img_file != img->file)
     {
         if (g->tex_render.texture_id != 0)
+        {
+            real_draw();
             glDeleteTextures(1, &g->tex_render.texture_id);
+        }
 
         g->tex_render.texture_id = CreateTexture2D(img);
         g->tex_render.img_file = img->file;
         ks_log("create texture");
     }
 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, g->tex_render.texture_id);
-    glUniform1i(g->tex_render.sample_loc, 0);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }
 
 static void clear_screen()
@@ -184,6 +202,12 @@ static void graphics_load_identity()
     g->pos.y = 0;
 }
 
+static void graphics_flush()
+{
+    real_draw();
+    ks_system_flush();
+}
+
 static void destruct(graphics_t* me)
 {
     ks_unused(me);
@@ -201,7 +225,7 @@ static ks_sys_graphics_interface_t interfaces = {
     graphics_pop,
     graphics_push,
     graphics_load_identity,
-    ks_system_flush,
+    graphics_flush,
 };
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
@@ -228,9 +252,6 @@ KS_API void ks_graphics_init(ks_object_t* container)
     g->tex_render.sample_loc = glGetUniformLocation(g->tex_render.program, "s_texture");
     g->tex_render.mvp_loc = glGetUniformLocation(g->tex_render.program, "m_mvp");
     glUseProgram(g->tex_render.program);
-
-    glVertexAttribPointer(g->tex_render.position_loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), vecCoords);
-    glVertexAttribPointer(g->tex_render.texCoord_loc, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), texCoords);
 
     glEnableVertexAttribArray(g->tex_render.position_loc);
     glEnableVertexAttribArray(g->tex_render.texCoord_loc);

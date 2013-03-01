@@ -67,7 +67,7 @@ static void director_draw()
 
     so_scene_draw(director->scene);
 
-    ks_system_flush();
+    ks_graphics_flush();
 }
 
 static void destruct(ks_director_t* me)
