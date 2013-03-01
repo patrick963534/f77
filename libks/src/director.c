@@ -32,16 +32,30 @@ static void calculate_fps(int delta)
 
 static void director_event(ks_event_t* e)
 {
-    if (so_node_msgs((ks_node_t*)director->scene, e))
+    if (director->scene->msgs && director->scene->msgs((ks_node_t*)director->scene, e))
         return;
 
     if (e->type == ks.types.KEY_DOWN && e->key.code == ks.keys.Escape)
         director->end = 1;
 }
 
+static void node_step(ks_node_t* me, int delta)
+{
+    ks_node_t *pos, *n;
+
+    ks_node_for_each(pos, n, me, ks_node_t)
+    {
+        if (ks_node_has_child(pos))
+            node_step(pos, delta);
+
+        if (pos->step)
+            pos->step(pos, delta);
+    }
+}
+
 static void director_update(int delta)
 {
-    so_node_step((ks_node_t*)director->scene, delta);
+    node_step((ks_node_t*)director->scene, delta);
 }
 
 static int calc_delta()
@@ -59,12 +73,30 @@ static int calc_delta()
     return delta;
 }
 
+static void node_draw(ks_node_t* me)
+{
+    ks_node_t *pos, *n;
+
+    ks_graphics_push();
+    ks_graphics_translate(me->x, me->y);
+
+    ks_node_for_each(pos, n, me, ks_node_t)
+    {
+        node_draw(pos);
+    }
+
+    if (me->draw)
+        me->draw(me);
+
+    ks_graphics_pop();
+}
+
 static void director_draw()
 {
     ks_graphics_load_identity();
     ks_graphics_clear_screen();
 
-    so_node_draw((ks_node_t*)director->scene);
+    node_draw((ks_node_t*)director->scene);
 
     ks_system_flush();
 }

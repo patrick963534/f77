@@ -4,8 +4,6 @@
 #include <ks/node.h>
 #include <ks/event.h>
 
-void so_node_draw(ks_node_t* me);
-void so_node_step(ks_node_t* me, int delta);
-int  so_node_msgs(ks_node_t* me, ks_event_t* e);
+
 
 #endif

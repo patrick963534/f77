@@ -55,7 +55,9 @@ static ks_scene_t* create_scene()
 
     ks_helper_path_join_relative_app(buf, sizeof(buf), "img.png");
 
-    me = ks_scene_new(sizeof(*me));
+    me       = ks_scene_new(sizeof(*me));
+    me->msgs = msgs;
+
     actor0 = ks_actor_new(buf, sizeof(*actor0), (ks_node_t*)me);
     actor1 = ks_actor_new(buf, sizeof(*actor1), (ks_node_t*)me);
     actor2 = ks_actor_new(buf, sizeof(*actor2), (ks_node_t*)me);
@@ -65,7 +67,6 @@ static ks_scene_t* create_scene()
     actor2->x = 800;
 
     actor0->step = step;
-    actor0->msgs = msgs;
 
     return me;
 }
