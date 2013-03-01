@@ -134,6 +134,8 @@ KS_API void ks_node_delete_children(ks_node_t* me)
 KS_API void ks_node_add(ks_node_t* me, ks_node_t* child)
 {
     ks_list_add_tail(&me->node_children, &child->node_sibling);
+    ks_object_remove((ks_object_t*)child);
+
     child->parent = me;
 }
 
