@@ -5,8 +5,6 @@
 #include <ks/director.h>
 #include <ks/log.h>
 
-#include <GLES2/gl2.h>
-#include <EGL/egl.h>
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,11 +12,8 @@
 typedef struct system_t
 {
     ks_extends_system();
-    
-    EGLNativeWindowType     hwnd;
-    EGLDisplay              display;
-    EGLContext              context;
-    EGLSurface              surface;
+
+    HWND    hwnd;
 
 } system_t;
 
@@ -26,12 +21,10 @@ static system_t* sys = 0;
 
 static void destruct(system_t* me)
 {
-    ks_unused(me);
-
     ks_object_destruct((ks_object_t*)me);
 }
 
-LRESULT WINAPI ESWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     LRESULT  lRet = 1; 
     ks_event_t e;
@@ -68,7 +61,7 @@ LRESULT WINAPI ESWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return lRet; 
 }
 
-static int init_window()
+static int create_window()
 {
     WNDCLASS wndclass = {0}; 
     DWORD    wStyle   = 0;
@@ -76,10 +69,10 @@ static int init_window()
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
     wndclass.style         = CS_OWNDC;
-    wndclass.lpfnWndProc   = (WNDPROC)ESWindowProc; 
+    wndclass.lpfnWndProc   = (WNDPROC)WindowProc; 
     wndclass.hInstance     = hInstance; 
     wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH); 
-    wndclass.lpszClassName = "opengles2.0"; 
+    wndclass.lpszClassName = "spark"; 
 
     if (!RegisterClass (&wndclass) ) 
         return FALSE; 
@@ -95,100 +88,16 @@ static int init_window()
 
     AdjustWindowRect ( &windowRect, wStyle, FALSE );
 
-    sys->hwnd = CreateWindow(
-        "opengles2.0",
-        ks_director_instance()->title,
-        wStyle,
-        0,
-        0,
+    sys->hwnd = CreateWindow( "spark", ks_director_instance()->title,
+        wStyle, 0, 0,
         windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top,
-        NULL,
-        NULL,
-        hInstance,
-        NULL);
+        NULL, NULL, hInstance, NULL);
 
-    // Set the ESContext* to the GWL_USERDATA so that it is available to the 
-    // ESWindowProc
-    //SetWindowLongPtr (sys->hwnd, GWL_USERDATA, (LONG) (LONG_PTR)sys);
-
-    if ( sys->hwnd == NULL )
-        return GL_FALSE;
+    if (sys->hwnd == NULL)
+        return FALSE;
 
     ShowWindow(sys->hwnd, TRUE);
-
-    return 1;
-}
-
-static int init_egl()
-{
-    EGLint numConfigs;
-    EGLint majorVersion;
-    EGLint minorVersion;
-    EGLDisplay display;
-    EGLContext context;
-    EGLSurface surface;
-    EGLConfig config;
-    EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
-
-    EGLint attribList[] = {
-        EGL_RED_SIZE,       5,
-        EGL_GREEN_SIZE,     6,
-        EGL_BLUE_SIZE,      5,
-        EGL_DEPTH_SIZE,     8,
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_NONE
-    };
-
-    display = eglGetDisplay(GetDC(sys->hwnd));
-    if (display == EGL_NO_DISPLAY)
-        goto fail;
-
-    if (!eglInitialize(display, &majorVersion, &minorVersion))
-        goto fail;
-
-    if (!eglGetConfigs(display, NULL, 0, &numConfigs))
-        goto fail;
- 
-    if (!eglChooseConfig(display, attribList, &config, 1, &numConfigs))
-        goto fail;
-
-    if (numConfigs <= 0)
-        goto fail;
- 
-    surface = eglCreateWindowSurface(display, config, sys->hwnd, NULL);
-    if (surface == EGL_NO_SURFACE)
-        goto fail;
- 
-    context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
-    if (context == EGL_NO_CONTEXT)
-        goto fail;
-    
-    if (!eglMakeCurrent(display, surface, surface, context))
-        goto fail;
-    
-    sys->display = display;
-    sys->surface = surface;
-    sys->context = context;
-
-    ks_log("display: %d", sys->display);
-    ks_log("surface: %d", sys->surface);
-    ks_log("context: %d", sys->context);
-
-    return 1;
-
-fail:
-    ks_log("%s", "init egl failed...");
-    return 0;
-}
-
-static int create_window()
-{
-    if (!init_window())
-        return 0;
-
-    if (!init_egl())
-        return 0;
 
     return 1;
 }
@@ -206,7 +115,7 @@ static void update_messages()
 
 static void flush()
 {
-    eglSwapBuffers(sys->display, sys->surface);
+    
 }
 
 static ks_sys_system_interface_t interfaces = {
