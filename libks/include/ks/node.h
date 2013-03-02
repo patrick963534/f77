@@ -29,7 +29,9 @@ KS_API void         ks_node_destruct(ks_node_t* me);
 KS_API void         ks_node_delete_children(ks_node_t* me);
 KS_API void         ks_node_add(ks_node_t* me, ks_node_t* child);
 KS_API void         ks_node_remove(ks_node_t* me);
+KS_API void         ks_node_sort_by_z(ks_node_t* me);
 KS_API int          ks_node_has_child(ks_node_t* me);
+KS_API int          ks_node_child_count(ks_node_t* me);
 
 #define ks_node_for_each(pos, n, node, type)                                  \
     for (pos = ks_list_entry(node->node_children.next, type, node_sibling),   \
