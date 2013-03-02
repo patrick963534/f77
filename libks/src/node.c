@@ -3,6 +3,47 @@
 #include <ks/log.h>
 #include <stdlib.h>
 
+static int node_comparer(const void* v1, const void* v2)
+{
+    ks_node_t* n1 = *((ks_node_t**)v1);
+    ks_node_t* n2 = *((ks_node_t**)v2);
+
+    return -(n1->z - n2->z);
+}
+
+static void sort_children_recursive(ks_node_t* node)
+{
+    ks_node_t **children;
+    ks_node_t *pos, *n;
+    int i = 0;
+    int sz = ks_node_child_count(node);
+
+    if (sz == 0)
+        return;
+
+    children = (ks_node_t**)malloc(sizeof(children[0]) * sz);
+    ks_node_for_each(pos, n, node, ks_node_t)
+    {
+        sort_children_recursive(pos);
+        ks_node_remove(pos);
+        children[i++] = pos;
+    }
+
+    qsort(children, sz, sizeof(children[0]), node_comparer);
+
+    for (i = 0; i < sz; i++)
+    {
+        ks_node_add(node, children[i]);
+    }
+
+    free(children);
+}
+
+KS_API void ks_node_sort_by_z(ks_node_t* me)
+{
+    sort_children_recursive(me);
+}
+
 KS_API void ks_node_destruct(ks_node_t* me)
 {
     ks_node_delete_children(me);
@@ -54,4 +95,17 @@ KS_API void ks_node_remove(ks_node_t* me)
 KS_API int ks_node_has_child(ks_node_t* me)
 {
     return !ks_list_empty(&me->node_children);
+}
+
+KS_API int ks_node_child_count(ks_node_t* me)
+{
+    ks_node_t *pos, *n;
+    int sz = 0;
+
+    ks_node_for_each(pos, n, me, ks_node_t)
+    {
+        sz++;
+    }
+    
+    return sz;
 }

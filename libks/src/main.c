@@ -66,6 +66,8 @@ static ks_scene_t* create_scene()
 
     actor0->step = step;
 
+    ks_node_sort_by_z((ks_node_t*)me);
+
     return me;
 }
 
