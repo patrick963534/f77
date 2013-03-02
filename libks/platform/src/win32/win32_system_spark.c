@@ -8,12 +8,19 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ks/helper.h"
 
 typedef struct system_t
 {
     ks_extends_system();
 
     HWND    hwnd;
+    HDC     hdc;
+
+    HBITMAP himg;
+    HDC     hdc_img;
+
+    ks_image_t* img;
 
 } system_t;
 
@@ -61,6 +68,29 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return lRet; 
 }
 
+static void create_bitmap()
+{
+    BITMAPINFOHEADER bmih;
+    int w = ks_director_instance()->width;
+    int h = ks_director_instance()->height;
+    HBITMAP hBmp;
+
+    memset(&bmih, 0, sizeof(BITMAPINFOHEADER));
+    bmih.biSize = sizeof(BITMAPINFOHEADER);
+    bmih.biWidth= w;
+    bmih.biHeight= -h;
+    bmih.biSizeImage= w * -h;
+    bmih.biCompression = BI_RGB;
+    bmih.biBitCount = 32;
+    bmih.biPlanes = 1;
+
+    hBmp = CreateDIBSection(sys->hdc, (BITMAPINFO*) &bmih, DIB_RGB_COLORS, (void**)&sys->ptr, NULL, 0);  
+    
+    sys->himg = hBmp;
+    sys->hdc_img = CreateCompatibleDC(sys->hdc);
+    SelectObject(sys->hdc_img, sys->himg);
+}
+
 static int create_window()
 {
     WNDCLASS wndclass = {0}; 
@@ -68,7 +98,7 @@ static int create_window()
     RECT     windowRect;
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
-    wndclass.style         = CS_OWNDC;
+    //wndclass.style         = CS_OWNDC;
     wndclass.lpfnWndProc   = (WNDPROC)WindowProc; 
     wndclass.hInstance     = hInstance; 
     wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH); 
@@ -99,6 +129,9 @@ static int create_window()
 
     ShowWindow(sys->hwnd, TRUE);
 
+    sys->hdc = GetWindowDC(sys->hwnd);
+    create_bitmap();
+
     return 1;
 }
 
@@ -115,7 +148,7 @@ static void update_messages()
 
 static void flush()
 {
-    
+    BitBlt(sys->hdc, 0, 30, ks_director_instance()->width, ks_director_instance()->height, sys->hdc_img, 0, 0, SRCCOPY);
 }
 
 static ks_sys_system_interface_t interfaces = {

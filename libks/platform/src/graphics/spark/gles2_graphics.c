@@ -5,6 +5,7 @@
 #include <ks/image.h>
 #include <ks/system.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define Pos_Stack_Size  256
 
@@ -29,6 +30,20 @@ static graphics_t* g = 0;
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
+    char* pBits = (char*)ks_system_instance()->ptr;
+    char* src = img->pixels;
+    int mainW = ks_director_instance()->width;
+    int w = img->width;
+    int h = img->height;
+    int align = (4 - w * 3 / 4) % 4;
+    int strip = mainW * 4 + align;
+    int i;
+
+    for (i = 0; i < h; ++i) 
+    {
+        memcpy(&pBits[i * strip], &src[i * w * 4], w * 4);
+    }
+
     ks_unused(img);
     ks_unused(offx);
     ks_unused(offy);
@@ -36,8 +51,6 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
     ks_unused(clip_y);
     ks_unused(clip_w);
     ks_unused(clip_h);
-
-    ks_log(__FUNCTION__);
 }
 
 static void clear_screen()

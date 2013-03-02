@@ -73,7 +73,7 @@ static ks_scene_t* create_scene()
 
 int main(int argc, char** argv)
 {
-    ks_director_init("Hello World", 320, 240, argc, argv);
+    ks_director_init("Hello World", 320, 320, argc, argv);
 
     ks_utest_start();
 
