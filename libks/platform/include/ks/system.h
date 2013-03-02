@@ -13,7 +13,6 @@ typedef struct ks_sys_system_interface_t
 
 #define ks_extends_system() \
     ks_extends_object();    \
-    void*   ptr;            \
     const ks_sys_system_interface_t* klass
 
 typedef struct ks_system_t

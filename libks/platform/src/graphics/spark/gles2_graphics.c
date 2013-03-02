@@ -24,8 +24,6 @@ typedef struct graphics_t
     draw_pos_t  pos_stack[Pos_Stack_Size];
     int top;
 
-    char*   buffer;
-
 } graphics_t;
 
 static graphics_t* g = 0;
@@ -88,7 +86,7 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
     if (!bounding(&x, &y, &clip_x, &clip_y, &clip_w, &clip_h))
         return;
 
-    for (i = 0; i < clip_h; ++i) 
+    for (i = 0; i < clip_h; ++i)
     {
         memcpy(&dst[(i + y) * dst_strip + x * 4], &src[(i + clip_y) * src_strip + clip_x * 4], clip_w * 4);
 //         int j;
@@ -141,20 +139,6 @@ static void graphics_load_identity()
 
 static void graphics_flush()
 {
-    int w = ks_director_instance()->width;
-    int h = ks_director_instance()->height;
-
-    char* pBits = (char*)ks_system_instance()->ptr;
-    char* src = g->buffer;
-
-    int strip = w * 4 + (4 - w * 3 / 4) % 4;
-    int i;
-
-    for (i = 0; i < h; ++i) 
-    {
-        memcpy(&pBits[i * strip], &src[i * w * 4], w * 4);
-    }
-
     ks_system_flush();
 }
 

@@ -1,6 +1,6 @@
 if not _PREMAKE_VERSION then
-   os.execute('premake4 --file=premake4_linux_spark.lua clean')
-   os.execute('premake4 --file=premake4_linux_spark.lua gmake')
+   os.execute('premake4 --file=premake4_codeblocks_spark.lua clean')
+   os.execute('premake4 --file=premake4_codeblocks_spark.lua codeblocks')
    return
 end
 

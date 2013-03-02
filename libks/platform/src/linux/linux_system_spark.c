@@ -4,8 +4,6 @@
 #include <ks/director.h>
 #include <ks/constants.h>
 #include <ks/event.h>
-#include <GLES2/gl2.h>
-#include <EGL/egl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ks/log.h>
@@ -19,12 +17,7 @@ typedef struct system_t
 {
     ks_extends_system();
 
-    EGLNativeWindowType     hwnd;
-    EGLDisplay              display;
-    EGLContext              context;
-    EGLSurface              surface;
-
-    Display*                x_display;
+    Display*   x_display;
 
 } system_t;
 
@@ -39,7 +32,7 @@ static void destruct(system_t* me)
     ks_object_destruct((ks_object_t*)me);
 }
 
-static int init_window()
+static int create_window()
 {
     Window                  root;
     XSetWindowAttributes    swa;
@@ -91,76 +84,7 @@ static int init_window()
     XSendEvent(x_display, DefaultRootWindow(x_display),
                0, SubstructureNotifyMask, &xev);
 
-    sys->hwnd = (EGLNativeWindowType)win;
-
-    return 1;
-}
-
-static int init_egl()
-{
-    EGLint numConfigs;
-    EGLint majorVersion;
-    EGLint minorVersion;
-    EGLDisplay display;
-    EGLContext context;
-    EGLSurface surface;
-    EGLConfig config;
-    EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
-    EGLint attribList[] =
-    {
-        EGL_RED_SIZE,       5,
-        EGL_GREEN_SIZE,     6,
-        EGL_BLUE_SIZE,      5,
-        EGL_DEPTH_SIZE,     8,
-        EGL_NONE
-    };
-
-    display = eglGetDisplay((EGLNativeDisplayType)sys->x_display);
-    if (display == EGL_NO_DISPLAY)
-        goto fail;
-
-    if (!eglInitialize(display, &majorVersion, &minorVersion))
-        goto fail;
-
-    if (!eglGetConfigs(display, NULL, 0, &numConfigs))
-        goto fail;
-
-    if (!eglChooseConfig(display, attribList, &config, 1, &numConfigs))
-        goto fail;
-
-    surface = eglCreateWindowSurface(display, config, sys->hwnd, NULL);
-    if (surface == EGL_NO_SURFACE)
-        goto fail;
-
-    context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
-    if (context == EGL_NO_CONTEXT)
-        goto fail;
-
-    if (!eglMakeCurrent(display, surface, surface, context))
-        goto fail;
-
-    sys->display = display;
-    sys->surface = surface;
-    sys->context = context;
-
-    ks_log("display: %d", sys->display);
-    ks_log("surface: %d", sys->surface);
-    ks_log("context: %d", sys->context);
-
-    return 1;
-
-fail:
-    ks_log("%s", "init egl failed...");
-    return 0;
-}
-
-static int create_window()
-{
-    if (!init_window())
-        return 0;
-
-    if (!init_egl())
-        return 0;
+    //sys->hwnd = (EGLNativeWindowType)win;
 
     return 1;
 }
@@ -205,7 +129,7 @@ static void update_messages()
 
 static void flush()
 {
-    eglSwapBuffers(sys->display, sys->surface);
+
 }
 
 static ks_sys_system_interface_t interfaces = {

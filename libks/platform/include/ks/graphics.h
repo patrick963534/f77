@@ -20,6 +20,7 @@ typedef struct ks_sys_graphics_interface_t
 
 #define ks_extends_graphics() \
     ks_extends_object();    \
+    char*   buffer;         \
     ks_sys_graphics_interface_t* klass
 
 typedef struct ks_graphics_t

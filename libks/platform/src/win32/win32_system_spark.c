@@ -21,6 +21,7 @@ typedef struct system_t
     HDC     hdc_img;
 
     ks_image_t* img;
+    char*       ptr;
 
 } system_t;
 
@@ -31,16 +32,16 @@ static void destruct(system_t* me)
     ks_object_destruct((ks_object_t*)me);
 }
 
-LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    LRESULT  lRet = 1; 
+    LRESULT  lRet = 1;
     ks_event_t e;
 
-    switch (uMsg) 
-    { 
+    switch (uMsg)
+    {
         case WM_DESTROY:
-            PostQuitMessage(0);             
-            break; 
+            PostQuitMessage(0);
+            break;
 
         case WM_KEYDOWN:
             e.type = ks.types.KEY_DOWN;
@@ -60,12 +61,12 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ks_eventq_endqueue(&e);
             break;
 
-        default: 
-            lRet = DefWindowProc (hWnd, uMsg, wParam, lParam); 
-            break; 
-    } 
+        default:
+            lRet = DefWindowProc (hWnd, uMsg, wParam, lParam);
+            break;
+    }
 
-    return lRet; 
+    return lRet;
 }
 
 static void create_bitmap()
@@ -84,8 +85,8 @@ static void create_bitmap()
     bmih.biBitCount = 32;
     bmih.biPlanes = 1;
 
-    hBmp = CreateDIBSection(sys->hdc, (BITMAPINFO*) &bmih, DIB_RGB_COLORS, (void**)&sys->ptr, NULL, 0);  
-    
+    hBmp = CreateDIBSection(sys->hdc, (BITMAPINFO*) &bmih, DIB_RGB_COLORS, (void**)&sys->ptr, NULL, 0);
+
     sys->himg = hBmp;
     sys->hdc_img = CreateCompatibleDC(sys->hdc);
     SelectObject(sys->hdc_img, sys->himg);
@@ -93,19 +94,19 @@ static void create_bitmap()
 
 static int create_window()
 {
-    WNDCLASS wndclass = {0}; 
+    WNDCLASS wndclass = {0};
     DWORD    wStyle   = 0;
     RECT     windowRect;
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
     //wndclass.style         = CS_OWNDC;
-    wndclass.lpfnWndProc   = (WNDPROC)WindowProc; 
-    wndclass.hInstance     = hInstance; 
-    wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH); 
-    wndclass.lpszClassName = "spark"; 
+    wndclass.lpfnWndProc   = (WNDPROC)WindowProc;
+    wndclass.hInstance     = hInstance;
+    wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+    wndclass.lpszClassName = "spark";
 
-    if (!RegisterClass (&wndclass) ) 
-        return FALSE; 
+    if (!RegisterClass (&wndclass) )
+        return FALSE;
 
     wStyle = WS_VISIBLE | WS_POPUP | WS_BORDER | WS_SYSMENU | WS_CAPTION;
 
@@ -139,7 +140,7 @@ static void update_messages()
 {
     MSG sMessage;
 
-    if(PeekMessage(&sMessage, NULL, 0, 0, PM_REMOVE)) 
+    if(PeekMessage(&sMessage, NULL, 0, 0, PM_REMOVE))
     {
         TranslateMessage(&sMessage);
         DispatchMessage(&sMessage);
@@ -148,6 +149,20 @@ static void update_messages()
 
 static void flush()
 {
+    int w = ks_director_instance()->width;
+    int h = ks_director_instance()->height;
+
+    char* dst = sys->ptr;
+    char* src = (char*)ks_graphics_instance()->buffer;
+
+    int strip = w * 4 + (4 - w * 3 / 4) % 4;
+    int i;
+
+    for (i = 0; i < h; ++i)
+    {
+        memcpy(&dst[i * strip], &src[i * w * 4], w * 4);
+    }
+
     BitBlt(sys->hdc, 0, 30, ks_director_instance()->width, ks_director_instance()->height, sys->hdc_img, 0, 0, SRCCOPY);
 }
 
