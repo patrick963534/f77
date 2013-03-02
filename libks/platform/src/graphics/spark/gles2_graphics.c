@@ -24,25 +24,15 @@ typedef struct graphics_t
     draw_pos_t  pos_stack[Pos_Stack_Size];
     int top;
 
+    char*   buffer;
+
 } graphics_t;
 
 static graphics_t* g = 0;
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
-    char* pBits = (char*)ks_system_instance()->ptr;
-    char* src = img->pixels;
-    int mainW = ks_director_instance()->width;
-    int w = img->width;
-    int h = img->height;
-    int align = (4 - w * 3 / 4) % 4;
-    int strip = mainW * 4 + align;
-    int i;
-
-    for (i = 0; i < h; ++i) 
-    {
-        memcpy(&pBits[i * strip], &src[i * w * 4], w * 4);
-    }
+    
 
     ks_unused(img);
     ks_unused(offx);
@@ -90,6 +80,20 @@ static void graphics_load_identity()
 
 static void graphics_flush()
 {
+    int w = ks_director_instance()->width;
+    int h = ks_director_instance()->height;
+
+    char* pBits = (char*)ks_system_instance()->ptr;
+    char* src = g->buffer;
+
+    int strip = w * 4 + (4 - w * 3 / 4) % 4;
+    int i;
+
+    for (i = 0; i < h; ++i) 
+    {
+        memcpy(&pBits[i * strip], &src[i * w * 4], w * 4);
+    }
+
     ks_system_flush();
 }
 
@@ -118,11 +122,14 @@ ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
 
 KS_API void ks_graphics_init(ks_object_t* container)
 {
+    ks_director_t* d = ks_director_instance();
+
     g = (graphics_t*)ks_object_new(sizeof(*g));
     g->destruct = (ks_destruct_f)destruct;
     g->klass    = ks_sys_graphics_interface_instance();
     g->tname    = "gles2_graphics";
     g->top      = -1;
+    g->buffer   = calloc(1, d->width * d->height * 4);
 
     if (container)
         ks_object_add(container, (ks_object_t*)g);
