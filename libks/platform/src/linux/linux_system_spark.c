@@ -17,7 +17,13 @@ typedef struct system_t
 {
     ks_extends_system();
 
-    Display*   x_display;
+    Display*    x_display;
+    Window      win;
+
+    GC          gc;
+    XImage*     img;
+    Pixmap      pixmap;
+    char*       img_data;
 
 } system_t;
 
@@ -49,9 +55,6 @@ static int create_window()
 
     root = DefaultRootWindow(x_display);
 
-    //swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask;
-    //swa.event_mask = KeyPressMask | ExposureMask | EnterWindowMask | LeaveWindowMask | PointerMotionMask | VisibilityChangeMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask;
-
     swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask | KeyReleaseMask;
 
     win = XCreateWindow(x_display, root, 0, 0,
@@ -81,10 +84,9 @@ static int create_window()
     xev.xclient.format       = 32;
     xev.xclient.data.l[0]    = 1;
     xev.xclient.data.l[1]    = 0;
-    XSendEvent(x_display, DefaultRootWindow(x_display),
-               0, SubstructureNotifyMask, &xev);
+    XSendEvent(x_display, DefaultRootWindow(x_display), 0, SubstructureNotifyMask, &xev);
 
-    //sys->hwnd = (EGLNativeWindowType)win;
+    sys->win = win;
 
     return 1;
 }
@@ -129,7 +131,55 @@ static void update_messages()
 
 static void flush()
 {
+    int w = ks_director_instance()->width;
+    int h = ks_director_instance()->height;
 
+    XClearWindow(sys->x_display, sys->win);
+    //XPutImage(sys->x_display, sys->pixmap, sys->gc, sys->img, 0, 0, 0, 0, 5, 5);
+    XPutImage(sys->x_display, sys->pixmap, sys->gc, sys->img, 0, 0, 0, 0, 5, 5);
+    XCopyArea(sys->x_display, sys->win, sys->pixmap, sys->gc, 0, 0, w, h, 0, 0);
+
+    XFlush(sys->x_display);
+    XSync(sys->x_display, 0);
+}
+
+static void init_buffer_image()
+{
+    int w = ks_director_instance()->width;
+    int h = ks_director_instance()->height;
+    int screen = DefaultScreen(sys->x_display);
+    Visual* visual = XDefaultVisual(sys->x_display, screen);
+    XGCValues gcvalue;
+
+    sys->gc = XCreateGC(sys->x_display, sys->win, 0, &gcvalue);
+
+    {
+        XColor color1, color2;
+        Colormap colormap = DefaultColormap(sys->x_display, DefaultScreen(sys->x_display));
+
+        color1.red = color1.blue = 0xffff;
+        color1.green = 0;
+        color2.red = color2.green = color2.blue = 0xff;
+        color1.flags = color2.flags = DoRed | DoGreen | DoBlue;
+
+        XAllocColor(sys->x_display, colormap, &color1);
+        XAllocColor(sys->x_display, colormap, &color2);
+
+        XSetForeground(sys->x_display, sys->gc, color1.pixel);
+        XSetBackground(sys->x_display, sys->gc, color2.pixel);
+
+        XDrawRectangle(sys->x_display, sys->win, sys->gc, 10, 10, 100, 100);
+        XFlush(sys->x_display);
+    }
+
+    XClearWindow(sys->x_display, sys->win);
+
+    sys->img_data = calloc(1, w * h * 4);
+    memset(sys->img_data, 200, w * h * 4);
+
+    sys->img = XCreateImage(sys->x_display, visual, 24, ZPixmap, 0, sys->img_data, w, h, 8, w * 4);
+    sys->pixmap = XCreatePixmap(sys->x_display, sys->win, w, h, 24);
+    XInitImage(sys->img);
 }
 
 static ks_sys_system_interface_t interfaces = {
@@ -147,6 +197,8 @@ KS_API void ks_system_init(ks_object_t* container)
         ks_object_add(container, (ks_object_t*)sys);
 
     create_window();
+
+    init_buffer_image();
 
     ks_graphics_init(container);
     ks_eventq_init(container);
