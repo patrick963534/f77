@@ -32,15 +32,24 @@ static graphics_t* g = 0;
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
-    
+    int win_width = ks_director_instance()->width;
+    int dst_strip = win_width * 4;
+    int src_strip = img->width * 4;
 
-    ks_unused(img);
-    ks_unused(offx);
-    ks_unused(offy);
-    ks_unused(clip_x);
-    ks_unused(clip_y);
-    ks_unused(clip_w);
-    ks_unused(clip_h);
+    char* dst = g->buffer;
+    char* src = img->pixels;
+
+    int x = g->pos.x + offx;
+    int y = g->pos.y + offy;
+    int i;
+
+    x = 0;
+    y = 0;
+
+    for (i = 0; i < clip_h; ++i) 
+    {
+        memcpy(&dst[(i + y) * dst_strip + x * 4], &src[(i + clip_y) * src_strip + clip_x * 4], clip_w * 4);
+    }
 }
 
 static void clear_screen()
