@@ -23,8 +23,8 @@ solution "libks"
 			  "platform/src/linux/**.c", 
 			  "platform/src/common/**.h", 
 			  "platform/src/common/**.c", 
-			  "platform/src/gles2/**.h", 
-			  "platform/src/gles2/**.c", 
+			  "platform/src/graphics/gles2/**.h", 
+			  "platform/src/graphics/gles2/**.c", 
 			  "src/**.h", "src/**.c" }
 	   
       configuration "Debug"
