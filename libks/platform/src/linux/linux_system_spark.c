@@ -133,17 +133,10 @@ static void flush()
 {
     int w = ks_director_instance()->width;
     int h = ks_director_instance()->height;
-    int* ptr = (int*)sys->img_data;
-    int i, j;
+    char* dst = sys->img_data;
+    char* src = (char*)ks_graphics_instance()->buffer;
 
-    //memset(sys->img_data, 255, w * h * bpp);
-    for (i = 0; i < h; ++i)
-    {
-        for (j = 0; j < w; ++j)
-        {
-            ptr[i * w + j] = 0xffff00ff;
-        }
-    }
+    memcpy(dst, src, w * h * 4);
 
     XPutImage(sys->display, sys->pixmap, sys->gc, sys->img, 0, 0, 0, 0, w, h);
     XCopyArea(sys->display, sys->pixmap, sys->win, sys->gc, 0, 0, w, h, 0, 0);
