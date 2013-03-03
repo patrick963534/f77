@@ -72,6 +72,86 @@ static int bounding(int* x, int* y, int* cx, int* cy, int* cw, int* ch)
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
+    int dst_strip = ks_director_instance()->width;
+    int src_strip = img->width;
+
+    int* dst = (int*)g->buffer;
+    int* src = (int*)img->pixels;
+
+    int x = g->pos.x + offx;
+    int y = g->pos.y + offy;
+    int i;
+
+    if (!bounding(&x, &y, &clip_x, &clip_y, &clip_w, &clip_h))
+        return;
+
+    dst = dst + y * dst_strip + x;
+    src = src + clip_y * src_strip + clip_x;
+
+    while (i++ < clip_h)
+    {
+        int* dp = dst;
+        int* sp = src;
+        int j = 0;
+
+        while (j++ < clip_w)
+        {
+            int dv = *dp;
+            int sv = *sp;
+
+            float a = ((sv & 0xFF000000) >> 24) / 255.0f;
+
+            int r = ((dv & 0xFF0000) >> 16) * (1- a) + ((sv & 0xFF0000) >> 16) * a;
+            int g = ((dv & 0xFF00)   >> 8 ) * (1- a) + ((sv & 0xFF00)   >>  8) * a;
+            int b = ((dv & 0xFF)          ) * (1- a) + ((sv & 0xFF)          ) * a;
+
+            *dp = 0xff000000 | r << 16 | g << 8 | b;
+
+            ++dp;
+            ++sp;
+        }
+
+        dst += dst_strip;
+        src += src_strip;
+    }
+
+//    for (i = 0; i < clip_h; ++i)
+//    {
+//        // Get 167 FPS
+//        //memcpy(&dst[(i + y) * dst_strip + x * 4], &src[(i + clip_y) * src_strip + clip_x * 4], clip_w * 4);
+//
+//        // Get 122 FPS
+//        int* dp = &dst[(i + y) * dst_strip + x];
+//        int* sp = &src[(i + clip_y) * src_strip + clip_x];
+//        int j = 0;
+//        while (j++ < clip_w)
+//        {
+//            int dv = *dp;
+//            int sv = *sp;
+//            int da = (dv & 0xFF000000) >> 24;
+//            int dr = (dv & 0xFF0000) >> 16;
+//            int dg = (dv & 0xFF00) >> 8;
+//            int db = (dv & 0xFF);
+//
+//            *dp = sv;
+//
+//            ++dp;
+//            ++sp;
+//        }
+//
+//        // Get 99 FPS only.
+////        {
+////            int j = 0;
+////            for (j = 0; j < clip_w; ++j)
+////            {
+////                dst[(i + y) * dst_strip + x + j] = src[(i + clip_y) * src_strip + clip_x + j];
+////            }
+////        }
+//    }
+}
+
+static void draw2(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
+{
     int win_width = ks_director_instance()->width;
     int dst_strip = win_width * 4;
     int src_strip = img->width * 4;
@@ -88,15 +168,15 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
     for (i = 0; i < clip_h; ++i)
     {
-        memcpy(&dst[(i + y) * dst_strip + x * 4], &src[(i + clip_y) * src_strip + clip_x * 4], clip_w * 4);
-//         int j;
-//         for (j = 0; j < clip_w; ++j)
-//         {
-//             dst[(i + y) * dst_strip + x * 4 + j * 4 + 0] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 0];
-//             dst[(i + y) * dst_strip + x * 4 + j * 4 + 1] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 1];
-//             dst[(i + y) * dst_strip + x * 4 + j * 4 + 2] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 2];
-//             dst[(i + y) * dst_strip + x * 4 + j * 4 + 3] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 3];
-//         }
+        //memcpy(&dst[(i + y) * dst_strip + x * 4], &src[(i + clip_y) * src_strip + clip_x * 4], clip_w * 4);
+         int j;
+         for (j = 0; j < clip_w; ++j)
+         {
+             dst[(i + y) * dst_strip + x * 4 + j * 4 + 0] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 0];
+             dst[(i + y) * dst_strip + x * 4 + j * 4 + 1] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 1];
+             dst[(i + y) * dst_strip + x * 4 + j * 4 + 2] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 2];
+             dst[(i + y) * dst_strip + x * 4 + j * 4 + 3] = src[(i + clip_y) * src_strip + clip_x * 4 + j * 4 + 3];
+         }
     }
 }
 

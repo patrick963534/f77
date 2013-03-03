@@ -64,7 +64,7 @@ static ks_scene_t* create_scene()
     actor1->x = 400;
     actor2->x = 800;
 
-    actor0->step = step;
+    //actor0->step = step;
 
     ks_node_sort_by_z((ks_node_t*)me);
 
@@ -73,7 +73,7 @@ static ks_scene_t* create_scene()
 
 int main(int argc, char** argv)
 {
-    ks_director_init("Hello World", 320, 320, argc, argv);
+    ks_director_init("Hello World", 1024, 768, argc, argv);
 
     ks_utest_start();
 
