@@ -98,10 +98,15 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
         {
             int dv = *dp;
             int sv = *sp;
+            int sa = ((sv & 0xFF000000) >> 24);
 
-            if ((sv & 0xff000000) != 0xff000000)
+            if (sa == 0xff)
             {
-                float a = ((sv & 0xFF000000) >> 24) / 255.0f;
+                *dp = sv;
+            }
+            else if (sa != 0)
+            {
+                float a = sa / 255.0f;
 
                 int r = ((dv >> 16) & 0xFF) * (1- a) + ((sv >> 16) & 0xFF) * a;
                 int g = ((dv >>  8) & 0xFF) * (1- a) + ((sv >>  8) & 0xFF) * a;
@@ -109,10 +114,6 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
                 *dp = 0xff000000 | r << 16 | g << 8 | b;
             } 
-            else
-            {
-                *dp = sv;
-            }
 
             ++dp;
             ++sp;
