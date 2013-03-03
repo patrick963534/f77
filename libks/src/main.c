@@ -64,7 +64,7 @@ static ks_scene_t* create_scene()
     actor1->x = 400;
     actor2->x = 800;
 
-    //actor0->step = step;
+    actor0->step = step;
 
     ks_node_sort_by_z((ks_node_t*)me);
 

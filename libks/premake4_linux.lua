@@ -19,8 +19,9 @@ solution "libks"
 
 	  files { "include/**.h", 
               "platform/include/**.h",
-	          "platform/src/linux/**.h", 
-			  "platform/src/linux/**.c", 
+	          "platform/src/linux/common/**.h", 
+			  "platform/src/linux/common/**.c", 
+			  "platform/src/linux/linux_system_gles2.c", 
 			  "platform/src/common/**.h", 
 			  "platform/src/common/**.c", 
 			  "platform/src/graphics/gles2/**.h", 
