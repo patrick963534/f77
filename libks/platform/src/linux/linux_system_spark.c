@@ -17,7 +17,7 @@ typedef struct system_t
 {
     ks_extends_system();
 
-    Display*    x_display;
+    Display*    display;
     Window      win;
 
     GC          gc;
@@ -47,35 +47,35 @@ static int create_window()
     XWMHints                hints;
     XEvent                  xev;
     Window                  win;
-    Display*                x_display;
+    Display*                display;
 
-    sys->x_display = x_display = XOpenDisplay(NULL);
-    if (x_display == NULL)
+    sys->display = display = XOpenDisplay(NULL);
+    if (display == NULL)
         return 1;
 
-    root = DefaultRootWindow(x_display);
+    root = DefaultRootWindow(display);
 
     swa.event_mask =  ExposureMask | PointerMotionMask | KeyPressMask | KeyReleaseMask;
 
-    win = XCreateWindow(x_display, root, 0, 0,
+    win = XCreateWindow(display, root, 0, 0,
                         ks_director_instance()->width,
                         ks_director_instance()->height, 0,
                         CopyFromParent, InputOutput,
                         CopyFromParent, CWEventMask, &swa);
 
     xattr.override_redirect = 0;
-    XChangeWindowAttributes(x_display, win, CWOverrideRedirect, &xattr);
+    XChangeWindowAttributes(display, win, CWOverrideRedirect, &xattr);
 
     hints.input = 1;
     hints.flags = InputHint;
-    XSetWMHints(x_display, win, &hints);
+    XSetWMHints(display, win, &hints);
 
     // make the window visible on the screen
-    XMapWindow(x_display, win);
-    XStoreName(x_display, win, ks_director_instance()->title);
+    XMapWindow(display, win);
+    XStoreName(display, win, ks_director_instance()->title);
 
     // get identifiers for the provided atom name strings
-    wm_state = XInternAtom (x_display, "_NET_WM_STATE", 0);
+    wm_state = XInternAtom (display, "_NET_WM_STATE", 0);
 
     memset(&xev, 0, sizeof(xev));
     xev.type                 = ClientMessage;
@@ -84,7 +84,7 @@ static int create_window()
     xev.xclient.format       = 32;
     xev.xclient.data.l[0]    = 1;
     xev.xclient.data.l[1]    = 0;
-    XSendEvent(x_display, DefaultRootWindow(x_display), 0, SubstructureNotifyMask, &xev);
+    XSendEvent(display, DefaultRootWindow(display), 0, SubstructureNotifyMask, &xev);
 
     sys->win = win;
 
@@ -96,9 +96,9 @@ static void update_messages()
     XEvent xe;
     ks_event_t e;
 
-    while (XPending(sys->x_display))
+    while (XPending(sys->display))
     {
-        XNextEvent(sys->x_display, &xe);
+        XNextEvent(sys->display, &xe);
 
         if (xe.type == ButtonPress)
         {
@@ -133,53 +133,47 @@ static void flush()
 {
     int w = ks_director_instance()->width;
     int h = ks_director_instance()->height;
+    int* ptr = (int*)sys->img_data;
+    int i, j;
 
-    XClearWindow(sys->x_display, sys->win);
-    //XPutImage(sys->x_display, sys->pixmap, sys->gc, sys->img, 0, 0, 0, 0, 5, 5);
-    XPutImage(sys->x_display, sys->pixmap, sys->gc, sys->img, 0, 0, 0, 0, 5, 5);
-    XCopyArea(sys->x_display, sys->win, sys->pixmap, sys->gc, 0, 0, w, h, 0, 0);
+    //memset(sys->img_data, 255, w * h * bpp);
+    for (i = 0; i < h; ++i)
+    {
+        for (j = 0; j < w; ++j)
+        {
+            ptr[i * w + j] = 0xffff00ff;
+        }
+    }
 
-    XFlush(sys->x_display);
-    XSync(sys->x_display, 0);
+    XPutImage(sys->display, sys->pixmap, sys->gc, sys->img, 0, 0, 0, 0, w, h);
+    XCopyArea(sys->display, sys->pixmap, sys->win, sys->gc, 0, 0, w, h, 0, 0);
+
+    XFlush(sys->display);
+    XSync(sys->display, 0);
+    //sleep(3);
 }
 
 static void init_buffer_image()
 {
     int w = ks_director_instance()->width;
     int h = ks_director_instance()->height;
-    int screen = DefaultScreen(sys->x_display);
-    Visual* visual = XDefaultVisual(sys->x_display, screen);
-    XGCValues gcvalue;
+    int screen = DefaultScreen(sys->display);
+    int depth = DefaultDepth(sys->display, screen);
+    int bpp = (depth + 7) / 8 + 1;
 
-    sys->gc = XCreateGC(sys->x_display, sys->win, 0, &gcvalue);
+    XMapWindow(sys->display, sys->win);
 
-    {
-        XColor color1, color2;
-        Colormap colormap = DefaultColormap(sys->x_display, DefaultScreen(sys->x_display));
+    sys->gc = XCreateGC(sys->display, sys->win, 0, 0);
 
-        color1.red = color1.blue = 0xffff;
-        color1.green = 0;
-        color2.red = color2.green = color2.blue = 0xff;
-        color1.flags = color2.flags = DoRed | DoGreen | DoBlue;
+    XSetForeground(sys->display, sys->gc, BlackPixel(sys->display, screen));
+    XSetBackground(sys->display, sys->gc, WhitePixel(sys->display, screen));
 
-        XAllocColor(sys->x_display, colormap, &color1);
-        XAllocColor(sys->x_display, colormap, &color2);
+    XClearWindow(sys->display, sys->win);
 
-        XSetForeground(sys->x_display, sys->gc, color1.pixel);
-        XSetBackground(sys->x_display, sys->gc, color2.pixel);
+    sys->img_data = malloc(w * h * bpp);
 
-        XDrawRectangle(sys->x_display, sys->win, sys->gc, 10, 10, 100, 100);
-        XFlush(sys->x_display);
-    }
-
-    XClearWindow(sys->x_display, sys->win);
-
-    sys->img_data = calloc(1, w * h * 4);
-    memset(sys->img_data, 200, w * h * 4);
-
-    sys->img = XCreateImage(sys->x_display, visual, 24, ZPixmap, 0, sys->img_data, w, h, 8, w * 4);
-    sys->pixmap = XCreatePixmap(sys->x_display, sys->win, w, h, 24);
-    XInitImage(sys->img);
+    sys->img = XCreateImage(sys->display, CopyFromParent, depth, ZPixmap, 0, sys->img_data, w, h, 8, w * bpp);
+    sys->pixmap = XCreatePixmap(sys->display, sys->win, w, h, depth);
 }
 
 static ks_sys_system_interface_t interfaces = {

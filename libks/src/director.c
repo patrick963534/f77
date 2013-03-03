@@ -111,7 +111,7 @@ KS_API void ks_director_run(ks_scene_t* scene)
         director_draw();
 
         calculate_fps(delta);
-        //ks_time_sleep(1);
+        ks_time_sleep(1);
     }
 
     ks_object_delete(director);
