@@ -76,7 +76,7 @@ static void generate_vec_coords(GLfloat* p, int offx, int offy, int clip_w, int 
     GLfloat z = (GLfloat)g->pos.z;
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
-    float factor = 0.5f; // The default value is 2.0f. Value 0.5f means scale down 4 times.
+    float factor = 2.0f; // The default value is 2.0f. Value 0.5f means scale down 4 times.
 
     float minX = x * factor / (float)all_w - 1.0f;
     float minY = y * factor / (float)all_h - 1.0f;
@@ -175,7 +175,7 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
 static void clear_screen()
 {
-    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
