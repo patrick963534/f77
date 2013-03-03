@@ -78,8 +78,8 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
     int* dst = (int*)g->buffer;
     int* src = (int*)img->pixels;
 
-    int x = g->pos.x + offx;
-    int y = g->pos.y + offy;
+    int x = g->pos.x + offx - clip_w / 2;
+    int y = ks_director_instance()->height - (g->pos.y + offy + clip_h / 2);
     int i = 0;
 
     if (!bounding(&x, &y, &clip_x, &clip_y, &clip_w, &clip_h))
@@ -96,7 +96,6 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
         while (j++ < clip_w)
         {
-            int dv = *dp;
             int sv = *sp;
             int sa = ((sv & 0xFF000000) >> 24);
 
@@ -106,6 +105,7 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
             }
             else if (sa != 0)
             {
+                int dv = *dp;
                 float a = sa / 255.0f;
 
                 int r = ((dv >> 16) & 0xFF) * (1- a) + ((sv >> 16) & 0xFF) * a;
@@ -113,7 +113,7 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
                 int b = ((dv      ) & 0xFF) * (1- a) + ((sv      ) & 0xFF) * a;
 
                 *dp = 0xff000000 | r << 16 | g << 8 | b;
-            } 
+            }
 
             ++dp;
             ++sp;

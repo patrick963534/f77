@@ -60,9 +60,12 @@ static ks_scene_t* create_scene()
     actor1 = ks_actor_new(buf, (ks_node_t*)me);
     actor2 = ks_actor_new(buf, (ks_node_t*)me);
 
-    actor0->x = 0;
-    actor1->x = 400;
-    actor2->x = 800;
+    actor0->x = 256;
+    actor0->y = 256;
+    actor1->x = 400 + 256;
+    actor1->y = 256;
+    actor2->x = 800 + 256;
+    actor2->y = 256;
 
     actor0->step = step;
 
