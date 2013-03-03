@@ -152,7 +152,7 @@ static void init_buffer_image()
     int h = ks_director_instance()->height;
     int screen = DefaultScreen(sys->display);
     int depth = DefaultDepth(sys->display, screen);
-    int bpp = (depth + 7) / 8 + 1;
+    int bpp = 4; //(depth + 7) / 8 + 1;
 
     XMapWindow(sys->display, sys->win);
 
