@@ -80,7 +80,7 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
     int x = g->pos.x + offx;
     int y = g->pos.y + offy;
-    int i;
+    int i = 0;
 
     if (!bounding(&x, &y, &clip_x, &clip_y, &clip_w, &clip_h))
         return;
