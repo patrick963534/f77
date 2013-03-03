@@ -103,12 +103,12 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
             {
                 float a = ((sv & 0xFF000000) >> 24) / 255.0f;
 
-                int r = ((dv & 0xFF0000) >> 16) * (1- a) + ((sv & 0xFF0000) >> 16) * a;
-                int g = ((dv & 0xFF00)   >> 8 ) * (1- a) + ((sv & 0xFF00)   >>  8) * a;
-                int b = ((dv & 0xFF)          ) * (1- a) + ((sv & 0xFF)          ) * a;
+                int r = ((dv >> 16) & 0xFF) * (1- a) + ((sv >> 16) & 0xFF) * a;
+                int g = ((dv >>  8) & 0xFF) * (1- a) + ((sv >>  8) & 0xFF) * a;
+                int b = ((dv      ) & 0xFF) * (1- a) + ((sv      ) & 0xFF) * a;
 
                 *dp = 0xff000000 | r << 16 | g << 8 | b;
-            }
+            } 
             else
             {
                 *dp = sv;
