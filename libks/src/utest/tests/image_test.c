@@ -7,10 +7,8 @@
 static void image_load_test()
 {
     ks_image_t* img;
-    char buf[256];
 
-    ks_helper_path_join_relative_app(buf, sizeof(buf), "aa.png");
-    img = ks_image_load(buf, NULL);
+    img = ks_image_load("aa.png", NULL);
 
     ks_object_delete(img);
 }

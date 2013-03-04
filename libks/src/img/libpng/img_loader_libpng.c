@@ -1,5 +1,6 @@
 #include "img_loader_libpng.h"
 #include <ks/log.h>
+#include <ks/helper.h>
 #include <stdlib.h>
 #include <png.h>
 
@@ -31,10 +32,12 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
     png_structp png_ptr;
     png_infop   info_ptr;
     png_bytep*  row_pointers;
+    char        abs_file_path[FILENAME_MAX];
     FILE* fp;
     int i;
 
-    if (NULL == (fp = fopen(file, "rb")))
+    ks_helper_path_join_relative_app(abs_file_path, sizeof(abs_file_path), file);
+    if (NULL == (fp = fopen(abs_file_path, "rb")))
     {
         ks_log("can not find file: %s", file);
         return;

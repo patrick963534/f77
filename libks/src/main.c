@@ -44,21 +44,17 @@ static int msgs(ks_node_t* me, ks_event_t* e)
 
 static ks_scene_t* create_scene()
 {
-    char buf[256];
-
     ks_scene_t* me;
     ks_actor_t* actor0;
     ks_actor_t* actor1;
     ks_actor_t* actor2;
 
-    ks_helper_path_join_relative_app(buf, sizeof(buf), "img.png");
-
     me       = ks_scene_new(sizeof(*me));
     me->msgs = msgs;
 
-    actor0 = ks_actor_new(buf, (ks_node_t*)me);
-    actor1 = ks_actor_new(buf, (ks_node_t*)me);
-    actor2 = ks_actor_new(buf, (ks_node_t*)me);
+    actor0 = ks_actor_new("img.png", (ks_node_t*)me);
+    actor1 = ks_actor_new("img.png", (ks_node_t*)me);
+    actor2 = ks_actor_new("img.png", (ks_node_t*)me);
 
     actor0->x = 256;
     actor0->y = 256;
