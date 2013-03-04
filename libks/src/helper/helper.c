@@ -80,3 +80,26 @@ KS_API char* ks_helper_path_join_relative_app(char* buf, int sz, const char* fil
 
     return buf;
 }
+
+KS_API void ks_helper_image_save_ppm(const char* file, const char* pixels, int width, int height)
+{
+    FILE* save_fp = fopen(file, "wb");
+    char* buffer = malloc(width * 3);
+    int i, j;
+
+    fprintf(save_fp, "P6 %d %d 255 ", width, height);
+
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            buffer[j * 3]    = pixels[i * width * 4 + j * 4];
+            buffer[j * 3+ 1] = pixels[i * width * 4 + j * 4 + 1];
+            buffer[j * 3+ 2] = pixels[i * width * 4 + j * 4 + 2];
+        }
+
+        fwrite(buffer, 1, width * 3, save_fp);
+    }
+
+    fclose(save_fp);
+}
