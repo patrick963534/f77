@@ -4,6 +4,6 @@
 #include <ks/defs.h>
 #include "../font_loader.c.h"
 
-void so_font_loader_freetype_load(const char* file, so_font_loader_data_t* info);
+void so_font_loader_freetype_load(const char* font_file, int font_size, const char* text, so_font_loader_data_t* info);
 
 #endif
