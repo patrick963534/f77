@@ -149,6 +149,8 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
     if (verCoords_count == Vertex_Max_Count * 6)
         real_draw();
 
+    offx -= clip_w / 2;
+    offy -= clip_h / 2;
     setup_model(img, offx, offy, clip_x, clip_y, clip_w, clip_h);
 
     if (g->tex_render.img_file != img->file)
