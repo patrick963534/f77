@@ -4,29 +4,6 @@
 #include <stdlib.h>
 #include <png.h>
 
-void so_img_loader_libpng_save(const char* pixels, int width, int height)
-{
-    FILE* save_fp = fopen("tt.ppm", "wb");
-    char* buffer = malloc(width * 3);
-    int i, j;
-
-    fprintf(save_fp, "P6 %d %d 255 ", width, height);
-
-    for (i = 0; i < height; i++)
-    {
-        for (j = 0; j < width; j++)
-        {
-            buffer[j * 3]    = pixels[i * width * 4 + j * 4];
-            buffer[j * 3+ 1] = pixels[i * width * 4 + j * 4 + 1];
-            buffer[j * 3+ 2] = pixels[i * width * 4 + j * 4 + 2];
-        }
-
-        fwrite(buffer, 1, width * 3, save_fp);
-    }
-
-    fclose(save_fp);
-}
-
 void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
 {
     png_structp png_ptr;

@@ -9,8 +9,11 @@
 #include <ks/actor.h>
 #include <ks/helper.h>
 #include <ks/event.h>
+#include <ks/text.h>
+#include <ks/libc.h>
 #include <ks/constants.h>
 #include "utest/utest.h"
+
 
 static void step(ks_node_t* me, int delta)
 {
@@ -23,6 +26,24 @@ static void step(ks_node_t* me, int delta)
         me->y += (int)offset;
         offset -= (int)offset;
     }
+}
+
+static void step_fps(ks_text_t* me, int delta)
+{
+    static float ellapse = 0;
+
+    ellapse += delta;
+
+    if (ellapse > 1000)
+    {
+        char buf[128];
+
+        ks_text_set_content(me, ks_itoa(buf, sizeof(buf), ks_director_instance()->fps));
+        me->x = me->image->width / 2;
+        me->y = ks_director_instance()->height - me->image->height / 2;
+
+        ellapse = 0;
+    }    
 }
 
 static int msgs(ks_node_t* me, ks_event_t* e)
@@ -45,25 +66,36 @@ static int msgs(ks_node_t* me, ks_event_t* e)
 static ks_scene_t* create_scene()
 {
     ks_scene_t* me;
-    ks_actor_t* actor0;
-    ks_actor_t* actor1;
-    ks_actor_t* actor2;
+    ks_node_t*  node;
+//     ks_actor_t* actor0;
+//     ks_actor_t* actor1;
+//     ks_actor_t* actor2;
 
     me       = ks_scene_new(sizeof(*me));
     me->msgs = msgs;
 
-    actor0 = ks_actor_new("img.png", (ks_node_t*)me);
-    actor1 = ks_actor_new("img.png", (ks_node_t*)me);
-    actor2 = ks_actor_new("img.png", (ks_node_t*)me);
+    node = ks_node_new(sizeof(*node), (ks_node_t*)me);
+    node->x = 100;
 
-    actor0->x = 256;
-    actor0->y = 256;
-    actor1->x = 400 + 256;
-    actor1->y = 256;
-    actor2->x = 800 + 256;
-    actor2->y = 256;
+    ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
+    ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
+    ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
+    ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
+    ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
+    ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;    
 
-    actor0->step = step;
+//     actor0 = ks_actor_new("img.png", (ks_node_t*)me);
+//     actor1 = ks_actor_new("img.png", (ks_node_t*)me);
+//     actor2 = ks_actor_new("img.png", (ks_node_t*)me);
+// 
+//     actor0->x = 256;
+//     actor0->y = 256;
+//     actor1->x = 400 + 256;
+//     actor1->y = 256;
+//     actor2->x = 800 + 256;
+//     actor2->y = 256;
+// 
+//     actor0->step = step;
 
     ks_node_sort_by_z((ks_node_t*)me);
 
