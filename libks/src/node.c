@@ -13,18 +13,26 @@ static int node_comparer(const void* v1, const void* v2)
 
 static void sort_children_recursive(ks_node_t* node)
 {
-    ks_node_t **children;
+    #define Sort_Nodes_Cache_Size    1024
+    static ks_node_t* sort_nodes_cache[Sort_Nodes_Cache_Size];
+
     ks_node_t *pos, *n;
-    int i = 0;
+    ks_node_t **children = sort_nodes_cache;
     int sz = ks_node_child_count(node);
+    int is_heap = 0;
+    int i = 0;
 
     if (sz == 0)
         return;
 
-    children = (ks_node_t**)malloc(sizeof(children[0]) * sz);
+    if (sz >= 1024)
+    {
+        is_heap = 1;
+        children = (ks_node_t**)malloc(sizeof(children[0]) * sz);
+    }
+
     ks_node_for_each(pos, n, node, ks_node_t)
     {
-        sort_children_recursive(pos);
         ks_node_remove(pos);
         children[i++] = pos;
     }
@@ -32,11 +40,15 @@ static void sort_children_recursive(ks_node_t* node)
     qsort(children, sz, sizeof(children[0]), node_comparer);
 
     for (i = 0; i < sz; i++)
-    {
         ks_node_add(node, children[i]);
-    }
 
-    free(children);
+    if (is_heap)
+        free(children);
+
+    ks_node_for_each(pos, n, node, ks_node_t)
+    {
+        sort_children_recursive(pos);
+    }
 }
 
 KS_API void ks_node_sort_by_z(ks_node_t* me)

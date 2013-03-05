@@ -38,6 +38,25 @@ static void node_step(ks_node_t* me, int delta)
     }
 }
 
+static void node_msgs(ks_node_t* me, ks_event_t* e)
+{
+    ks_node_t *pos, *n;
+
+    ks_node_for_each(pos, n, me, ks_node_t)
+    {
+        if (ks_node_has_child(pos))
+            node_msgs(pos, e);
+
+        if (pos->step)
+            pos->msgs(pos, e);
+    }
+}
+
+void so_scene_msgs(ks_scene_t* me, ks_event_t* e)
+{
+    node_msgs((ks_node_t*)me, e);
+}
+
 void so_scene_step(ks_scene_t* me, int delta)
 {
     node_step((ks_node_t*)me, delta);

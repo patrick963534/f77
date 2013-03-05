@@ -5,6 +5,7 @@
 #include <ks/event.h>
 
 void so_scene_draw(ks_scene_t* me);
+void so_scene_msgs(ks_scene_t* me, ks_event_t* e);
 void so_scene_step(ks_scene_t* me, int delta);
 
 #endif

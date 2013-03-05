@@ -9,6 +9,7 @@ typedef struct ks_node_t ks_node_t;
 
 typedef void (*ks_draw_f)(ks_node_t* me_);
 typedef void (*ks_step_f)(ks_node_t* me_, int delta);
+typedef int  (*ks_msgs_f)(ks_node_t* me_, ks_event_t* e);
 
 #define ks_extends_node()           \
     ks_extends_object();            \
@@ -17,6 +18,7 @@ typedef void (*ks_step_f)(ks_node_t* me_, int delta);
     ks_list_t   node_children;      \
     ks_list_t   node_sibling;       \
     ks_step_f   step;               \
+    ks_msgs_f   msgs;               \
     ks_draw_f   draw
 
 struct ks_node_t

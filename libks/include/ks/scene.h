@@ -4,12 +4,9 @@
 #include <ks/defs.h>
 #include <ks/node.h>
 
-typedef int  (*ks_msgs_f)(ks_node_t* me_, ks_event_t* e);
-
 typedef struct ks_scene_t
 {
     ks_extends_node();
-    ks_msgs_f   msgs; 
 
 } ks_scene_t;
 
