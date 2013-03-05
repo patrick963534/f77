@@ -7,6 +7,7 @@
 
 KS_API void ks_object_destruct(ks_object_t* me)
 {
+    ks_object_remove(me);
     ks_object_delete_children(me);
 }
 
@@ -64,6 +65,8 @@ KS_API void ks_object_delete(void* me_)
         me->destruct(me);
 
     me->magic = 0;
+
+    ks_assert(me->heap == 1, "me->heap should be 1, there might be memory over writting.");
 
     if (me->heap)
         free(me);
