@@ -9,7 +9,7 @@ typedef struct ks_text_t
 {
     ks_extends_node();
     
-    int             max_width;
+    int             wrap_width;
     int             font_size;
     char*           font_file;
     char*           text;
@@ -17,7 +17,7 @@ typedef struct ks_text_t
 
 } ks_text_t;
 
-KS_API ks_text_t* ks_text_new(const char* font_file, int font_size, int max_width, const char* content, ks_node_t* parent);
+KS_API ks_text_t* ks_text_new(const char* font_file, int font_size, int wrap_width, const char* content, ks_node_t* parent);
 KS_API void       ks_text_set_content(ks_text_t* me, const char* content);
 KS_API void       ks_text_destruct(ks_text_t* me);
 
