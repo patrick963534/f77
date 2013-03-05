@@ -225,5 +225,5 @@ void so_font_loader_freetype_load(const char* font_file, int font_size, const ch
     cf = get_face(font_file, font_size);
     info->pixels = render_text(cf->face, ucs_text, &info->width, &info->height);    
 
-    ks_helper_image_save_ppm("E:\\font_text.ppm", info->pixels, info->width, info->height);
+    //ks_helper_image_save_ppm("E:\\font_text.ppm", info->pixels, info->width, info->height);
 }

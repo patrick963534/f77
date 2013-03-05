@@ -12,6 +12,7 @@ typedef struct ks_director_t
     char        title[256];
     int         width;
     int         height;
+    int         fps;
 
     ks_scene_t* scene;
     int         end;

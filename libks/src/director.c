@@ -24,7 +24,9 @@ static void calculate_fps(int delta)
     ellapse += delta;
     if (ellapse > 1000)
     {
-        ks_log("FPS: %d ", count);
+        int fps = count * 1000 / ellapse;
+        director->fps = fps;
+        ks_log("FPS: %d ", fps);
         ellapse = 0;
         count = 0;
     }
