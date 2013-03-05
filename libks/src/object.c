@@ -51,6 +51,9 @@ KS_API void ks_object_delete(void* me_)
 {
     ks_cast(ks_object_t);
 
+    if (!me)
+        return;
+
     if (me->magic != Magic_Number)
     {
         ks_assert(0, "ks_object_delete get wrong parameter, which isn't a ks_object_t instance.");

@@ -26,7 +26,7 @@ static cached_image_t* cached_image_search(const char* file)
     cached_image_t* pos;
 
     if (!file)
-        return 0;
+        return NULL;
 
     ks_list_for_each_entry(pos, &head, cached_image_t, item)
     {
@@ -34,7 +34,7 @@ static cached_image_t* cached_image_search(const char* file)
             return pos;
     }
 
-    return 0;
+    return NULL;
 }
 
 static cached_image_t* cached_image_load(const char* file)
@@ -76,7 +76,11 @@ static void cached_image_remove(const char* file)
 
 KS_API void ks_image_destruct(ks_image_t* me)
 {
-    cached_image_remove(me->file);
+    if (me->file)
+        cached_image_remove(me->file);
+    else
+        free(me->pixels);
+
     ks_object_destruct((ks_object_t*)me);
 }
 
@@ -100,6 +104,23 @@ KS_API ks_image_t* ks_image_load(const char* file, ks_object_t* container)
     me->pixels   = img->pixels;
     me->width    = img->w;
     me->height   = img->h;
+
+    if (container)
+        ks_object_add(container, (ks_object_t*)me);
+
+    return me;
+}
+
+KS_API ks_image_t* ks_image_from(const char* pixels, int w, int h, ks_object_t* container)
+{
+    ks_image_t* me;
+
+    me           = (ks_image_t*)ks_object_new(sizeof(*me));
+    me->tname    = "ks_image";
+    me->destruct = (ks_destruct_f)ks_image_destruct;
+    me->pixels   = pixels;
+    me->width    = w;
+    me->height   = h;
 
     if (container)
         ks_object_add(container, (ks_object_t*)me);

@@ -82,6 +82,9 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
     int y = ks_director_instance()->height - (g->pos.y + offy + clip_h / 2);
     int i = 0;
 
+    if (img->width == 0 || img->height == 0 || clip_w == 0 || clip_h == 0)
+        return;
+
     if (!bounding(&x, &y, &clip_x, &clip_y, &clip_w, &clip_h))
         return;
 
