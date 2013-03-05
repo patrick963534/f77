@@ -129,7 +129,7 @@ KS_API int ks_u8_encode(char *dest, unsigned ch)
     return 0;
 }
 
-KS_API int ks_u8_lenth(char *s)
+KS_API int ks_u8_lenth(const char *s)
 {
     int count = 0;
     int i = 0;
@@ -140,7 +140,7 @@ KS_API int ks_u8_lenth(char *s)
     return count;
 }
 
-KS_API unsigned ks_u8_next_ucs(char *s, int *i)
+KS_API unsigned ks_u8_next_ucs(const char *s, int *i)
 {
     unsigned ch = 0;
     int sz = 0;
