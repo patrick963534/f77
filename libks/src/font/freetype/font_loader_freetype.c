@@ -3,6 +3,7 @@
 #include <ks/helper.h>
 #include <ks/list.h>
 #include <ks/libc.h>
+#include <ks/utf8.h>
 #include <stdlib.h>
 #include <ft2build.h>
 
@@ -75,35 +76,121 @@ static cached_face_t* get_face(const char* font_file, int font_size)
     return pos;
 }
 
+static void calc_size(FT_Face face, const int* text, int* ret_w, int* ret_h)
+{
+    int limit_w = *ret_w;
+    int tmp_width = 0;
+    int is_newline = 1;
+    int width = 0;
+    int height = 0;
+    int error;
+
+    while (*text != 0)
+    {
+        int ch = *text;
+
+        if (ch == '\r' || ch == '\n')
+        {
+            is_newline = 1;
+            tmp_width = 0;
+            ++text;
+            continue;
+        }
+
+        error = FT_Load_Glyph(face, FT_Get_Char_Index(face, ch), FT_LOAD_DEFAULT);
+        tmp_width += (face->glyph->metrics.horiAdvance >> 6);
+
+        if (ch == ' ')
+        {
+            ++text;
+            continue;;
+        }
+
+        if (limit_w != 0 && tmp_width > limit_w)
+        {
+            is_newline = 1;
+            tmp_width = (face->glyph->metrics.horiAdvance >> 6);
+        }
+
+        if (is_newline)
+        {
+            height += (face->glyph->metrics.vertAdvance >> 6);
+            is_newline = 0;
+        }
+
+        if (width < tmp_width)
+            width = tmp_width;
+
+        ++text;
+    }
+
+    *ret_w = width;
+    *ret_h = height;
+}
+
 static char* render_text(FT_Face face, const int* text, int* ret_w, int* ret_h)
 {
     FT_Bitmap* bitmap;
+    int* str = (int*)text;
     int* pixels;
     int offx = 0;
+    int offy = 0;
+    int tmp_height = 0;
     int error;
+    int max_idx;
     int i, j;
 
     int width = 320;
     int height = 240;
-    
+
+    calc_size(face, str, &width, &height);    
+    max_idx = width * height;
     pixels = (int*)calloc(1, width * height * 4);
 
-    error = FT_Load_Glyph(face, FT_Get_Char_Index(face, *text), FT_LOAD_RENDER);
-
-    bitmap = &face->glyph->bitmap;
-
-    for (i = 0; i < bitmap->rows; ++i) 
+    while (*str != 0)
     {
-        for (j = 0; j < bitmap->width; ++j) 
+        int ch = *str;
+        if (ch == '\r' || ch == '\n')
         {
-            int iY = (face->size->metrics.ascender - face->glyph->metrics.horiBearingY) >> 6;
-            int iX = face->glyph->metrics.horiBearingX >> 6;
-            int idx = (i + iY) * width + j + iX + offx;
-            int bp = bitmap->buffer[i * bitmap->width + j];
-
-            pixels[idx] = bp << 24 | bp << 16 | bp << 8 | bp;
+            offy += tmp_height;
+            tmp_height = 0;
+            offx = 0;
+            ++str;
+            continue;
         }
-    }
+
+        error = FT_Load_Glyph(face, FT_Get_Char_Index(face, ch), FT_LOAD_RENDER);
+        if (tmp_height < (face->glyph->metrics.vertAdvance >> 6))
+            tmp_height = (face->glyph->metrics.vertAdvance >> 6);
+
+        if (ch == ' ')
+        {
+            offx += (face->glyph->metrics.horiAdvance >> 6);
+            ++str;
+            continue;;
+        }
+
+        bitmap = &face->glyph->bitmap;
+
+        for (i = 0; i < bitmap->rows; ++i) 
+        {
+            for (j = 0; j < bitmap->width; ++j) 
+            {
+                int iY = (face->size->metrics.ascender - face->glyph->metrics.horiBearingY) >> 6;
+                int iX = face->glyph->metrics.horiBearingX >> 6;
+                int idx = (i + iY + offy) * width + j + iX + offx;
+                int bp = bitmap->buffer[i * bitmap->width + j];
+
+                if (idx >= max_idx)
+                    continue;
+
+                pixels[idx] = bp << 24 | bp << 16 | bp << 8 | bp;
+            }
+        }
+
+        offx += (face->glyph->metrics.horiAdvance >> 6);
+        ++str;
+    }    
 
     *ret_w = width;
     *ret_h = height;
@@ -117,9 +204,9 @@ void so_font_loader_freetype_load(const char* font_file, int font_size, const ch
     int* ucs_text;
     int length;
 
-    length = ks_u8_lenth(text);
-    ucs_text = malloc(length);
-    ks_u8_to_ucs(ucs_text, length, text, strlen(text));
+    length = ks_u8_lenth(text) + 1;
+    ucs_text = malloc(length * 4);
+    ks_u8_to_ucs((unsigned*)ucs_text, length, text, strlen(text));
 
     cf = get_face(font_file, font_size);
     info->pixels = render_text(cf->face, ucs_text, &info->width, &info->height);    
