@@ -8,8 +8,7 @@ typedef void (*ks_destruct_f)(void* o);
 
 #define ks_extends_object()             \
     int             magic;              \
-    int             heap:1;             \
-    int             unused:31;          \
+    int             heap;               \
     char*           tname;              \
     ks_list_t       object_children;    \
     ks_list_t       object_sibling;     \
