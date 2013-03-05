@@ -124,6 +124,8 @@ static void calc_size(FT_Face face, const int* text, int* ret_w, int* ret_h)
         ++text;
     }
 
+    height += (face->size->metrics.height - face->glyph->metrics.vertAdvance) >> 6;
+
     *ret_w = width;
     *ret_h = height;
 }
