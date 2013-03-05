@@ -3,6 +3,7 @@
 #include <ks/libc.h>
 #include <ks/graphics.h>
 #include <stdlib.h>
+#include <string.h>
 #include "font/font_loader.h"
 
 static void text_draw(ks_text_t* me)
@@ -19,13 +20,14 @@ KS_API void ks_text_destruct(ks_text_t* me)
     ks_node_destruct((ks_node_t*)me);
 }
 
-KS_API ks_text_t* ks_text_new(const char* font_file, int font_size, const char* content, ks_node_t* parent)
+KS_API ks_text_t* ks_text_new(const char* font_file, int font_size, int max_width, const char* content, ks_node_t* parent)
 {
     ks_text_t* me;
 
     me              = (ks_text_t*)ks_node_new(sizeof(*me), parent);
     me->font_file   = ks_strdup(font_file);
     me->font_size   = font_size;
+    me->max_width   = max_width;
     me->destruct    = (ks_destruct_f)ks_text_destruct;
     me->draw        = (ks_draw_f)text_draw;
     me->tname       = "ks_text";
@@ -39,9 +41,11 @@ KS_API void ks_text_set_content(ks_text_t* me, const char* content)
 {
     so_font_loader_data_t data;
     
-    if (content == NULL)
+    if (content == NULL || 
+        (me->text && strcmp(me->text, content) == 0))
         return;
 
+    data.width = me->max_width;
     so_font_loader_load(me->font_file, me->font_size, content, &data);
     
     ks_object_delete(me->image);

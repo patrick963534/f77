@@ -142,8 +142,8 @@ static char* render_text(FT_Face face, const int* text, int* ret_w, int* ret_h)
     int max_idx;
     int i, j;
 
-    int width = 320;
-    int height = 240;
+    int width = *ret_w;
+    int height = 0;
 
     calc_size(face, str, &width, &height);    
     max_idx = width * height;
@@ -152,6 +152,8 @@ static char* render_text(FT_Face face, const int* text, int* ret_w, int* ret_h)
     while (*str != 0)
     {
         int ch = *str;
+        int ch_width, ch_height;
+
         if (ch == '\r' || ch == '\n')
         {
             offy += tmp_height;
@@ -162,14 +164,24 @@ static char* render_text(FT_Face face, const int* text, int* ret_w, int* ret_h)
         }
 
         error = FT_Load_Glyph(face, FT_Get_Char_Index(face, ch), FT_LOAD_RENDER);
-        if (tmp_height < (face->glyph->metrics.vertAdvance >> 6))
-            tmp_height = (face->glyph->metrics.vertAdvance >> 6);
+        ch_width  = (face->glyph->metrics.horiAdvance >> 6);
+        ch_height = (face->glyph->metrics.vertAdvance >> 6);
+
+        if (tmp_height < ch_height)
+            tmp_height = ch_height;
 
         if (ch == ' ')
         {
-            offx += (face->glyph->metrics.horiAdvance >> 6);
+            offx += ch_width;
             ++str;
             continue;;
+        }
+
+        if (offx + ch_width > width)
+        {
+            offy += tmp_height;
+            tmp_height = 0;
+            offx = 0;
         }
 
         bitmap = &face->glyph->bitmap;
@@ -186,7 +198,7 @@ static char* render_text(FT_Face face, const int* text, int* ret_w, int* ret_h)
                 if (idx >= max_idx)
                     continue;
 
-                pixels[idx] = bp << 24 | bp << 16 | bp << 8 | bp;
+                pixels[idx] = 0xff << 24 | bp << 16 | bp << 8 | bp;
             }
         }
 
