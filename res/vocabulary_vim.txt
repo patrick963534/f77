@@ -167,6 +167,7 @@ bra
 braid
 brain
 brand
+brave
 bread
 break
 broken
@@ -221,6 +222,8 @@ cinema
 city
     citizen
 class
+classic
+classmate
 clean
 click
 climb
@@ -248,6 +251,7 @@ coordinate
 copy
 cosine
 cosplay
+cover
 crazy
 create
 creation
@@ -307,6 +311,7 @@ direction
 directory
 disable
 disallow
+display
 distinct
 disturb
 divide
@@ -401,6 +406,7 @@ finger
 finish
     finite
 fire
+fish
 fit
 fitness
 fix
@@ -438,3 +444,44 @@ fur
 further
 furniture
 future
+game
+gap
+garbage
+garden
+gardener
+gas
+gate
+gather
+gay
+    gear
+gentleman
+general
+generate
+generation
+genius
+German
+get
+gift
+    giga
+girl
+glad
+glass
+global
+go
+goal
+god
+golf
+good
+goody
+grab
+grade
+grap
+grass
+great
+green
+grey
+ground
+group
+grow
+guard
+guru
