@@ -345,7 +345,7 @@ void dprintf(const char *, ...);
 
 #else
 
-#define dprintf(format, args...)
+#define dprintf(format, ...)
 
 #endif
 #endif /* !BEOS */
