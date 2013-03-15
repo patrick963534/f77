@@ -13,6 +13,8 @@
 #include <ks/libc.h>
 #include <ks/constants.h>
 #include "utest/utest.h"
+#include "r7/r7_zbuffer.h"
+#include <r7/gl.h>
 
 
 static void step(ks_node_t* me, int delta)
@@ -102,12 +104,67 @@ static ks_scene_t* create_scene()
     return me;
 }
 
+static GLuint make_object( void )
+{
+    GLuint list;
+
+    list = glGenLists( 1 );
+
+    glNewList( list, GL_COMPILE );
+
+    glBegin( GL_LINE_LOOP );
+        glVertex3f(  1.0f,  0.5f, 0.4f );
+        glVertex3f(  1.0f, -0.5f, 0.4f );
+        glVertex3f( -1.0f, -0.5f, 0.4f );
+        glVertex3f( -1.0f,  0.5f, 0.4f );
+    glEnd();
+
+    glEndList();
+
+    return list;
+}
+
+static void test()
+{
+    ZBuffer *zb;
+    char* buf;
+    int width = 320;
+    int height = 240;
+    GLuint Object;
+
+    buf = calloc(1, width * height * 4);
+    zb = ZB_open(width, height, ZB_MODE_RGB24, 0, NULL, NULL, NULL);
+
+    glInit(zb);
+    glViewport(0, 0, width, height);
+    ZB_resize(zb, buf, width, height);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
+    glMatrixMode(GL_MODELVIEW);
+
+    Object = make_object();
+
+    glClear( GL_COLOR_BUFFER_BIT );
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef( 0.0f, 0.0f, -10.0f );
+    glColor3f( 1.0, 1.0, 1.0 );
+    glCallList( Object );
+    glPopMatrix();
+    glFlush();
+
+    ks_helper_image_save_ppm("ab.ppm", buf, width, height);    
+}
+
 int main(int argc, char** argv)
 {
     ks_director_init("Hello World", 320, 240, argc, argv);
 
     ks_utest_start();
 
+    test();
     ks_director_run(create_scene());
     return 0;
 }
