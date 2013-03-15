@@ -14,8 +14,8 @@ solution "libks"
       location ( "build" )
       targetdir ( "bin" )
       libdirs { "/usr/lib" }
-      links { "rt", "X11", "png" }
-      includedirs { "include", "platform/include" }
+      links { "rt", "X11", "png", "freetype" }
+      includedirs { "include", "platform/include", "/usr/include/freetype2" }
 
 	  files { "include/**.h", 
               "platform/include/**.h",

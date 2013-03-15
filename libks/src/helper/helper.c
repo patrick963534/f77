@@ -103,3 +103,27 @@ KS_API void ks_helper_image_save_ppm(const char* file, const char* pixels, int w
 
     fclose(save_fp);
 }
+
+KS_API void ks_helper_image565_save_ppm(const char* file, const char* pixels, int width, int height)
+{
+    FILE* save_fp = fopen(file, "wb");
+    char* buffer = malloc(width * 3);
+    unsigned short* sp = (unsigned short*)pixels;
+    int i, j;
+
+    fprintf(save_fp, "P6 %d %d 255 ", width, height);
+
+    for (i = 0; i < height; i++)
+    {
+        for (j = 0; j < width; j++)
+        {
+            int v = sp[i * width + j];
+
+            buffer[j * 3]    = ((v >> 11) & 0x1F) * 255 / 32;
+            buffer[j * 3+ 1] = ((v >>  5) & 0x3F) * 255 / 64;
+            buffer[j * 3+ 2] = ((v >>  0) & 0x1F) * 255 / 32;
+        }
+
+        fwrite(buffer, 1, width * 3, save_fp);
+    }
+}

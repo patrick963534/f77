@@ -13,5 +13,6 @@ KS_API void     ks_helper_int_to_bytes(char* buf, int val);
 KS_API void     ks_helper_bytes_to_int(const char* buf, int* val);
 
 KS_API void     ks_helper_image_save_ppm(const char* file, const char* pixels, int width, int height);
+KS_API void     ks_helper_image565_save_ppm(const char* file, const char* pixels, int width, int height);
 
 #endif

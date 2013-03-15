@@ -45,7 +45,7 @@ static void step_fps(ks_text_t* me, int delta)
         me->y = ks_director_instance()->height - me->image->height / 2;
 
         ellapse = 0;
-    }    
+    }
 }
 
 static int msgs(ks_node_t* me, ks_event_t* e)
@@ -84,22 +84,22 @@ static ks_scene_t* create_scene()
     ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
     ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
     ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
-    ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;    
+    ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
 
 //     actor0 = ks_actor_new("img.png", (ks_node_t*)me);
 //     actor1 = ks_actor_new("img.png", (ks_node_t*)me);
 //     actor2 = ks_actor_new("img.png", (ks_node_t*)me);
-// 
+//
 //     actor0->x = 256;
 //     actor0->y = 256;
 //     actor1->x = 400 + 256;
 //     actor1->y = 256;
 //     actor2->x = 800 + 256;
 //     actor2->y = 256;
-// 
+//
 //     actor0->step = step;
 
-    
+
 
     return me;
 }
@@ -112,11 +112,10 @@ static GLuint make_object( void )
 
     glNewList( list, GL_COMPILE );
 
-    glBegin( GL_LINE_LOOP );
-        glVertex3f(  1.0f,  0.5f, 0.4f );
-        glVertex3f(  1.0f, -0.5f, 0.4f );
-        glVertex3f( -1.0f, -0.5f, 0.4f );
-        glVertex3f( -1.0f,  0.5f, 0.4f );
+    glBegin( GL_TRIANGLES );
+        glVertex3f(  0.0f,  0.5f, 0.4f );
+        glVertex3f(  0.5f, -0.5f, 0.4f );
+        glVertex3f( -0.5f, -0.5f, 0.4f );
     glEnd();
 
     glEndList();
@@ -132,7 +131,7 @@ static void test()
     int height = 240;
     GLuint Object;
 
-    buf = calloc(1, width * height * 4);
+    buf = calloc(1, width * height * 2);
     zb = ZB_open(width, height, ZB_MODE_RGBA, 0, NULL, NULL, NULL);
 
     glInit(zb);
@@ -150,12 +149,12 @@ static void test()
     glPushMatrix();
     glLoadIdentity();
     glTranslatef( 0.0f, 0.0f, -10.0f );
-    glColor3f( 1.0, 1.0, 1.0 );
+    glColor3f( 1.0, 1.0, 0.0 );
     glCallList( Object );
     glPopMatrix();
     glFlush();
 
-    ks_helper_image_save_ppm("ab.ppm", buf, width, height);    
+    ks_helper_image565_save_ppm("ab.ppm", buf, width, height);
 }
 
 int main(int argc, char** argv)
