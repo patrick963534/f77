@@ -18,9 +18,9 @@ void ZB_plot(ZBuffer * zb, ZBufferPoint * p)
         pp[1]=p->g>>8;
         pp[2]=p->b>>8;
 #else
-	*pp = RGB_TO_PIXEL(p->r, p->g, p->b);
+	*pp = (PIXEL)RGB_TO_PIXEL(p->r, p->g, p->b);
 #endif
-	*pz = zz;
+	*pz = (unsigned short)zz;
     }
 }
 

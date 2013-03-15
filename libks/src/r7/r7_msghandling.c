@@ -1,3 +1,4 @@
+#include "r7_zgl.h"
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -21,6 +22,7 @@ tgl_warning(const char *format, ...)
   vfprintf(stderr, format, args);
   va_end(args);
 #endif /* !NO_DEBUG_OUTPUT */
+  r7_unused(format);
 }
 
 /* This function should be used for debug output only. */
@@ -34,6 +36,7 @@ tgl_trace(const char *format, ...)
   vfprintf(stderr, format, args);
   va_end(args);
 #endif /* !NO_DEBUG_OUTPUT */
+  r7_unused(format);
 }
 
 /* Use this function to output info about things in the code which
@@ -49,4 +52,5 @@ tgl_fixme(const char *format, ...)
   vfprintf(stderr, format, args);
   va_end(args);
 #endif /* !NO_DEBUG_OUTPUT */
+  r7_unused(format);
 }

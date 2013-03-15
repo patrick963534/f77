@@ -36,7 +36,7 @@ void glopMaterial(GLContext *c,GLParam *p)
     break;
   case GL_SHININESS:
     m->shininess=v[0];
-    m->shininess_i = (v[0]/128.0f)*SPECULAR_BUFFER_RESOLUTION;
+    m->shininess_i = (int)((v[0]/128.0f)*SPECULAR_BUFFER_RESOLUTION);
     break;
   case GL_AMBIENT_AND_DIFFUSE:
     for(i=0;i<4;i++)
@@ -113,7 +113,7 @@ void glopLight(GLContext *c,GLParam *p)
       float a=v.v[0];
       assert(a == 180 || (a>=0 && a<=90));
       l->spot_cutoff=a;
-      if (a != 180) l->cos_spot_cutoff=cos(a * M_PI / 180.0);
+      if (a != 180) l->cos_spot_cutoff=(float)cos(a * M_PI / 180.0);
     }
     break;
   case GL_CONSTANT_ATTENUATION:
@@ -219,7 +219,7 @@ void gl_shade_vertex(GLContext *c,GLVertex *v)
       d.X=l->position.v[0]-v->ec.v[0];
       d.Y=l->position.v[1]-v->ec.v[1];
       d.Z=l->position.v[2]-v->ec.v[2];
-      dist=sqrt(d.X*d.X+d.Y*d.Y+d.Z*d.Z);
+      dist=(float)sqrt(d.X*d.X+d.Y*d.Y+d.Z*d.Z);
       if (dist>1E-3) {
         tmp=1/dist;
         d.X*=tmp;
@@ -249,7 +249,7 @@ void gl_shade_vertex(GLContext *c,GLVertex *v)
         } else {
           /* TODO: optimize */
           if (l->spot_exponent > 0) {
-            att=att*pow(dot_spot,l->spot_exponent);
+            att=(float)(att*pow(dot_spot,l->spot_exponent));
           }
         }
       }
@@ -268,14 +268,14 @@ void gl_shade_vertex(GLContext *c,GLVertex *v)
       } else {
         s.X=d.X;
         s.Y=d.Y;
-        s.Z=d.Z+1.0;
+        s.Z=d.Z+1.0f;
       }
       dot_spec=n.X*s.X+n.Y*s.Y+n.Z*s.Z;
       if (twoside && dot_spec < 0) dot_spec = -dot_spec;
       if (dot_spec>0) {
         GLSpecBuf *specbuf;
         int idx;
-        tmp=sqrt(s.X*s.X+s.Y*s.Y+s.Z*s.Z);
+        tmp=(float)sqrt(s.X*s.X+s.Y*s.Y+s.Z*s.Z);
         if (tmp > 1E-3) {
           dot_spec=dot_spec / tmp;
         }

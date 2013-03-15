@@ -60,6 +60,7 @@ void glopLoadIdentity(GLContext *c,GLParam *p)
   gl_M4_Id(c->matrix_stack_ptr[c->matrix_mode]);
 
   gl_matrix_update(c);
+  r7_unused(p);
 }
 
 void glopMultMatrix(GLContext *c,GLParam *p)
@@ -88,6 +89,7 @@ void glopPushMatrix(GLContext *c,GLParam *p)
 {
   int n=c->matrix_mode;
   M4 *m;
+  r7_unused(p);
 
   assert( (c->matrix_stack_ptr[n] - c->matrix_stack[n] + 1 )
 	   < c->matrix_stack_depth_max[n] );
@@ -102,6 +104,7 @@ void glopPushMatrix(GLContext *c,GLParam *p)
 void glopPopMatrix(GLContext *c,GLParam *p)
 {
   int n=c->matrix_mode;
+  r7_unused(p);
 
   assert( c->matrix_stack_ptr[n] > c->matrix_stack[n] );
   c->matrix_stack_ptr[n]--;
@@ -116,7 +119,7 @@ void glopRotate(GLContext *c,GLParam *p)
   float angle;
   int dir_code;
 
-  angle = p[1].f * M_PI / 180.0;
+  angle = (float)(p[1].f * M_PI / 180.0);
   u[0]=p[2].f;
   u[1]=p[3].f;
   u[2]=p[4].f;
@@ -147,14 +150,14 @@ void glopRotate(GLContext *c,GLParam *p)
       /* normalize vector */
       float len = u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
       if (len == 0.0f) return;
-      len = 1.0f / sqrt(len);
+      len = (float)(1.0f / sqrt(len));
       u[0] *= len;
       u[1] *= len;
       u[2] *= len;
 
       /* store cos and sin values */
-      cost=cos(angle);
-      sint=sin(angle);
+      cost=(float)cos(angle);
+      sint=(float)sin(angle);
 
       /* fill in the values */
       m.m[3][0]=m.m[3][1]=m.m[3][2]=
@@ -221,12 +224,12 @@ void glopFrustum(GLContext *c,GLParam *p)
   float farp=p[6].f;
   float x,y,A,B,C,D;
 
-  x = (2.0*near) / (right-left);
-  y = (2.0*near) / (top-bottom);
+  x = (2.0f*near) / (right-left);
+  y = (2.0f*near) / (top-bottom);
   A = (right+left) / (right-left);
   B = (top+bottom) / (top-bottom);
   C = -(farp+near) / ( farp-near);
-  D = -(2.0*farp*near) / (farp-near);
+  D = -(2.0f*farp*near) / (farp-near);
 
   r=&m.m[0][0];
   r[0]= x; r[1]=0; r[2]=A; r[3]=0;

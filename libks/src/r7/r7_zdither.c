@@ -95,7 +95,7 @@ int ZDither_lookupColor(int r,int g,int b)
   r=(((v & 0xF800F800) >> 2) + r_d) & 0x70007000; \
   t=r | g; \
   c=ctable[t & 0xFFFF] | (ctable[t >> 16] << 8); \
-  *(unsigned short *)(dest+(a))=c; 	\
+  *(unsigned short *)(dest+(a))=(unsigned short)c; 	\
 }
 
 /* NOTE: all the memory access are 16 bit aligned, so if buf or

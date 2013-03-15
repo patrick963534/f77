@@ -265,6 +265,7 @@ static void ZB_copyFrameBufferRGB24(ZBuffer * zb,
 	    p += 3;
 	} while (--n > 0);
 
+    //p1 = (unsigned*)(((char*)p1) + linesize);
 	(char *) p1 += linesize;
     }
 }
@@ -431,7 +432,7 @@ void memset_s(void *adr, int val, int count)
     q = (unsigned short *) p;
     n = count & 7;
     for (i = 0; i < n; i++)
-	*q++ = val;
+	*q++ = (unsigned short)val;
 }
 
 void memset_l(void *adr, int val, int count)

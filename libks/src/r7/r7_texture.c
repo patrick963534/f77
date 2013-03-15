@@ -187,6 +187,8 @@ void glopTexEnv(GLContext *c,GLParam *p)
   int pname=p[2].i;
   int param=p[3].i;
 
+  r7_unused(c);
+
   if (target != GL_TEXTURE_ENV) {
   error:
     gl_fatal_error("glTexParameter: unsupported option");
@@ -203,7 +205,8 @@ void glopTexParameter(GLContext *c,GLParam *p)
   int target=p[1].i;
   int pname=p[2].i;
   int param=p[3].i;
-  
+  r7_unused(c);
+
   if (target != GL_TEXTURE_2D) {
   error:
     gl_fatal_error("glTexParameter: unsupported option");
@@ -226,4 +229,6 @@ void glopPixelStore(GLContext *c,GLParam *p)
       param != 1) {
     gl_fatal_error("glPixelStore: unsupported option");
   }
+
+  r7_unused(c);
 }

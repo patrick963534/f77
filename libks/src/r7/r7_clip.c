@@ -15,7 +15,7 @@ void gl_transform_to_viewport(GLContext *c,GLVertex *v)
   float winv;
 
   /* coordinates */
-  winv=1.0/v->pc.W;
+  winv=(float)(1.0/v->pc.W);
   v->zp.x= (int) ( v->pc.X * winv * c->viewport.scale.X 
                    + c->viewport.trans.X );
   v->zp.y= (int) ( v->pc.Y * winv * c->viewport.scale.Y 
@@ -52,10 +52,10 @@ static void gl_add_select1(GLContext *c,int z1,int z2,int z3)
 {
   unsigned int min,max;
   min=max=z1;
-  if (z2<min) min=z2;
-  if (z3<min) min=z3;
-  if (z2>max) max=z2;
-  if (z3>max) max=z3;
+  if ((unsigned)z2<min) min=z2;
+  if ((unsigned)z3<min) min=z3;
+  if ((unsigned)z2>max) max=z2;
+  if ((unsigned)z3>max) max=z3;
 
   gl_add_select(c,0xffffffff-min,0xffffffff-max);
 }

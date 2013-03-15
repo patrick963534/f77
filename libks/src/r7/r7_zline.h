@@ -63,7 +63,7 @@
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,*pz))  { 			\
       RGBPIXEL;	\
-      *pz=zz; 					\
+      *pz=(PIXEL)zz; 					\
     }						\
   }
 #else /* INTERP_Z */

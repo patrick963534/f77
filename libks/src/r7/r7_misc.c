@@ -137,6 +137,8 @@ void glopHint(GLContext *c,GLParam *p)
 
   /* do nothing */
 #endif
+  r7_unused(c);
+  r7_unused(p);
 }
 
 void 

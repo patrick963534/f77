@@ -1,4 +1,5 @@
 #include "r7_zgl.h"
+#include <string.h>
 
 void glopNormal(GLContext * c, GLParam * p)
 {
@@ -59,13 +60,13 @@ void gl_eval_viewport(GLContext * c)
 
     v = &c->viewport;
 
-    v->trans.X = ((v->xsize - 0.5) / 2.0) + v->xmin;
-    v->trans.Y = ((v->ysize - 0.5) / 2.0) + v->ymin;
-    v->trans.Z = ((zsize - 0.5) / 2.0) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2;
+    v->trans.X = ((v->xsize - 0.5f) / 2.0f) + v->xmin;
+    v->trans.Y = ((v->ysize - 0.5f) / 2.0f) + v->ymin;
+    v->trans.Z = ((zsize - 0.5f) / 2.0f) + ((1 << ZB_POINT_Z_FRAC_BITS)) / 2;
 
-    v->scale.X = (v->xsize - 0.5) / 2.0;
-    v->scale.Y = -(v->ysize - 0.5) / 2.0;
-    v->scale.Z = -((zsize - 0.5) / 2.0);
+    v->scale.X = (v->xsize - 0.5f) / 2.0f;
+    v->scale.Y = -(v->ysize - 0.5f) / 2.0f;
+    v->scale.Z = -((zsize - 0.5f) / 2.0f);
 }
 
 void glopBegin(GLContext * c, GLParam * p)
@@ -348,7 +349,7 @@ void glopVertex(GLContext * c, GLParam * p)
 void glopEnd(GLContext * c, GLParam * param)
 {
     assert(c->in_begin == 1);
-
+    r7_unused(param);
     if (c->begin_type == GL_LINE_LOOP) {
 	if (c->vertex_cnt >= 3) {
 	    gl_draw_line(c, &c->vertex[0], &c->vertex[2]);

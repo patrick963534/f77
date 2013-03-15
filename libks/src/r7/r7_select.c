@@ -56,6 +56,8 @@ void glopInitNames(GLContext *c,GLParam *p)
     c->name_stack_size=0;
     c->select_hit=NULL;
   }
+  r7_unused(c);
+  r7_unused(p);
 }
 
 void glopPushName(GLContext *c,GLParam *p)
@@ -74,6 +76,7 @@ void glopPopName(GLContext *c,GLParam *p)
     c->name_stack_size--;
     c->select_hit=NULL;
   }
+  r7_unused(p);
 }
 
 void glopLoadName(GLContext *c,GLParam *p)

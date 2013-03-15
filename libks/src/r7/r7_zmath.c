@@ -209,8 +209,8 @@ void gl_M4_Rotate(M4 *a,float t,int u)
 	 int v,w;
    if ((v=u+1)>2) v=0;
 	 if ((w=v+1)>2) w=0;
-	 s=sin(t);
-	 c=cos(t);
+	 s=(float)sin(t);
+	 c=(float)cos(t);
 	 gl_M4_Id(a);
 	 a->m[v][v]=c;	a->m[v][w]=-s;
 	 a->m[w][v]=s;	a->m[w][w]=c;
@@ -245,7 +245,7 @@ void gl_M3_Inv(M3 *a,M3 *m)
 int gl_V3_Norm(V3 *a)
 {
 	float n;
-	n=sqrt(a->X*a->X+a->Y*a->Y+a->Z*a->Z);
+	n=(float)sqrt(a->X*a->X+a->Y*a->Y+a->Z*a->Z);
 	if (n==0) return 1;
 	a->X/=n;
 	a->Y/=n;

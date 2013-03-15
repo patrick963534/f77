@@ -3,7 +3,7 @@
  */
 
 {
-  ZBufferPoint *t,*pr1,*pr2,*l1,*l2;
+  ZBufferPoint *t,*pr1=NULL,*pr2=NULL,*l1 = NULL,*l2 = NULL;
   float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
   unsigned short *pz1;
   PIXEL *pp1;
@@ -11,13 +11,13 @@
 
   int nb_lines,dx1,dy1,tmp,dx2,dy2;
 
-  int error,derror;
-  int x1,dxdy_min,dxdy_max;
+  int error=0,derror=0;
+  int x1=0,dxdy_min=0,dxdy_max=0;
 /* warning: x2 is multiplied by 2^16 */
-  int x2,dx2dy2;  
+  int x2=0,dx2dy2;  
 
 #ifdef INTERP_Z
-  int z1,dzdx,dzdy,dzdl_min,dzdl_max;
+  int z1=0,dzdx=0,dzdy=0,dzdl_min=0,dzdl_max=0;
 #endif
 #ifdef INTERP_RGB
   int r1,drdx,drdy,drdl_min,drdl_max;
@@ -52,16 +52,16 @@
 
   /* we compute dXdx and dXdy for all interpolated values */
   
-  fdx1 = p1->x - p0->x;
-  fdy1 = p1->y - p0->y;
+  fdx1 = (float)(p1->x - p0->x);
+  fdy1 = (float)(p1->y - p0->y);
 
-  fdx2 = p2->x - p0->x;
-  fdy2 = p2->y - p0->y;
+  fdx2 = (float)(p2->x - p0->x);
+  fdy2 = (float)(p2->y - p0->y);
 
   fz = fdx1 * fdy2 - fdx2 * fdy1;
   if (fz == 0)
     return;
-  fz = 1.0 / fz;
+  fz = 1.0f / fz;
 
   fdx1 *= fz;
   fdy1 *= fz;
@@ -69,8 +69,8 @@
   fdy2 *= fz;
 
 #ifdef INTERP_Z
-  d1 = p1->z - p0->z;
-  d2 = p2->z - p0->z;
+  d1 = (float)(p1->z - p0->z);
+  d2 = (float)(p2->z - p0->z);
   dzdx = (int) (fdy2 * d1 - fdy1 * d2);
   dzdy = (int) (fdx1 * d2 - fdx2 * d1);
 #endif

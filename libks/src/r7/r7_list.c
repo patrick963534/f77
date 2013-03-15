@@ -153,12 +153,16 @@ void gl_add_op333(GLParam *p)
 void glopEndList(GLContext *c,GLParam *p)
 {
     assert(0);
+    r7_unused(c);
+    r7_unused(p);
 }
 
 /* this opcode is never called directly */
 void glopNextBuffer(GLContext *c,GLParam *p)
 {
     assert(0);
+    r7_unused(c);
+    r7_unused(p);
 }
 
 
@@ -172,15 +176,16 @@ void glopCallList(GLContext *c,GLParam *p)
     if (l == NULL) gl_fatal_error("list %d not defined",list);
     p=l->first_op_buffer->ops;
 
-    while (1) {
-        op=p[0].op;
-        if (op == OP_EndList) break;
+    op=p[0].op;
+    while (op != OP_EndList) {
         if (op == OP_NextBuffer) {
             p=(GLParam *)p[1].p;
         } else {
             op_table_func[op](c,p);
             p+=op_table_size[op];
         }
+
+        op=p[0].op;
     }
 }
 

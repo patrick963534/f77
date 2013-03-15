@@ -75,7 +75,7 @@ void gl_resizeImage(unsigned char *dest,int xsize_dest,int ysize_dest,
       
       if ((xf+yf) <= INTERP_NORM) {
 	for(j=0;j<3;j++) {
-	  pix[j]=interpolate(pix_src[(yi*xsize_src+xi)*3+j],
+	  pix[j]=(unsigned char)interpolate(pix_src[(yi*xsize_src+xi)*3+j],
 			     pix_src[(yi*xsize_src+xi+1)*3+j],
 			     pix_src[((yi+1)*xsize_src+xi)*3+j],
 			     xf,yf);
@@ -84,7 +84,7 @@ void gl_resizeImage(unsigned char *dest,int xsize_dest,int ysize_dest,
 	xf=INTERP_NORM - xf;
 	yf=INTERP_NORM - yf;
 	for(j=0;j<3;j++) {
-	  pix[j]=interpolate(pix_src[((yi+1)*xsize_src+xi+1)*3+j],
+	  pix[j]=(unsigned char)interpolate(pix_src[((yi+1)*xsize_src+xi+1)*3+j],
 			     pix_src[((yi+1)*xsize_src+xi)*3+j],
 			     pix_src[(yi*xsize_src+xi+1)*3+j],
 			     xf,yf);

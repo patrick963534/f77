@@ -359,12 +359,13 @@ void dprintf(const char *, ...);
 several clipping stages */
 
 #define CLIP_EPSILON (1E-5)
+#define r7_unused(p) (void)(p)
 
 static INLINE_GL int gl_clipcode(float x,float y,float z,float w1)
 {
     float w;
 
-    w=w1 * (1.0 + CLIP_EPSILON);
+    w=(float)(w1 * (1.0 + CLIP_EPSILON));
     return (x<-w) |
         ((x>w)<<1) |
         ((y<-w)<<2) |
