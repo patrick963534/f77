@@ -118,7 +118,7 @@ KS_API ks_image_t* ks_image_from(const char* pixels, int w, int h, ks_object_t* 
     me           = (ks_image_t*)ks_object_new(sizeof(*me));
     me->tname    = "ks_image";
     me->destruct = (ks_destruct_f)ks_image_destruct;
-    me->pixels   = pixels;
+    me->pixels   = (char*)pixels;
     me->width    = w;
     me->height   = h;
 
