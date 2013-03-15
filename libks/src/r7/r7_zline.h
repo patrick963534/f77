@@ -45,14 +45,14 @@
 #if TGL_FEATURE_RENDER_BITS == 24
 #define RGBPIXEL pp[0] = r >> 16, pp[1] = g >> 16, pp[2] = b >> 16
 #else
-#define RGBPIXEL *pp = RGB_TO_PIXEL(r >> 8,g >> 8,b >> 8)
+#define RGBPIXEL *pp = (PIXEL)RGB_TO_PIXEL(r >> 8,g >> 8,b >> 8)
 #endif
 #else /* INTERP_RGB */
 #define RGB(x)
 #if TGL_FEATURE_RENDER_BITS == 24
 #define RGBPIXEL pp[0] = r, pp[1] = g, pp[2] = b
 #else
-#define RGBPIXEL *pp = color
+#define RGBPIXEL *pp = (PIXEL)color
 #endif
 #endif /* INTERP_RGB */
 
@@ -63,7 +63,7 @@
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,*pz))  { 			\
       RGBPIXEL;	\
-      *pz=(PIXEL)zz; 					\
+      *pz=(unsigned short)zz; 					\
     }						\
   }
 #else /* INTERP_Z */

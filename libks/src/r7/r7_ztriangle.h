@@ -14,23 +14,23 @@
   int error=0,derror=0;
   int x1=0,dxdy_min=0,dxdy_max=0;
 /* warning: x2 is multiplied by 2^16 */
-  int x2=0,dx2dy2;  
+  int x2=0,dx2dy2=0;  
 
 #ifdef INTERP_Z
   int z1=0,dzdx=0,dzdy=0,dzdl_min=0,dzdl_max=0;
 #endif
 #ifdef INTERP_RGB
-  int r1,drdx,drdy,drdl_min,drdl_max;
-  int g1,dgdx,dgdy,dgdl_min,dgdl_max;
-  int b1,dbdx,dbdy,dbdl_min,dbdl_max;
+  int r1=0,drdx=0,drdy=0,drdl_min=0,drdl_max=0;
+  int g1=0,dgdx=0,dgdy=0,dgdl_min=0,dgdl_max=0;
+  int b1=0,dbdx=0,dbdy=0,dbdl_min=0,dbdl_max=0;
 #endif
 #ifdef INTERP_ST
-  int s1,dsdx,dsdy,dsdl_min,dsdl_max;
-  int t1,dtdx,dtdy,dtdl_min,dtdl_max;
+  int s1=0,dsdx=0,dsdy=0,dsdl_min=0,dsdl_max=0;
+  int t1=0,dtdx=0,dtdy=0,dtdl_min=0,dtdl_max=0;
 #endif
 #ifdef INTERP_STZ
-  float sz1,dszdx,dszdy,dszdl_min,dszdl_max;
-  float tz1,dtzdx,dtzdy,dtzdl_min,dtzdl_max;
+  float sz1=0,dszdx=0,dszdy=0,dszdl_min=0,dszdl_max=0;
+  float tz1=0,dtzdx=0,dtzdy=0,dtzdl_min=0,dtzdl_max=0;
 #endif
 
   /* we sort the vertex with increasing y */
@@ -76,31 +76,31 @@
 #endif
 
 #ifdef INTERP_RGB
-  d1 = p1->r - p0->r;
-  d2 = p2->r - p0->r;
+  d1 = (float)(p1->r - p0->r);
+  d2 = (float)(p2->r - p0->r);
   drdx = (int) (fdy2 * d1 - fdy1 * d2);
   drdy = (int) (fdx1 * d2 - fdx2 * d1);
 
-  d1 = p1->g - p0->g;
-  d2 = p2->g - p0->g;
+  d1 = (float)(p1->g - p0->g);
+  d2 = (float)(p2->g - p0->g);
   dgdx = (int) (fdy2 * d1 - fdy1 * d2);
   dgdy = (int) (fdx1 * d2 - fdx2 * d1);
 
-  d1 = p1->b - p0->b;
-  d2 = p2->b - p0->b;
+  d1 = (float)(p1->b - p0->b);
+  d2 = (float)(p2->b - p0->b);
   dbdx = (int) (fdy2 * d1 - fdy1 * d2);
   dbdy = (int) (fdx1 * d2 - fdx2 * d1);
 
 #endif
   
 #ifdef INTERP_ST
-  d1 = p1->s - p0->s;
-  d2 = p2->s - p0->s;
+  d1 = (float)(p1->s - p0->s);
+  d2 = (float)(p2->s - p0->s);
   dsdx = (int) (fdy2 * d1 - fdy1 * d2);
   dsdy = (int) (fdx1 * d2 - fdx2 * d1);
   
-  d1 = p1->t - p0->t;
-  d2 = p2->t - p0->t;
+  d1 = (float)(p1->t - p0->t);
+  d2 = (float)(p2->t - p0->t);
   dtdx = (int) (fdy2 * d1 - fdy1 * d2);
   dtdy = (int) (fdx1 * d2 - fdx2 * d1);
 #endif
@@ -250,13 +250,13 @@
           register unsigned int z,zz;
 #endif
 #ifdef INTERP_RGB
-          register unsigned int or1,og1,ob1;
+          register unsigned int or1=0,og1=0,ob1=0;
 #endif
 #ifdef INTERP_ST
-          register unsigned int s,t;
+          register unsigned int s=0,t=0;
 #endif
 #ifdef INTERP_STZ
-          float sz,tz;
+          float sz=0,tz=0;
 #endif
 
           n=(x2 >> 16) - x1;

@@ -62,7 +62,7 @@ void glopLight(GLContext *c,GLParam *p)
 {
   int light=p[1].i;
   int type=p[2].i;
-  V4 v;
+  V4 v = {0};
   GLLight *l;
   int i;
   

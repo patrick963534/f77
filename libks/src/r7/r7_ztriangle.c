@@ -27,10 +27,10 @@ void ZB_fillTriangleFlat(ZBuffer *zb,
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
-      pp[3 * _a]=colorR;\
-      pp[3 * _a + 1]=colorG;\
-      pp[3 * _a + 2]=colorB;\
-      pz[_a]=zz;				\
+      pp[3 * _a]=(PIXEL)colorR;\
+      pp[3 * _a + 1]=(PIXEL)colorG;\
+      pp[3 * _a + 2]=(PIXEL)colorB;\
+      pz[_a]=(unsigned short)zz;				\
     }\
     z+=dzdx;					\
 }
@@ -46,8 +46,8 @@ void ZB_fillTriangleFlat(ZBuffer *zb,
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
-      pp[_a]=color;				\
-      pz[_a]=zz;				\
+      pp[_a]=(PIXEL)color;				\
+      pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
 }
@@ -83,10 +83,10 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
-      pp[3 * _a]=or1 >> 8;\
-      pp[3 * _a + 1]=og1 >> 8;\
-      pp[3 * _a + 2]=ob1 >> 8;\
-      pz[_a]=zz;				\
+      pp[3 * _a]=(PIXEL)(or1 >> 8);\
+      pp[3 * _a + 1]=(PIXEL)(og1 >> 8);\
+      pp[3 * _a + 2]=(PIXEL)(ob1 >> 8);\
+      pz[_a]=(unsigned short)zz;				\
     }\
     z+=dzdx;					\
     og1+=dgdx;					\
@@ -109,8 +109,8 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
       tmp=rgb & 0xF81F07E0;			\
-      pp[_a]=tmp | (tmp >> 16);			\
-      pz[_a]=zz;				\
+      pp[_a]=(PIXEL)(tmp | (tmp >> 16));			\
+      pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     rgb=(rgb+drgbdx) & ( ~ 0x00200800);		\
@@ -157,8 +157,8 @@ void ZB_fillTriangleSmooth(ZBuffer *zb,
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
-      pp[_a] = RGB_TO_PIXEL(or1, og1, ob1);\
-      pz[_a]=zz;				\
+      pp[_a] = (PIXEL)RGB_TO_PIXEL(or1, og1, ob1);\
+      pz[_a]=(unsigned short)zz;				\
     }\
     z+=dzdx;					\
     og1+=dgdx;					\
@@ -197,10 +197,10 @@ void ZB_fillTriangleMapping(ZBuffer *zb,
    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
      if (ZCMP(zz,pz[_a])) {				\
        ptr = texture + (((t & 0x3FC00000) | s) >> 14) * 3; \
-       pp[3 * _a]= ptr[0];\
-       pp[3 * _a + 1]= ptr[1];\
-       pp[3 * _a + 2]= ptr[2];\
-       pz[_a]=zz;				\
+       pp[3 * _a]= (PIXEL)ptr[0];\
+       pp[3 * _a + 1]= (PIXEL)ptr[1];\
+       pp[3 * _a + 2]= (PIXEL)ptr[2];\
+       pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     s+=dsdx;					\
@@ -213,8 +213,8 @@ void ZB_fillTriangleMapping(ZBuffer *zb,
 {						\
    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
      if (ZCMP(zz,pz[_a])) {				\
-       pp[_a]=texture[((t & 0x3FC00000) | s) >> 14];	\
-       pz[_a]=zz;				\
+       pp[_a]=(PIXEL)texture[((t & 0x3FC00000) | s) >> 14];	\
+       pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     s+=dsdx;					\
@@ -265,7 +265,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
        pp[3 * _a]= ptr[0];\
        pp[3 * _a + 1]= ptr[1];\
        pp[3 * _a + 2]= ptr[2];\
-       pz[_a]=zz;				\
+       pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     s+=dsdx;					\
@@ -280,7 +280,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
      if (ZCMP(zz,pz[_a])) {				\
        pp[_a]=*(PIXEL *)((char *)texture+ \
                (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));\
-       pz[_a]=zz;				\
+       pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     s+=dsdx;					\
@@ -298,7 +298,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
   float sz,tz,fz,zinv; \
   n=(x2>>16)-x1;                             \
   fz=(float)z1;\
-  zinv=1.0 / fz;\
+  zinv=1.0f / fz;\
   pp=(PIXEL *)((char *)pp1 + x1 * PSZB); \
   pz=pz1+x1;					\
   z=z1;						\
@@ -314,7 +314,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
       dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
       dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
       fz+=fndzdx;\
-      zinv=1.0 / fz;\
+      zinv=1.0f / fz;\
     }\
     PUT_PIXEL(0);							   \
     PUT_PIXEL(1);							   \
@@ -379,8 +379,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
        zinv= 1.0 / (float) z; \
        s= (int) (sz * zinv); \
        t= (int) (tz * zinv); \
-       pp[_a]=texture[((t & 0x3FC00000) | s) >> 14];	\
-       pz[_a]=zz;				\
+       pp[_a]=(PIXEL)texture[((t & 0x3FC00000) | s) >> 14];	\
+       pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     sz+=dszdx;					\
