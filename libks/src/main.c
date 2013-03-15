@@ -133,7 +133,7 @@ static void test()
     GLuint Object;
 
     buf = calloc(1, width * height * 4);
-    zb = ZB_open(width, height, ZB_MODE_RGB24, 0, NULL, NULL, NULL);
+    zb = ZB_open(width, height, ZB_MODE_RGBA, 0, NULL, NULL, NULL);
 
     glInit(zb);
     glViewport(0, 0, width, height);
