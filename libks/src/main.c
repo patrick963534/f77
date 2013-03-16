@@ -112,10 +112,10 @@ static GLuint make_object( void )
 
     glNewList( list, GL_COMPILE );
 
-    glBegin( GL_TRIANGLES );
-        glVertex3f(  0.0f,  0.5f, 0.4f );
-        glVertex3f(  0.5f, -0.5f, 0.4f );
-        glVertex3f( -0.5f, -0.5f, 0.4f );
+    glBegin(GL_TRIANGLES);
+        glColor3f( 1.0, 1.0, 0.0 ); glVertex3f(  0.0f,  0.5f, 0.4f );
+        glColor3f( 1.0, 0.0, 1.0 ); glVertex3f(  0.5f, -0.5f, 0.4f );
+        glColor3f( 0.0, 1.0, 1.0 ); glVertex3f( -0.5f, -0.5f, 0.4f );
     glEnd();
 
     glEndList();
@@ -149,7 +149,6 @@ static void test()
     glPushMatrix();
     glLoadIdentity();
     glTranslatef( 0.0f, 0.0f, -10.0f );
-    glColor3f( 1.0, 1.0, 0.0 );
     glCallList( Object );
     glPopMatrix();
     glFlush();
