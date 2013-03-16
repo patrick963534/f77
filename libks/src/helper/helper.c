@@ -102,6 +102,7 @@ KS_API void ks_helper_image_save_ppm(const char* file, const char* pixels, int w
     }
 
     fclose(save_fp);
+    free(buffer);
 }
 
 KS_API void ks_helper_image565_save_ppm(const char* file, const char* pixels, int width, int height)
@@ -128,4 +129,5 @@ KS_API void ks_helper_image565_save_ppm(const char* file, const char* pixels, in
     }
 
     fclose(save_fp);
+    free(buffer);
 }
