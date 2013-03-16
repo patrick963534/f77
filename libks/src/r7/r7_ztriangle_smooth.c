@@ -5,6 +5,50 @@
 #define ZCMP(z,zpix) ((z) >= (zpix))
 #define SAR_RND_TO_ZERO(v,n) (v / (1<<n))
 
+#define PUT_PIXEL(_a)				\
+{						\
+    zz=z >> ZB_POINT_Z_FRAC_BITS;		\
+    if (ZCMP(zz,pz[_a])) {				\
+        tmp=rgb & 0xF81F07E0;			\
+        pp[_a]=(PIXEL)(tmp | (tmp >> 16));			\
+        pz[_a]=(unsigned short)zz;				\
+    }						\
+    z+=dzdx;					\
+    rgb=(rgb+drgbdx) & ( ~ 0x00200800);		\
+}
+
+#define DRAW_LINE()							   \
+{									   \
+  register unsigned short *pz;					   \
+  register PIXEL *pp;					   \
+  register unsigned int tmp,z,zz,rgb,drgbdx;				   \
+  register int n;							   \
+  n=(x2 >> 16) - x1;							   \
+  pp=pp1+x1;								   \
+  pz=pz1+x1;								   \
+  z=z1;									   \
+  rgb=(r1 << 16) & 0xFFC00000;						   \
+  rgb|=(g1 >> 5) & 0x000007FF;						   \
+  rgb|=(b1 << 5) & 0x001FF000;						   \
+  drgbdx=_drgbdx;							   \
+  while (n>=3) {							   \
+      PUT_PIXEL(0);							   \
+      PUT_PIXEL(1);							   \
+      PUT_PIXEL(2);							   \
+      PUT_PIXEL(3);							   \
+      pz+=4;								   \
+      pp+=4;								   \
+      n-=4;								   \
+  }									   \
+  while (n>=0) {							   \
+      PUT_PIXEL(0);							   \
+      pz+=1;								   \
+      pp+=1;								   \
+      n-=1;								   \
+  }									   \
+}
+
+
 void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBufferPoint *p2)
 {
     int _drgbdx;
@@ -173,65 +217,15 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBuffe
 
         while (nb_lines>0) {
             nb_lines--;
-
-            {
-                unsigned short *pz;					   
-                PIXEL *pp;					   
-                unsigned int tmp,z,zz,rgb,drgbdx;				   
-                int n;							   
-                n=(x2 >> 16) - x1;							   
-                pp=pp1+x1;								   
-                pz=pz1+x1;								   
-                z=z1;									   
-                rgb=(r1 << 16) & 0xFFC00000;						   
-                rgb|=(g1 >> 5) & 0x000007FF;						   
-                rgb|=(b1 << 5) & 0x001FF000;						   
-                drgbdx=_drgbdx;							   
-                while (n>=3) {							   
-                    int kkk = 0;
-                    for (kkk = 0; kkk < 4; ++kkk)
-                    {
-                        zz=z >> ZB_POINT_Z_FRAC_BITS;		
-                        if (ZCMP(zz,pz[kkk])) {				
-                            tmp=rgb & 0xF81F07E0;			
-                            pp[kkk]=(PIXEL)(tmp | (tmp >> 16));			
-                            pz[kkk]=(unsigned short)zz;				
-                        }						
-                        z+=dzdx;					
-                        rgb=(rgb+drgbdx) & ( ~ 0x00200800);		
-                    }
-
-                    pz+=4;								   
-                    pp+=4;								   
-                    n-=4;								   
-                }									   
-                while (n>=0) {			
-                    int kkk = 0;
-                    {
-                        zz=z >> ZB_POINT_Z_FRAC_BITS;		
-                        if (ZCMP(zz,pz[kkk])) {				
-                            tmp=rgb & 0xF81F07E0;			
-                            pp[kkk]=(PIXEL)(tmp | (tmp >> 16));			
-                            pz[kkk]=(unsigned short)zz;				
-                        }						
-                        z+=dzdx;					
-                        rgb=(rgb+drgbdx) & ( ~ 0x00200800);		
-                    }
-                    pz+=1;								   
-                    pp+=1;								   
-                    n-=1;								   
-                }			
-            }
-
+            DRAW_LINE();
 
             /* left edge */
             error+=derror;
             if (error > 0) {
                 error-=0x10000;
+
                 x1+=dxdy_max;
-
                 z1+=dzdl_max;
-
 
                 r1+=drdl_max;
                 g1+=dgdl_max;
@@ -239,7 +233,6 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBuffe
 
             } else {
                 x1+=dxdy_min;
-
                 z1+=dzdl_min;
 
                 r1+=drdl_min;
