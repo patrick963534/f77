@@ -123,6 +123,8 @@ static void smooth_test()
     ks_helper_image565_save_ppm("smooth_test.ppm", buf, width, height);
 
     free(buf);
+    glClose();
+    ZB_close(zb);
 }
 
 static void texture_mapping_test()
@@ -169,9 +171,15 @@ static void texture_mapping_test()
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
 
+    glDeleteTextures(2, TexObj);
+
     glFlush();
 
     ks_helper_image565_save_ppm("texture_mapping_test.ppm", buf, width, height);
+
+    free(buf);
+    glClose();
+    ZB_close(zb);
 }
 
 void ks_utest_r7_test()

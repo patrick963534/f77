@@ -184,6 +184,13 @@ void glInit(void *zbuffer1)
 void glClose(void)
 {
   GLContext *c=gl_get_context333();
+  int i;
+
+  for(i=0;i<3;i++) {
+      gl_free(c->matrix_stack[i]);
+  }
+  gl_free(c->vertex);
+
   endSharedState(c);
   gl_free(c);
 }
