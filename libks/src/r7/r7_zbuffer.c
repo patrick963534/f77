@@ -48,7 +48,7 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode,
 
     size = zb->xsize * zb->ysize * sizeof(unsigned short);
 
-    zb->zbuf = gl_malloc(size);
+    zb->zbuf = gl_zalloc(size);
     if (zb->zbuf == NULL)
 	goto error;
 
