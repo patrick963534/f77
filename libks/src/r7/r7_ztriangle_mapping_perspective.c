@@ -36,46 +36,48 @@
     z=z1;						\
     sz=sz1;\
     tz=tz1;\
-    while (n>=(NB_INTERP-1)) {						   \
-    {\
-    float ss,tt;\
-    ss=(sz * zinv);\
-    tt=(tz * zinv);\
-    s=(int) ss;\
-    t=(int) tt;\
-    dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
-    dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
-    fz+=fndzdx;\
-    zinv=1.0f / fz;\
-    }\
-    PUT_PIXEL(0);							   \
-    PUT_PIXEL(1);							   \
-    PUT_PIXEL(2);							   \
-    PUT_PIXEL(3);							   \
-    PUT_PIXEL(4);							   \
-    PUT_PIXEL(5);							   \
-    PUT_PIXEL(6);							   \
-    PUT_PIXEL(7);							   \
-    pz+=NB_INTERP;							   \
-    pp=(PIXEL *)((char *)pp + NB_INTERP * PSZB);\
-    n-=NB_INTERP;							   \
-    sz+=ndszdx;\
-    tz+=ndtzdx;\
+    while (n>=(NB_INTERP-1))    \
+    {						   \
+        {\
+            float ss,tt;\
+            ss=(sz * zinv);\
+            tt=(tz * zinv);\
+            s=(int) ss;\
+            t=(int) tt;\
+            dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
+            dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
+            fz+=fndzdx;\
+            zinv=1.0f / fz;\
+        }\
+        PUT_PIXEL(0);							   \
+        PUT_PIXEL(1);							   \
+        PUT_PIXEL(2);							   \
+        PUT_PIXEL(3);							   \
+        PUT_PIXEL(4);							   \
+        PUT_PIXEL(5);							   \
+        PUT_PIXEL(6);							   \
+        PUT_PIXEL(7);							   \
+        pz+=NB_INTERP;							   \
+        pp=(PIXEL *)((char *)pp + NB_INTERP * PSZB);\
+        n-=NB_INTERP;							   \
+        sz+=ndszdx;\
+        tz+=ndtzdx;\
     }									   \
     {\
-    float ss,tt;\
-    ss=(sz * zinv);\
-    tt=(tz * zinv);\
-    s=(int) ss;\
-    t=(int) tt;\
-    dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
-    dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
+        float ss,tt;\
+        ss=(sz * zinv);\
+        tt=(tz * zinv);\
+        s=(int) ss;\
+        t=(int) tt;\
+        dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
+        dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
     }\
-    while (n>=0) {							   \
-    PUT_PIXEL(0);							   \
-    pz+=1;								   \
-    pp=(PIXEL *)((char *)pp + PSZB);\
-    n-=1;								   \
+    while (n>=0) \
+    {							   \
+        PUT_PIXEL(0);							   \
+        pz+=1;								   \
+        pp=(PIXEL *)((char *)pp + PSZB);\
+        n-=1;								   \
     }									   \
 }
 
