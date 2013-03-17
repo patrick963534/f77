@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "r7_zbuffer.h"
 
+#if 0
+
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
 #define NB_INTERP 8
@@ -287,3 +289,5 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoin
         }
     }
 }
+
+#endif
