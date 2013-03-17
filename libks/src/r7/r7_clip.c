@@ -409,7 +409,7 @@ void gl_draw_triangle_fill(GLContext *c,
   } else if (c->current_shade_model == GL_SMOOTH) {
     ZB_fillTriangleSmooth(c->zb,&p0->zp,&p1->zp,&p2->zp);
   } else {
-    ZB_fillTriangleFlat(c->zb,&p0->zp,&p1->zp,&p2->zp);
+    
   }
 }
 
