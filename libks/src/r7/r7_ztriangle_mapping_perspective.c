@@ -8,118 +8,122 @@
 
 #define NB_INTERP 8
 
+static PIXEL *texture;
+static float fdzdx,fndzdx,ndszdx,ndtzdx;
+
+static ZBufferPoint *zpt,*pr1=NULL,*pr2=NULL,*l1 = NULL,*l2 = NULL;
+static float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
+static unsigned short *pz1;
+static PIXEL *pp1;
+static int part,update_left,update_right;
+
+static int nb_lines,dx1,dy1,tmp,dx2,dy2;
+
+static int error=0,derror=0;
+static int x1=0,dxdy_min=0,dxdy_max=0;
+/* warning: x2 is multiplied by 2^16 */
+static int x2=0,dx2dy2=0;  
+
+static int z1=0,dzdx=0,dzdy=0,dzdl_min=0,dzdl_max=0;
+
+static float sz1=0,dszdx=0,dszdy=0,dszdl_min=0,dszdl_max=0;
+static float tz1=0,dtzdx=0,dtzdy=0,dtzdl_min=0,dtzdl_max=0;
+
+#define TEXTURE_PIXEL(texture, t, s)  \
+            (((char *)texture + (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH))))
+
 #define PUT_PIXEL(_a)				\
 {						\
     zz=z >> ZB_POINT_Z_FRAC_BITS;		\
     if (ZCMP(zz,pz[_a])) {				\
-    pp[_a]=*(PIXEL *)((char *)texture+ \
-    (((t & 0x3FC00000) | (s & 0x003FC000)) >> (17 - PSZSH)));\
-    pz[_a]=(unsigned short)zz;				\
+        pp[_a]=*(PIXEL *)TEXTURE_PIXEL(texture, t, s);\
+        pz[_a]=(unsigned short)zz;				\
     }						\
     z+=dzdx;					\
     s+=dsdx;					\
     t+=dtdx;					\
 }
 
-#define DRAW_LINE()				\
-{						\
-    register unsigned short *pz;		\
-    register PIXEL *pp;		\
-    register unsigned int s,t,z,zz;	\
-    register int n,dsdx,dtdx;		\
-    float sz,tz,fz,zinv; \
-    n=(x2>>16)-x1;                             \
-    fz=(float)z1;\
-    zinv=1.0f / fz;\
-    pp=(PIXEL *)((char *)pp1 + x1 * PSZB); \
-    pz=pz1+x1;					\
-    z=z1;						\
-    sz=sz1;\
-    tz=tz1;\
-    while (n>=(NB_INTERP-1))    \
-    {						   \
-        {\
-            float ss,tt;\
-            ss=(sz * zinv);\
-            tt=(tz * zinv);\
-            s=(int) ss;\
-            t=(int) tt;\
-            dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
-            dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
-            fz+=fndzdx;\
-            zinv=1.0f / fz;\
-        }\
-        PUT_PIXEL(0);							   \
-        PUT_PIXEL(1);							   \
-        PUT_PIXEL(2);							   \
-        PUT_PIXEL(3);							   \
-        PUT_PIXEL(4);							   \
-        PUT_PIXEL(5);							   \
-        PUT_PIXEL(6);							   \
-        PUT_PIXEL(7);							   \
-        pz+=NB_INTERP;							   \
-        pp=(PIXEL *)((char *)pp + NB_INTERP * PSZB);\
-        n-=NB_INTERP;							   \
-        sz+=ndszdx;\
-        tz+=ndtzdx;\
-    }									   \
-    {\
-        float ss,tt;\
-        ss=(sz * zinv);\
-        tt=(tz * zinv);\
-        s=(int) ss;\
-        t=(int) tt;\
-        dsdx= (int)( (dszdx - ss*fdzdx)*zinv );\
-        dtdx= (int)( (dtzdx - tt*fdzdx)*zinv );\
-    }\
-    while (n>=0) \
-    {							   \
-        PUT_PIXEL(0);							   \
-        pz+=1;								   \
-        pp=(PIXEL *)((char *)pp + PSZB);\
-        n-=1;								   \
-    }									   \
+static void DRAW_LINE()				
+{						
+    register unsigned short *pz;		
+    register PIXEL *pp;		
+    register unsigned int s,t,z,zz;	
+    register int n,dsdx,dtdx;		
+    float sz,tz,fz,zinv; 
+    n=(x2>>16)-x1;                             
+    fz=(float)z1;
+    zinv=1.0f / fz;
+    pp=(PIXEL *)((char *)pp1 + x1 * PSZB); 
+    pz=pz1+x1;					
+    z=z1;						
+    sz=sz1;
+    tz=tz1;
+
+    while (n >= (NB_INTERP-1))    
+    {						   
+        float ss,tt;
+        int i;
+        ss = (sz * zinv);
+        tt = (tz * zinv);
+        s = (int) ss;
+        t = (int) tt;
+        dsdx = (int)((dszdx - ss*fdzdx)*zinv);
+        dtdx = (int)((dtzdx - tt*fdzdx)*zinv);
+        fz += fndzdx;
+        zinv = 1.0f / fz;
+        
+        for (i = 0; i < 8; ++i, z+=dzdx, s+=dsdx, t+=dtdx)
+        {
+            zz=z >> ZB_POINT_Z_FRAC_BITS;		
+            if (ZCMP(zz, pz[i])) {				
+                pp[i]=*(PIXEL *)TEXTURE_PIXEL(texture, t, s);
+                pz[i]=(unsigned short)zz;				
+            }						
+        }
+
+        pz+=NB_INTERP;							   
+        pp=(PIXEL *)((char *)pp + NB_INTERP * PSZB);
+        n-=NB_INTERP;							   
+        sz+=ndszdx;
+        tz+=ndtzdx;
+    }									   
+    {
+        float ss,tt;
+        ss = (sz * zinv);
+        tt = (tz * zinv);
+        s = (int) ss;
+        t = (int) tt;
+        dsdx = (int)( (dszdx - ss*fdzdx)*zinv );
+        dtdx = (int)( (dtzdx - tt*fdzdx)*zinv );
+    }
+    while (n>=0) 
+    {							   
+        PUT_PIXEL(0);							   
+        pz += 1;								   
+        pp=(PIXEL *)((char *)pp + PSZB);
+        n-=1;								   
+    }									   
 }
 
 void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
                             ZBufferPoint *p0,ZBufferPoint *p1,ZBufferPoint *p2)
 {
-    PIXEL *texture;
-    float fdzdx,fndzdx,ndszdx,ndtzdx;
-
-    ZBufferPoint *t,*pr1=NULL,*pr2=NULL,*l1 = NULL,*l2 = NULL;
-    float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
-    unsigned short *pz1;
-    PIXEL *pp1;
-    int part,update_left,update_right;
-
-    int nb_lines,dx1,dy1,tmp,dx2,dy2;
-
-    int error=0,derror=0;
-    int x1=0,dxdy_min=0,dxdy_max=0;
-    /* warning: x2 is multiplied by 2^16 */
-    int x2=0,dx2dy2=0;  
-
-    int z1=0,dzdx=0,dzdy=0,dzdl_min=0,dzdl_max=0;
-
-    float sz1=0,dszdx=0,dszdy=0,dszdl_min=0,dszdl_max=0;
-    float tz1=0,dtzdx=0,dtzdy=0,dtzdl_min=0,dtzdl_max=0;
-
     /* we sort the vertex with increasing y */
     if (p1->y < p0->y) {
-        t = p0;
+        zpt = p0;
         p0 = p1;
-        p1 = t;
+        p1 = zpt;
     }
     if (p2->y < p0->y) {
-        t = p2;
+        zpt = p2;
         p2 = p1;
         p1 = p0;
-        p0 = t;
+        p0 = zpt;
     } else if (p2->y < p1->y) {
-        t = p1;
+        zpt = p1;
         p1 = p2;
-        p2 = t;
+        p2 = zpt;
     }
 
     /* we compute dXdx and dXdy for all interpolated values */
@@ -219,10 +223,12 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
         if (update_left) {
             dy1 = l2->y - l1->y;
             dx1 = l2->x - l1->x;
+
             if (dy1 > 0) 
                 tmp = (dx1 << 16) / dy1;
             else
                 tmp = 0;
+
             x1 = l1->x;
             error = 0;
             derror = tmp & 0x0000ffff;
@@ -233,7 +239,6 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
             dzdl_min=(dzdy + dzdx * dxdy_min); 
             dzdl_max=dzdl_min + dzdx;
 
-
             sz1=l1->sz;
             dszdl_min=(dszdy + dszdx * dxdy_min);
             dszdl_max=dszdl_min + dszdx;
@@ -241,7 +246,6 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
             tz1=l1->tz;
             dtzdl_min=(dtzdy + dtzdx * dxdy_min);
             dtzdl_max=dtzdl_min + dtzdx;
-
         }
 
         /* compute values for the right edge */
@@ -266,22 +270,18 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb,
             error+=derror;
             if (error > 0) {
                 error-=0x10000;
+
                 x1+=dxdy_max;
-
                 z1+=dzdl_max;
-
 
                 sz1+=dszdl_max;
                 tz1+=dtzdl_max;
-
             } else {
                 x1+=dxdy_min;
                 z1+=dzdl_min;
 
-
                 sz1+=dszdl_min;
                 tz1+=dtzdl_min;
-
             } 
 
             /* right edge */
