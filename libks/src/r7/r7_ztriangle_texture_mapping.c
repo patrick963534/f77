@@ -85,9 +85,9 @@ static void fill_top_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 
     for (y = p2->y; y > p0->y; y--)
     {
+        draw_line(zb, (int)curx1, (int)curx2, y);
         curx1 -= invslope1;
         curx2 -= invslope2;
-        draw_line(zb, (int)curx1, (int)curx2, y);
     }
 }
 
