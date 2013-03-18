@@ -33,25 +33,24 @@ static int calculate_area(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
     return dx1 * dy2 - dx2 * dy1;
 }
 
-static void draw_line(ZBuffer *zb, int x1, int x2, int y)
+static void draw_line(ZBuffer *zb, int minx, int maxx, int y)
 {
-    unsigned short* pp = zb->pbuf + zb->xsize * y;
-    int n = 0;
-
-    if (x1 > x2)
-    {
-        n = x1 - x2;
-        pp += x2;
-    }
-    else
-    {
-        n = x2 - x1;
-        pp += x1;
-    }    
+    unsigned short* pp = zb->pbuf + zb->xsize * y + minx;
+    int n = maxx - minx;
     
     while (n-- >= 0)
     {
         *pp++ = 0xffff;
+    }
+}
+
+static void ensure_min_max(float* min, float* max)
+{
+    if (abs(*min) > abs(*max))
+    {
+        float temp = *min;
+        *min = *max;
+        *max = temp;
     }
 }
 
@@ -65,9 +64,11 @@ static void fill_bottom_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoin
     float curx1 = (float)p0->x;
     float curx2 = (float)p0->x;
 
+    ensure_min_max(&invslope1, &invslope2);
+
     for (y = p0->y; y <= p1->y; y++)
     {
-        draw_line(zb, (int)curx1, (int)curx2, y);
+        draw_line(zb, (int)(curx1 + 0.5f), (int)curx2, y);
         curx1 += invslope1;
         curx2 += invslope2;
     }
@@ -83,9 +84,11 @@ static void fill_top_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
     float curx1 = (float)p2->x;
     float curx2 = (float)p2->x;
 
+    ensure_min_max(&invslope1, &invslope2);
+
     for (y = p2->y; y > p0->y; y--)
     {
-        draw_line(zb, (int)curx1, (int)curx2, y);
+        draw_line(zb, (int)(curx1 + 0.5f), (int)curx2, y);
         curx1 -= invslope1;
         curx2 -= invslope2;
     }
