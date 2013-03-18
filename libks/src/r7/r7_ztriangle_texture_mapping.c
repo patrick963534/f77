@@ -58,18 +58,16 @@ static void draw_line(ZBuffer *zb, int x1, int x2, int y)
 static void fill_bottom_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
 {
     int y;
-    int ox1 = p0->x;
-    int ox2 = p0->x;
 
     float invslope1 = (float)(p1->x - p0->x) / (float)(p1->y - p0->y);
     float invslope2 = (float)(p2->x - p0->x) / (float)(p2->y - p0->y);
 
-    float curx1 = 0;
-    float curx2 = 0;
+    float curx1 = (float)p0->x;
+    float curx2 = (float)p0->x;
 
     for (y = p0->y; y <= p1->y; y++)
     {
-        draw_line(zb, ox1 + (int)curx1, ox2 + (int)curx2, y);
+        draw_line(zb, (int)curx1, (int)curx2, y);
         curx1 += invslope1;
         curx2 += invslope2;
     }
@@ -78,20 +76,18 @@ static void fill_bottom_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoin
 static void fill_top_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
 {
     int y;
-    int ox1 = p2->x;
-    int ox2 = p2->x;
 
     float invslope1 = (float)(p2->x - p0->x) / (float)(p2->y - p0->y);
     float invslope2 = (float)(p2->x - p1->x) / (float)(p2->y - p1->y);
 
-    float curx1 = 0;
-    float curx2 = 0;
+    float curx1 = (float)p2->x;
+    float curx2 = (float)p2->x;
 
     for (y = p2->y; y > p0->y; y--)
     {
         curx1 -= invslope1;
         curx2 -= invslope2;
-        draw_line(zb, ox1 + (int)curx1, ox2 + (int)curx2, y);
+        draw_line(zb, (int)curx1, (int)curx2, y);
     }
 }
 
