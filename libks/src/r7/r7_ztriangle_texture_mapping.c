@@ -99,7 +99,11 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
     if (p0->y == p1->y)
     {
+        --p0->y;
+        --p1->y;
         fill_top_flat_triangle(zb, p0, p1, p2);
+        ++p0->y;
+        ++p1->y;
     }
     else if (p1->y == p2->y)
     {
