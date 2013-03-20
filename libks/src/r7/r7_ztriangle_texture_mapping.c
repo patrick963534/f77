@@ -94,12 +94,17 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
     unsigned short* pp;
     int area;
     ZBufferPoint *vp, *lp, *rp;
+    float dxl, dxr;
+    int nbline;
     int part;
+    float lx = (float)p0->x;
+    float rx = (float)p0->x;
+
+    sort_point_by_y(&p0, &p1, &p2);   
 
     if ((area = calculate_area(p0, p1, p2)) == 0)
         return;
 
-    sort_point_by_y(&p0, &p1, &p2);    
     pp = zb->pbuf + zb->xsize * p0->y;
 
     for (part = 0; part < 2; ++part)
@@ -118,37 +123,61 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
         }
+
+        dxl = (float)(vp->x - lp->x) / (float)(vp->y - lp->y);
+        dxr = (float)(vp->x - rp->x) / (float)(vp->y - rp->y);
+
+        nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
+
+        while (nbline-- > 0)
+        {
+            lx += dxl;
+            rx += dxr;
+
+            {
+                int n = (int)rx - (int)lx;
+                unsigned short* line_pp = pp + (int)(lx);
+
+                while (n-- >= 0)
+                {
+                    *line_pp++ = 0xffff;
+                }
+            }
+
+            pp += zb->xsize;
+        }
     }
 }
 
 void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
 {
-    if (calculate_area(p0, p1, p2) == 0)
-        return;
-
-    sort_point_by_y(&p0, &p1, &p2);    
-
-    if (p0->y == p1->y)
-    {
-        --p0->y;
-        --p1->y;
-        fill_top_flat_triangle(zb, p0, p1, p2);
-        ++p0->y;
-        ++p1->y;
-    }
-    else if (p1->y == p2->y)
-    {
-        fill_bottom_flat_triangle(zb, p0, p1, p2);
-    }
-    else
-    {
-        ZBufferPoint p;
-        p.x = (int)((p1->y - p0->y) * (float)(p2->x - p0->x) / (float)(p2->y - p0->y)) + p0->x;
-        p.y = p1->y;
-
-        fill_bottom_flat_triangle(zb, p0, &p, p1);
-        fill_top_flat_triangle(zb, p1, &p, p2);
-    }
+    test(zb, p0, p1, p2);
+//     if (calculate_area(p0, p1, p2) == 0)
+//         return;
+// 
+//     sort_point_by_y(&p0, &p1, &p2);    
+// 
+//     if (p0->y == p1->y)
+//     {
+//         --p0->y;
+//         --p1->y;
+//         fill_top_flat_triangle(zb, p0, p1, p2);
+//         ++p0->y;
+//         ++p1->y;
+//     }
+//     else if (p1->y == p2->y)
+//     {
+//         fill_bottom_flat_triangle(zb, p0, p1, p2);
+//     }
+//     else
+//     {
+//         ZBufferPoint p;
+//         p.x = (int)((p1->y - p0->y) * (float)(p2->x - p0->x) / (float)(p2->y - p0->y)) + p0->x;
+//         p.y = p1->y;
+// 
+//         fill_bottom_flat_triangle(zb, p0, &p, p1);
+//         fill_top_flat_triangle(zb, p1, &p, p2);
+//     }
 
 
 }
