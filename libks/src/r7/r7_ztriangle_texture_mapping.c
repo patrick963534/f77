@@ -1,24 +1,23 @@
 #include <stdlib.h>
 #include "r7_zbuffer.h"
 
+#define swap_ptr(type, p1, p2)  { type* _type_t = p1; p1 = p2; p2 = _type_t; }
+
 static void sort_point_by_y(ZBufferPoint** zp0, ZBufferPoint** zp1, ZBufferPoint** zp2)
 {
-    ZBufferPoint *p0, *p1, *p2, *t;
+    ZBufferPoint *p0, *p1, *p2;
     p0 = *zp0; p1 = *zp1; p2 = *zp2;
 
     if (p1->y < p0->y)
-    {
-        t = p0; p0 = p1; p1 = t;
-    }
+        swap_ptr(ZBufferPoint, p0, p1);
 
     if (p2->y < p0->y)
     {
-        t = p2; p2 = p1; p1 = p0; p0 = t;
+        swap_ptr(ZBufferPoint, p2, p1);
+        swap_ptr(ZBufferPoint, p1, p0);
     }
     else if (p2->y < p1->y)
-    {
-        t = p2; p2 = p1; p1 = t;
-    }
+        swap_ptr(ZBufferPoint, p2, p1);
 
     *zp0 = p0; *zp1 = p1; *zp2 = p2;
 }
@@ -58,8 +57,8 @@ static void fill_bottom_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoin
 {
     int y;
 
-    float dx1 = (float)(p1->x - p0->x) / (float)(p1->y - p0->y);
-    float dx2 = (float)(p2->x - p0->x) / (float)(p2->y - p0->y);
+    float dx1 = (float)(p0->x - p1->x) / (float)(p0->y - p1->y);
+    float dx2 = (float)(p0->x - p2->x) / (float)(p0->y - p2->y);
 
     float curx1 = (float)p0->x;
     float curx2 = (float)p0->x;
@@ -87,6 +86,38 @@ static void fill_top_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
         curx1 -= dx1;
         curx2 -= dx2;
         draw_line(zb, curx1, curx2, y);
+    }
+}
+
+static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
+{
+    unsigned short* pp;
+    int area;
+    ZBufferPoint *vp, *lp, *rp;
+    int part;
+
+    if ((area = calculate_area(p0, p1, p2)) == 0)
+        return;
+
+    sort_point_by_y(&p0, &p1, &p2);    
+    pp = zb->pbuf + zb->xsize * p0->y;
+
+    for (part = 0; part < 2; ++part)
+    {
+        if (part == 0)
+        {
+            vp = p0; lp = p2; rp = p1;
+
+            if (area < 0)
+                swap_ptr(ZBufferPoint, lp, rp);
+        }
+        else
+        {
+            vp = p2; lp = p0; rp = p1;
+
+            if (area < 0)
+                swap_ptr(ZBufferPoint, lp, rp);
+        }
     }
 }
 
