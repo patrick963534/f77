@@ -138,12 +138,6 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                         if (xx < tex_w && yy < tex_h)
                             *line_pp++ = texture[yy * tex_w + xx];
 
-                        //if (part == 0)
-                        //    *line_pp++ = 0xff00;
-                        //else
-                        //    *line_pp++ = 0xffff;
-
-
                         tu += tdu;
                         tv += tdv;
                     }
