@@ -97,10 +97,10 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
             int tex_h = 256;
             float lx = (float)vp->x;
             float rx = (float)vp->x;
-            float lu = (float)vp->u * tex_w;
-            float ru = (float)vp->u * tex_w;
-            float lv = (float)vp->v * tex_h;
-            float rv = (float)vp->v * tex_h;
+            float lu = (float)vp->u * tex_w - 1;
+            float ru = (float)vp->u * tex_w - 1;
+            float lv = (float)vp->v * tex_h - 1;
+            float rv = (float)vp->v * tex_h - 1;
 
             unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
             unsigned short* texture = zb->current_texture;
@@ -132,7 +132,9 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                     {
                         int xx = (int)(tu+0.5f);
                         int yy = (int)(tv+0.5f);
-                        *line_pp++ = texture[yy * tex_w + xx];
+
+                        if (xx < tex_w && yy < tex_h)
+                            *line_pp++ = texture[yy * tex_w + xx];
 
                         //if (part == 0)
                         //    *line_pp++ = 0xff00;
