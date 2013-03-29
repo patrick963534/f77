@@ -89,6 +89,9 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                 --nbline;
         }
 
+        if (nbline <= 0)
+            continue;
+
         {
             float lx = (float)vp->x;
             float rx = (float)vp->x;
@@ -120,8 +123,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                 {
                     float tu = lu * 256;
                     float tv = lv * 256;
-                    float tdu = (dur - dul) * 256 / n;
-                    float tdv = (dvr - dvl) * 256 / n;
+                    float tdu = (ru - lu) * 256 / n;
+                    float tdv = (rv - lv) * 256 / n;
 
                     while (n-- > 0)
                     {

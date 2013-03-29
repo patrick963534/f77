@@ -162,11 +162,11 @@ static void texture_mapping_test()
     glColor3f(1, 1, 1);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0, 0, -10);
+    glTranslatef(0, 0, -5);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
-        glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f,  0.5f, 0.f);
-        glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f,  0.0f, 0.f);
+        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f, 0.5f, 0.f);
+        glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, 0.5f, 0.f);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f, 0.0f, 0.f);
 
         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
         glTexCoord2f(0.0, 1.0); glVertex3f( 0.0f,  0.0f, 0.f);
