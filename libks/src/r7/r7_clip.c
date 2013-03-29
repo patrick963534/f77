@@ -44,6 +44,9 @@ void gl_transform_to_viewport(GLContext *c,GLVertex *v)
                   + ZB_POINT_S_MIN);
     v->zp.t=(int)(v->tex_coord.Y * (ZB_POINT_T_MAX - ZB_POINT_T_MIN) 
                   + ZB_POINT_T_MIN);
+
+    v->zp.u = v->tex_coord.X;
+    v->zp.v = v->tex_coord.Y;
   }
 }
 
