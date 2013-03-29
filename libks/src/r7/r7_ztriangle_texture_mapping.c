@@ -93,23 +93,25 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
             continue;
 
         {
+            int tex_w = 256;
+            int tex_h = 256;
             float lx = (float)vp->x;
             float rx = (float)vp->x;
-            float lu = (float)vp->u;
-            float ru = (float)vp->u;
-            float lv = (float)vp->v;
-            float rv = (float)vp->v;
+            float lu = (float)vp->u * tex_w;
+            float ru = (float)vp->u * tex_w;
+            float lv = (float)vp->v * tex_h;
+            float rv = (float)vp->v * tex_h;
 
-            unsigned short* pp = zb->pbuf + zb->xsize * vp->y;
+            unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
             unsigned short* texture = zb->current_texture;
 
             float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
             float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
 
-            float dul = (float)(lp->u - vp->u) / (float)(abs(vp->y - lp->y));
-            float dur = (float)(rp->u - vp->u) / (float)(abs(vp->y - rp->y));
-            float dvl = (float)(lp->v - vp->v) / (float)(abs(vp->y - lp->y));
-            float dvr = (float)(rp->v - vp->v) / (float)(abs(vp->y - rp->y));
+            float dul = (float)(lp->u - vp->u) * tex_w / (float)(abs(vp->y - lp->y));
+            float dur = (float)(rp->u - vp->u) * tex_w / (float)(abs(vp->y - rp->y));
+            float dvl = (float)(lp->v - vp->v) * tex_h / (float)(abs(vp->y - lp->y));
+            float dvr = (float)(rp->v - vp->v) * tex_h / (float)(abs(vp->y - rp->y));
 
             while (nbline-- > 0)
             {
@@ -121,19 +123,22 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
                 if (n > 0) 
                 {
-                    float tu = lu * 256;
-                    float tv = lv * 256;
-                    float tdu = (ru - lu) * 256 / n;
-                    float tdv = (rv - lv) * 256 / n;
+                    float tu = lu;
+                    float tv = lv;
+                    float tdu = (ru - lu) / n;
+                    float tdv = (rv - lv) / n;
 
                     while (n-- > 0)
                     {
+                        int xx = (int)(tu+0.5f);
+                        int yy = (int)(tv+0.5f);
+                        *line_pp++ = texture[yy * tex_w + xx];
+
                         //if (part == 0)
                         //    *line_pp++ = 0xff00;
                         //else
                         //    *line_pp++ = 0xffff;
 
-                        *line_pp++ = texture[(int)(tv) * 256 + (int)(tu)];
 
                         tu += tdu;
                         tv += tdv;
