@@ -92,9 +92,21 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
         {
             float lx = (float)vp->x;
             float rx = (float)vp->x;
+            float lu = (float)vp->u;
+            float ru = (float)vp->u;
+            float lv = (float)vp->v;
+            float rv = (float)vp->v;
+
             unsigned short* pp = zb->pbuf + zb->xsize * vp->y;
+            unsigned short* texture = zb->current_texture;
+
             float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
             float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
+
+            float dul = (float)(lp->u - vp->u) / (float)(abs(vp->y - lp->y));
+            float dur = (float)(rp->u - vp->u) / (float)(abs(vp->y - rp->y));
+            float dvl = (float)(lp->v - vp->v) / (float)(abs(vp->y - lp->y));
+            float dvr = (float)(rp->v - vp->v) / (float)(abs(vp->y - rp->y));
 
             while (nbline-- >= 0)
             {
@@ -104,16 +116,30 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                 if (line_step < 0)
                     --n;
 
-                while (n-- > 0)
+                if (n > 0) 
                 {
-                    if (part == 0)
-                        *line_pp++ = 0xff00;
-                    else
-                        *line_pp++ = 0xffff;
+                    float tu = lu * 256;
+                    float tv = lv * 256;
+                    float tdu = (dur - dul) * 256 / n;
+                    float tdv = (dvr - dvl) * 256 / n;
+
+                    while (n-- > 0)
+                    {
+                        //if (part == 0)
+                        //    *line_pp++ = 0xff00;
+                        //else
+                        //    *line_pp++ = 0xffff;
+
+                        *line_pp++ = texture[(int)(tv) * 256 + (int)(tu)];
+
+                        tu += tdu;
+                        tv += tdv;
+                    }
                 }
 
-                lx += dxl;
-                rx += dxr;
+                lx += dxl; rx += dxr;
+                lu += dul; ru += dur;
+                lv += dvl; rv += dvr;
                 pp += line_step;
             }
         }        
