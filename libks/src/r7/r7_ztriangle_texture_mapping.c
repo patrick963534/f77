@@ -94,6 +94,7 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
     int area;
     ZBufferPoint *vp, *lp, *rp;
     int part;
+    int cut_top_flat = 0;
 
     sort_point_by_y(&p0, &p1, &p2);   
 
@@ -113,6 +114,10 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
             vp = p2; lp = p0; rp = p1;
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
+
+            cut_top_flat = 1;
+            if (p0->y == p1->y)
+                cut_top_flat = 0;
         }
 
         {
@@ -124,12 +129,17 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
             float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
             float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
 
+            if (cut_top_flat)
+                --nbline;
 
             while (nbline-- >= 0)
             {
-                int n = (int)rx - (int)lx;
-                unsigned short* line_pp = pp + (int)(lx);
+                int n = (int)(rx + 0.5f) - (int)(lx + 0.5f);
+                unsigned short* line_pp = pp + (int)(lx + 0.5f);
 
+                if (part == 1)
+                    --n;
+                
                 while (n-- >= 0)
                 {
                     if (part == 0)
