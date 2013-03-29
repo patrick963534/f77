@@ -95,8 +95,6 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
     int area;
     ZBufferPoint *vp, *lp, *rp;
     float dxl, dxr;
-    int line_step;
-    int nbline;
     int part;
 
     sort_point_by_y(&p0, &p1, &p2);   
@@ -104,55 +102,50 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
     if ((area = calculate_area(p0, p1, p2)) == 0)
         return;
 
-
     for (part = 0; part < 2; ++part)
     {
-        float lx;
-        float rx;
-
         if (part == 0)
         {
             vp = p0; lp = p2; rp = p1;
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
-
-            line_step = zb->xsize;
         }
         else
         {
             vp = p2; lp = p0; rp = p1;
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
-
-            line_step = -zb->xsize;
         }
 
-        lx = (float)vp->x;
-        rx = (float)vp->x;
-        pp = zb->pbuf + zb->xsize * vp->y;
-
-        nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
-
-        dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
-        dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
-
-        while (nbline-- >= 0)
         {
+            float lx = (float)vp->x;
+            float rx = (float)vp->x;
+            int nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
+            int line_step = (part == 0) ? zb->xsize : -zb->xsize;
+
+            pp = zb->pbuf + zb->xsize * vp->y;
+
+            dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
+            dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
+
+            while (nbline-- >= 0)
             {
                 int n = (int)rx - (int)lx;
                 unsigned short* line_pp = pp + (int)(lx);
 
                 while (n-- >= 0)
                 {
-                    *line_pp++ = 0xff00;
+                    if (part == 0)
+                        *line_pp++ = 0xff00;
+                    else
+                        *line_pp++ = 0xffff;
                 }
+
+                lx += dxl;
+                rx += dxr;
+                pp += line_step;
             }
-
-            lx += dxl;
-            rx += dxr;
-
-            pp += line_step;
-        }
+        }        
     }
 }
 
