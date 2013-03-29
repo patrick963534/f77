@@ -95,56 +95,63 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
     int area;
     ZBufferPoint *vp, *lp, *rp;
     float dxl, dxr;
+    int line_step;
     int nbline;
     int part;
-    float lx = (float)p0->x;
-    float rx = (float)p0->x;
 
     sort_point_by_y(&p0, &p1, &p2);   
 
     if ((area = calculate_area(p0, p1, p2)) == 0)
         return;
 
-    pp = zb->pbuf + zb->xsize * p0->y;
 
     for (part = 0; part < 2; ++part)
     {
+        float lx;
+        float rx;
+
         if (part == 0)
         {
             vp = p0; lp = p2; rp = p1;
-
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
+
+            line_step = zb->xsize;
         }
         else
         {
             vp = p2; lp = p0; rp = p1;
-
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
+
+            line_step = -zb->xsize;
         }
 
-        dxl = (float)(vp->x - lp->x) / (float)(vp->y - lp->y);
-        dxr = (float)(vp->x - rp->x) / (float)(vp->y - rp->y);
+        lx = (float)vp->x;
+        rx = (float)vp->x;
+        pp = zb->pbuf + zb->xsize * vp->y;
 
         nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
 
-        while (nbline-- > 0)
-        {
-            lx += dxl;
-            rx += dxr;
+        dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
+        dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
 
+        while (nbline-- >= 0)
+        {
             {
                 int n = (int)rx - (int)lx;
                 unsigned short* line_pp = pp + (int)(lx);
 
                 while (n-- >= 0)
                 {
-                    *line_pp++ = 0xffff;
+                    *line_pp++ = 0xff00;
                 }
             }
 
-            pp += zb->xsize;
+            lx += dxl;
+            rx += dxr;
+
+            pp += line_step;
         }
     }
 }
