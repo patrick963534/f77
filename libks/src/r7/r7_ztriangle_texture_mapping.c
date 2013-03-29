@@ -53,6 +53,64 @@ static void draw_line(ZBuffer *zb, float x1, float x2, int y)
     }
 }
 
+static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBufferPoint * rp, int nbline, int line_step ) 
+{
+    int tex_w = 256;
+    int tex_h = 256;
+    float lx = (float)vp->x;
+    float rx = (float)vp->x;
+    float lu = (float)vp->u * tex_w - 1;
+    float ru = (float)vp->u * tex_w - 1;
+    float lv = (float)vp->v * tex_h - 1;
+    float rv = (float)vp->v * tex_h - 1;
+
+    unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
+    unsigned short* texture = zb->current_texture;
+
+    float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
+    float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
+
+    float dul = (float)(lp->u - vp->u) * tex_w / (float)(abs(vp->y - lp->y));
+    float dur = (float)(rp->u - vp->u) * tex_w / (float)(abs(vp->y - rp->y));
+    float dvl = (float)(lp->v - vp->v) * tex_h / (float)(abs(vp->y - lp->y));
+    float dvr = (float)(rp->v - vp->v) * tex_h / (float)(abs(vp->y - rp->y));
+
+    while (nbline-- > 0)
+    {
+        int n = (int)(rx + 0.5f) - (int)(lx + 0.5f) + 1;
+        unsigned short* line_pp = pp + (int)(lx + 0.5f);
+
+        if (line_step < 0)
+            --n;
+
+        if (n > 0) 
+        {
+            float tu = lu;
+            float tv = lv;
+            float tdu = (ru - lu) / n;
+            float tdv = (rv - lv) / n;
+
+            while (n-- > 0)
+            {
+                int xx = (int)(tu+0.5f);
+                int yy = (int)(tv+0.5f);
+
+                if (xx < tex_w && yy < tex_h)
+                    *line_pp++ = texture[yy * tex_w + xx];
+
+                tu += tdu;
+                tv += tdv;
+            }
+        }
+
+        lx += dxl; rx += dxr;
+        lu += dul; ru += dur;
+        lv += dvl; rv += dvr;
+        pp += line_step;
+    }
+}
+
+
 void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
 {
     int area;
@@ -94,60 +152,6 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
         if (nbline <= 0)
             continue;
 
-        {
-            int tex_w = 256;
-            int tex_h = 256;
-            float lx = (float)vp->x;
-            float rx = (float)vp->x;
-            float lu = (float)vp->u * tex_w - 1;
-            float ru = (float)vp->u * tex_w - 1;
-            float lv = (float)vp->v * tex_h - 1;
-            float rv = (float)vp->v * tex_h - 1;
-
-            unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
-            unsigned short* texture = zb->current_texture;
-
-            float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
-            float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
-
-            float dul = (float)(lp->u - vp->u) * tex_w / (float)(abs(vp->y - lp->y));
-            float dur = (float)(rp->u - vp->u) * tex_w / (float)(abs(vp->y - rp->y));
-            float dvl = (float)(lp->v - vp->v) * tex_h / (float)(abs(vp->y - lp->y));
-            float dvr = (float)(rp->v - vp->v) * tex_h / (float)(abs(vp->y - rp->y));
-
-            while (nbline-- > 0)
-            {
-                int n = (int)(rx + 0.5f) - (int)(lx + 0.5f) + 1;
-                unsigned short* line_pp = pp + (int)(lx + 0.5f);
-
-                if (line_step < 0)
-                    --n;
-
-                if (n > 0) 
-                {
-                    float tu = lu;
-                    float tv = lv;
-                    float tdu = (ru - lu) / n;
-                    float tdv = (rv - lv) / n;
-
-                    while (n-- > 0)
-                    {
-                        int xx = (int)(tu+0.5f);
-                        int yy = (int)(tv+0.5f);
-
-                        if (xx < tex_w && yy < tex_h)
-                            *line_pp++ = texture[yy * tex_w + xx];
-
-                        tu += tdu;
-                        tv += tdv;
-                    }
-                }
-
-                lx += dxl; rx += dxr;
-                lu += dul; ru += dur;
-                lv += dvl; rv += dvr;
-                pp += line_step;
-            }
-        }        
+        draw_part(zb, vp, lp, rp, nbline, line_step);
     }
 }
