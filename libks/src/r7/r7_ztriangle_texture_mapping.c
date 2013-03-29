@@ -75,7 +75,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                 swap_ptr(ZBufferPoint, lp, rp);
 
             line_step = zb->xsize;
-            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
+            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y)) + 1;
         }
         else
         {
@@ -84,9 +84,9 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
                 swap_ptr(ZBufferPoint, lp, rp);
 
             line_step = -zb->xsize;
-            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y)) + 1;          
-            if (p0->y != p1->y)
-                --nbline;
+            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));          
+            if (p0->y == p1->y)
+                ++nbline;
         }
 
         if (nbline <= 0)
