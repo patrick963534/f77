@@ -76,6 +76,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
             line_step = zb->xsize;
             nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y)) + 1;
+            if (p1->y == p2->y)
+                --nbline;
         }
         else
         {
