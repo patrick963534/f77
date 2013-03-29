@@ -53,43 +53,7 @@ static void draw_line(ZBuffer *zb, float x1, float x2, int y)
     }
 }
 
-static void fill_bottom_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
-{
-    int y;
-
-    float dx1 = (float)(p0->x - p1->x) / (float)(p0->y - p1->y);
-    float dx2 = (float)(p0->x - p2->x) / (float)(p0->y - p2->y);
-
-    float curx1 = (float)p0->x;
-    float curx2 = (float)p0->x;
-
-    for (y = p0->y; y <= p1->y; y++)
-    {
-        draw_line(zb, curx1, curx2, y);
-        curx1 += dx1;
-        curx2 += dx2;
-    }
-}
-
-static void fill_top_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
-{
-    int y;
-
-    float dx1 = (float)(p2->x - p0->x) / (float)(p2->y - p0->y);
-    float dx2 = (float)(p2->x - p1->x) / (float)(p2->y - p1->y);
-
-    float curx1 = (float)p2->x;
-    float curx2 = (float)p2->x;
-
-    for (y = p2->y; y > p0->y; y--)
-    {
-        curx1 -= dx1;
-        curx2 -= dx2;
-        draw_line(zb, curx1, curx2, y);
-    }
-}
-
-static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
+void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
 {
     int area;
     ZBufferPoint *vp, *lp, *rp;
@@ -139,7 +103,7 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
 
                 if (line_step < 0)
                     --n;
-                
+
                 while (n-- > 0)
                 {
                     if (part == 0)
@@ -154,37 +118,4 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
             }
         }        
     }
-}
-
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
-{
-    test(zb, p0, p1, p2);
-//     if (calculate_area(p0, p1, p2) == 0)
-//         return;
-// 
-//     sort_point_by_y(&p0, &p1, &p2);    
-// 
-//     if (p0->y == p1->y)
-//     {
-//         --p0->y;
-//         --p1->y;
-//         fill_top_flat_triangle(zb, p0, p1, p2);
-//         ++p0->y;
-//         ++p1->y;
-//     }
-//     else if (p1->y == p2->y)
-//     {
-//         fill_bottom_flat_triangle(zb, p0, p1, p2);
-//     }
-//     else
-//     {
-//         ZBufferPoint p;
-//         p.x = (int)((p1->y - p0->y) * (float)(p2->x - p0->x) / (float)(p2->y - p0->y)) + p0->x;
-//         p.y = p1->y;
-// 
-//         fill_bottom_flat_triangle(zb, p0, &p, p1);
-//         fill_top_flat_triangle(zb, p1, &p, p2);
-//     }
-
-
 }
