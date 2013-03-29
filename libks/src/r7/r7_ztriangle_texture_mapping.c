@@ -91,10 +91,8 @@ static void fill_top_flat_triangle(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *
 
 static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2)
 {
-    unsigned short* pp;
     int area;
     ZBufferPoint *vp, *lp, *rp;
-    float dxl, dxr;
     int part;
 
     sort_point_by_y(&p0, &p1, &p2);   
@@ -122,11 +120,10 @@ static void test(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *
             float rx = (float)vp->x;
             int nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
             int line_step = (part == 0) ? zb->xsize : -zb->xsize;
+            unsigned short* pp = zb->pbuf + zb->xsize * vp->y;
+            float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
+            float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
 
-            pp = zb->pbuf + zb->xsize * vp->y;
-
-            dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
-            dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
 
             while (nbline-- >= 0)
             {
