@@ -104,15 +104,15 @@ static ks_scene_t* create_scene()
     actor0->x = 400;
     actor0->y = 240;
     actor0->angle = 45;
-    actor0->step = step_rotate;
+//    actor0->step = step_rotate;
 
 //     actor1 = ks_actor_new("img.png", (ks_node_t*)me);
 //     actor1->x = 384 + 10;
-//     actor1->y = 256;
-
+//     actor1->y = 128;
+// 
 //     actor2 = ks_actor_new("img.png", (ks_node_t*)me);
 //     actor2->x = 640 + 20;
-//     actor2->y = 256;
+//     actor2->y = 128;
 
     //actor0->step = step;
 
