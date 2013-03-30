@@ -126,7 +126,6 @@ static void graphics_load_identity()
 static void graphics_flush()
 {
     g->buffer = glFlush();
-    ks_helper_image565_save_ppm("flush.ppm", g->buffer, ks_director_instance()->width, ks_director_instance()->height);
     ks_system_flush();
 }
 
