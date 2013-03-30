@@ -10,7 +10,7 @@ void initSharedState(GLContext *c)
   s->texture_hash_table=
       gl_zalloc(sizeof(GLTexture *) * TEXTURE_HASH_TABLE_SIZE);
 
-  alloc_texture(c,0);
+  //alloc_texture(c,0);
 }
 
 void endSharedState(GLContext *c)
@@ -22,6 +22,12 @@ void endSharedState(GLContext *c)
     /* TODO */
   }
   gl_free(s->lists);
+
+  c->current_texture = NULL;
+  for (i = 0; i < TEXTURE_HASH_TABLE_SIZE; ++i)
+  {
+      glDeleteTextures(1, (const unsigned int*)&i);
+  }
 
   gl_free(s->texture_hash_table);
 }

@@ -130,6 +130,10 @@ static void destruct(graphics_t* me)
 
     ks_log("%s", "destruct gles2_graphics");
 
+    if (g->img_buf != NULL)
+        glDeleteTextures(1, &g->textureId);
+
+    glClose();
     ks_object_destruct((ks_object_t*)me);
 }
 

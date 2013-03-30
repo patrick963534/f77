@@ -67,7 +67,7 @@ KS_API ks_node_t* ks_node_new(int sz, ks_node_t* parent)
     ks_node_t* me;
 
     me              = (ks_node_t*)ks_object_new(ks_max(sz, sizeof(*me)));
-    me->destruct    = (ks_destruct_f)ks_object_destruct;
+    me->destruct    = (ks_destruct_f)ks_node_destruct;
     me->tname       = "ks_node";
     me->sx          = 1;
     me->sy          = 1;

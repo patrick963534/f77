@@ -17,6 +17,7 @@ static void text_draw(ks_text_t* me)
 KS_API void ks_text_destruct(ks_text_t* me)
 {
     free(me->text);
+    free(me->image);
     ks_node_destruct((ks_node_t*)me);
 }
 

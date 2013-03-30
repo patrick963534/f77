@@ -16,6 +16,7 @@
 #include "r7/r7_zbuffer.h"
 #include <r7/gl.h>
 
+#include <vld.h>
 
 static void step(ks_node_t* me, int delta)
 {
@@ -90,31 +91,34 @@ static ks_scene_t* create_scene()
     me       = ks_scene_new(sizeof(*me));
     me->msgs = msgs;
 
-//     node = ks_node_new(sizeof(*node), (ks_node_t*)me);
-//     node->x = 100;
-// 
-//     ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
-//     ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
-//     ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
-//     ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
-//     ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
-//     ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
+    node = ks_node_new(sizeof(*node), (ks_node_t*)me);
+    node->x = 100;
+    node->z = -1;
+
+    ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
+    ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
+    ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
+    ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
+    ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
+    ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
 
     actor0 = ks_actor_new("img.png", (ks_node_t*)me);
-    actor0->x = 400;
-    actor0->y = 240;
+    actor0->x = 128;
+    actor0->y = 128;
     actor0->angle = 45;
-//    actor0->step = step_rotate;
+    actor0->step = step_rotate;
 
-//     actor1 = ks_actor_new("img.png", (ks_node_t*)me);
-//     actor1->x = 384 + 10;
-//     actor1->y = 128;
-// 
-//     actor2 = ks_actor_new("img.png", (ks_node_t*)me);
-//     actor2->x = 640 + 20;
-//     actor2->y = 128;
+    actor1 = ks_actor_new("img.png", (ks_node_t*)me);
+    actor1->x = 384 + 10;
+    actor1->y = 128;
+ 
+    actor2 = ks_actor_new("img.png", (ks_node_t*)me);
+    actor2->x = 640 + 20;
+    actor2->y = 128;
 
     //actor0->step = step;
+
+    ks_node_sort_by_z(me);
 
     return me;
 }

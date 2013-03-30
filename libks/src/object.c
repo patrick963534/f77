@@ -7,8 +7,8 @@
 
 KS_API void ks_object_destruct(ks_object_t* me)
 {
-    ks_object_remove(me);
     ks_object_delete_children(me);
+    ks_object_remove(me);
 }
 
 KS_API ks_object_t* ks_object_new(int sz)

@@ -12,7 +12,7 @@ static void node_draw(ks_node_t* me)
 
     ks_graphics_push();
 
-    ks_graphics_translate(me->x, me->y, me->z);
+    ks_graphics_translate(me->x, me->y, 0);
 
     if (me->angle != 0)
         ks_graphics_rotate(me->angle);
@@ -87,5 +87,5 @@ KS_API ks_scene_t* ks_scene_new(int sz)
 
 KS_API void ks_scene_destruct(ks_scene_t* me)
 {
-    ks_object_destruct((ks_object_t*)me);
+    ks_node_destruct((ks_node_t*)me);
 }

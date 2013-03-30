@@ -35,6 +35,7 @@ static void free_texture(GLContext *c,int h)
   for(i=0;i<MAX_TEXTURE_LEVELS;i++) {
     im=&t->images[i];
     if (im->pixmap != NULL) gl_free(im->pixmap);
+    if (im->alpha != NULL) gl_free(im->alpha);
   }
 
   gl_free(t);
