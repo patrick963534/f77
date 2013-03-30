@@ -92,7 +92,7 @@ static void smooth_test()
     GLuint Object;
 
     buf = calloc(1, width * height * 2);
-    zb = ZB_open(width, height, ZB_MODE_RGBA, 0, NULL, NULL, NULL);
+    zb = ZB_open(width, height, 0);
 
     glInit(zb);
     glViewport(0, 0, width, height);
@@ -135,7 +135,7 @@ static void texture_mapping_test()
     int height = 100;
 
     buf = calloc(1, width * height * 2);
-    zb = ZB_open(width, height, ZB_MODE_RGBA, 0, NULL, NULL, NULL);
+    zb = ZB_open(width, height, 0);
 
     glInit(zb);
     glViewport(0, 0, width, height);
@@ -164,17 +164,17 @@ static void texture_mapping_test()
     glLoadIdentity();
     glTranslatef(0, 0, -5);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f, 0.5f, 0.f);
-        glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, 0.5f, 0.f);
-        glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f, 0.0f, 0.f);
+        //glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f, 0.5f, 0.f);
+        //glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, 0.5f, 0.f);
+        //glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f, 0.0f, 0.f);
 
-        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
-        glTexCoord2f(0.0, 1.0); glVertex3f( 0.0f,  0.0f, 0.f);
-        glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f,  0.0f, 0.f);
+        //glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
+        //glTexCoord2f(0.0, 1.0); glVertex3f( 0.0f,  0.0f, 0.f);
+        //glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f,  0.0f, 0.f);
 
-//         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
-//         glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, -0.5f, 0.f);
-//         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
+         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
+         glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, -0.5f, 0.f);
+         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.5f, 0.f);
 
 //         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
 //         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
