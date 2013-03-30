@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "r7_zbuffer.h"
 
+#if 0
+
 #define ZCMP(z,zpix) ((z) >= (zpix))
 #define SAR_RND_TO_ZERO(v,n) (v / (1<<n))
 
@@ -250,3 +252,5 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBuffe
         }
     }
 }
+
+#endif

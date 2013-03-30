@@ -133,13 +133,14 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
 
 void ZB_setTexture(ZBuffer *zb, PIXEL *texture, int w, int h);
 
-void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
+//void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
 
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBufferPoint *p2);
+//void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBufferPoint *p2);
+
+void ZB_rasterize(ZBuffer *zb, ZBufferPoint *p0,ZBufferPoint *p1,ZBufferPoint *p2);
 
 
-typedef void (*ZB_fillTriangleFunc)(ZBuffer  *,
-	    ZBufferPoint *,ZBufferPoint *,ZBufferPoint *);
+typedef void (*ZB_fillTriangleFunc)(ZBuffer  *, ZBufferPoint *,ZBufferPoint *,ZBufferPoint *);
 
 /* memory.c */
 void gl_free(void *p);
