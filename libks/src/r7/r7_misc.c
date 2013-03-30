@@ -10,6 +10,8 @@ void glopViewport(GLContext *c,GLParam *p)
   xsize=p[3].i;
   ysize=p[4].i;
 
+
+
   /* we may need to resize the zbuffer */
 
   if (c->viewport.xmin != xmin ||
@@ -20,25 +22,23 @@ void glopViewport(GLContext *c,GLParam *p)
     xsize_req=xmin+xsize;
     ysize_req=ymin+ysize;
 
-    if (c->gl_resize_viewport && 
-        c->gl_resize_viewport(c,&xsize_req,&ysize_req) != 0) {
+    if (c->gl_resize_viewport && c->gl_resize_viewport(c,&xsize_req,&ysize_req) != 0) 
       gl_fatal_error("glViewport: error while resizing display");
-    }
 
     xsize=xsize_req-xmin;
     ysize=ysize_req-ymin;
-    if (xsize <= 0 || ysize <= 0) {
+    if (xsize <= 0 || ysize <= 0) 
       gl_fatal_error("glViewport: size too small");
-    }
-
-    tgl_trace("glViewport: %d %d %d %d\n",
-              xmin, ymin, xsize, ysize);
+    
+    tgl_trace("glViewport: %d %d %d %d\n", xmin, ymin, xsize, ysize);
     c->viewport.xmin=xmin;
     c->viewport.ymin=ymin;
     c->viewport.xsize=xsize;
     c->viewport.ysize=ysize;
     
     c->viewport.updated=1;
+
+    c->zb=ZB_open(xsize, ysize, 0);
   }
 }
 

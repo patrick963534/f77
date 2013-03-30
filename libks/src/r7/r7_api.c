@@ -637,9 +637,9 @@ void glCallList(unsigned int list)
     gl_add_op333(p);
 }
 
-void glFlush(void)
+char* glFlush(void)
 {
-    /* nothing to do */
+    return gl_get_context333()->zb->pbuf;
 }
 
 void glHint(int target,int mode)

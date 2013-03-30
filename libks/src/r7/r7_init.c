@@ -27,9 +27,8 @@ void endSharedState(GLContext *c)
 }
 
 
-void glInit(void *zbuffer1)
+void glInit()
 {
-  ZBuffer *zbuffer=(ZBuffer *)zbuffer1;
   GLContext *c;
   GLViewport *v;
   int i;
@@ -37,20 +36,10 @@ void glInit(void *zbuffer1)
   c=gl_zalloc(sizeof(GLContext));
   gl_ctx=c;
 
-  c->zb=zbuffer;
-
   /* allocate GLVertex array */
   c->vertex_max = POLYGON_MAX_VERTEX;
   c->vertex = gl_malloc(POLYGON_MAX_VERTEX*sizeof(GLVertex));
   
-  /* viewport */
-  v=&c->viewport;
-  v->xmin=0;
-  v->ymin=0;
-  v->xsize=zbuffer->xsize;
-  v->ysize=zbuffer->ysize;
-  v->updated=1;
-
   /* shared state */
   initSharedState(c);
 
@@ -185,6 +174,8 @@ void glClose(void)
 {
   GLContext *c=gl_get_context333();
   int i;
+
+  ZB_close(c->zb);
 
   for(i=0;i<3;i++) {
       gl_free(c->matrix_stack[i]);

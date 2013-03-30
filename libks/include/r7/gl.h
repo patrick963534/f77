@@ -784,7 +784,7 @@ void glLightModelfv(int pname,float *param);
 
 /* misc */
 
-void glFlush(void);
+char* glFlush(void);
 void glHint(int target,int mode);
 void glGetIntegerv(int pname,int *params);
 void glGetFloatv(int pname, float *v);
@@ -828,7 +828,7 @@ INLINE_GL void glTexParameterf(int, int, int) {};
 
 void glDebug(int mode);
 
-void glInit(void *zbuffer);
+void glInit();
 void glClose(void);
 
 #ifdef __cplusplus
