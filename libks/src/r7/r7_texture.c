@@ -143,16 +143,16 @@ void glopTexImage2D(GLContext *c,GLParam *p)
   }
   
   do_free=0;
-  if (width != 256 || height != 256) {
-    pixels1 = gl_malloc(256 * 256 * 3);
-    /* no interpolation is done here to respect the original image aliasing ! */
-    gl_resizeImageNoInterpolate(pixels1,256,256,pixels,width,height);
-    do_free=1;
-    width=256;
-    height=256;
-  } else {
+//   if (width != 256 || height != 256) {
+//     pixels1 = gl_malloc(256 * 256 * 3);
+//     /* no interpolation is done here to respect the original image aliasing ! */
+//     gl_resizeImageNoInterpolate(pixels1,256,256,pixels,width,height);
+//     do_free=1;
+//     width=256;
+//     height=256;
+//   } else {
     pixels1=pixels;
-  }
+  //}
 
   im=&c->current_texture->images[level];
   im->xsize=width;

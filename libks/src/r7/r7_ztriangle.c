@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include "r7_zbuffer.h"
 
-void ZB_setTexture(ZBuffer *zb,PIXEL *texture)
+void ZB_setTexture(ZBuffer *zb,PIXEL *texture, int w, int h)
 {
     zb->current_texture=texture;
+    zb->tex_w = w;
+    zb->tex_h = h;
 }

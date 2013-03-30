@@ -55,8 +55,8 @@ static void draw_line(ZBuffer *zb, float x1, float x2, int y)
 
 static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBufferPoint * rp, int nbline, int line_step ) 
 {
-    int tex_w = 256;
-    int tex_h = 256;
+    int tex_w = zb->tex_w;
+    int tex_h = zb->tex_h;
     float lx = (float)vp->x;
     float rx = (float)vp->x;
     float lu = (float)vp->u * tex_w - 1;
