@@ -119,12 +119,11 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
  
                          *line_pp = (unsigned short)((r << 11) | (g << 5) | b);
                     }
-                    
-                    ++line_pp;
                 }
 
                 tu += tdu;
                 tv += tdv;
+                ++line_pp;
             }
         }
 
