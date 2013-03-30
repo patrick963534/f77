@@ -129,6 +129,7 @@ typedef struct GLVertex {
 
 typedef struct GLImage {
     void *pixmap;
+    void *alpha;
     int xsize,ysize;
 } GLImage;
 
@@ -313,8 +314,8 @@ void glEndTextures(GLContext *c);
 GLTexture *alloc_texture(GLContext *c,int h);
 
 /* image_util.c */
-void gl_convertRGBA_to_5R6G5B(unsigned short *pixmap,unsigned char *rgba, int xsize,int ysize);
-void gl_convertRGB_to_5R6G5B(unsigned short *pixmap,unsigned char *rgb, int xsize,int ysize);
+void gl_convertRGBA_to_5R6G5B(unsigned short *pixmap, unsigned char* alpha, const unsigned char *rgba, int xsize,int ysize);
+void gl_convertRGB_to_5R6G5B(unsigned short *pixmap, const unsigned char *rgb, int xsize,int ysize);
 void gl_convertRGB_to_8A8R8G8B(unsigned int *pixmap, unsigned char *rgb,
                                int xsize, int ysize);
 void gl_resizeImage(unsigned char *dest,int xsize_dest,int ysize_dest,

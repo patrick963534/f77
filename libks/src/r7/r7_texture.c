@@ -144,14 +144,21 @@ void glopTexImage2D(GLContext *c,GLParam *p)
     im=&c->current_texture->images[level];
     im->xsize=width;
     im->ysize=height;
-    if (im->pixmap!=NULL) gl_free(im->pixmap);
 
-    im->pixmap=gl_malloc(width*height*2);
-    if(im->pixmap) {
-        if (format == GL_RGB)
-            gl_convertRGB_to_5R6G5B(im->pixmap,pixels,width,height);
-        else if (format == GL_RGBA)
-            gl_convertRGBA_to_5R6G5B(im->pixmap,pixels,width,height);
+    gl_free(im->pixmap);
+    gl_free(im->alpha);
+
+    im->pixmap = gl_malloc(width*height*2);
+
+    if (format == GL_RGB)
+    {
+        im->alpha = NULL;
+        gl_convertRGB_to_5R6G5B(im->pixmap,pixels,width,height);
+    }
+    else if (format == GL_RGBA)
+    {
+        im->alpha = gl_malloc(width*height);
+        gl_convertRGBA_to_5R6G5B(im->pixmap, im->alpha, pixels, width, height);
     }
 }
 
