@@ -11,6 +11,7 @@
 #include "r7_zfeatures.h"
 
 #define INLINE_GL 
+#define M_PI		3.14159265358979323846
 
 //#define DEBUG
 /* #define NDEBUG */
