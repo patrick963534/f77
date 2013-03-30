@@ -107,7 +107,6 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                     if (a == 0xff)
                     {
                         bv = texture[ppidx];
-                        bb = 1;
                     }
                     else if (a > 0)
                     {
@@ -120,7 +119,6 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                         int b = (int)(((dv      ) & 0x1F) * (1- af) + ((sv      ) & 0x1F) * af);
 
                         bv = (unsigned short)((r << 11) | (g << 5) | b);
-                        bb = 1;
                     }
 
                     if (bb)
@@ -132,6 +130,9 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
 
                         bb = 0;
                     }
+
+                    if (a)
+                        bb = 1;
                 }
 
                 tu += tdu;
