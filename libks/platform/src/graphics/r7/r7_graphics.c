@@ -37,15 +37,17 @@ static void setup_model(int offx, int offy, int clip_x, int clip_y, int clip_w, 
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
 
-    float minx = (float)x - all_w / 2;
-    float miny = (float)y - all_h / 2;
-    float maxx = minx + clip_w;
-    float maxy = miny + clip_h;
+    float minx = -clip_w/2;
+    float miny = -clip_h/2;
+    float maxx =  clip_w/2;
+    float maxy =  clip_h/2;
 
     float minu = (clip_x) / (float)img_w;
     float minv = (clip_y) / (float)img_h;
     float maxu = (clip_x + clip_w) / (float)img_w;
     float maxv = (clip_y + clip_h) / (float)img_h;
+
+    glTranslatef(offx, offy, 0);
 
     glBegin(GL_TRIANGLES);
         glTexCoord2f(minu, minv); glVertex3f( minx, maxy, -5.f);
@@ -60,9 +62,6 @@ static void setup_model(int offx, int offy, int clip_x, int clip_y, int clip_w, 
 
 static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h)
 {
-    offx -= clip_w / 2;
-    offy -= clip_h / 2;
-
     bound_update(&clip_x, &clip_y, img, &clip_w, &clip_h);
 
     if (g->img_buf != img->pixels)
@@ -118,7 +117,10 @@ static void graphics_pop()
 
 static void graphics_load_identity()
 {
+    int width = ks_director_instance()->width;
+    int height = ks_director_instance()->height;
     glLoadIdentity();
+    glTranslatef(-width/2, -height/2, 0);
 }
 
 static void graphics_flush()
