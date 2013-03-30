@@ -81,7 +81,7 @@ static void draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, in
 
 static void clear_screen()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
