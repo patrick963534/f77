@@ -37,8 +37,8 @@ static void setup_model(int offx, int offy, int clip_x, int clip_y, int clip_w, 
     int all_w = ks_director_instance()->width;
     int all_h = ks_director_instance()->height;
 
-    float minx = x - all_w / 2;
-    float miny = y - all_h / 2;
+    float minx = (float)x - all_w / 2;
+    float miny = (float)y - all_h / 2;
     float maxx = minx + clip_w;
     float maxy = miny + clip_h;
 
