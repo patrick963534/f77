@@ -17,7 +17,6 @@
 #include <ks/text.h>
 #include <ks/libc.h>
 #include <ks/constants.h>
-#include "../../r7/r7_zbuffer.h"
 #include <r7/gl.h>
 
 static GLuint TexObj[2];
@@ -85,18 +84,12 @@ static void bind_texture(int texobj,int image)
 
 static void smooth_test()
 {
-    ZBuffer *zb;
-    char* buf;
     int width = 320;
     int height = 240;
     GLuint Object;
 
-    buf = calloc(1, width * height * 2);
-    zb = ZB_open(width, height, 0);
-
-    glInit(zb);
+    glInit();
     glViewport(0, 0, width, height);
-    ZB_resize(zb, buf, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -118,28 +111,19 @@ static void smooth_test()
     glTranslatef(0.0f, 0.0f, -10.0f);
     glCallList(Object);
     glPopMatrix();
-    glFlush();
 
-    ks_helper_image565_save_ppm("smooth_test.ppm", buf, width, height);
+    ks_helper_image565_save_ppm("smooth_test.ppm", glFlush(), width, height);
 
-    free(buf);
-    glClose();
-    ZB_close(zb);
+    glClose();    
 }
 
 static void texture_mapping_test()
 {
-    ZBuffer *zb;
-    char* buf;
     int width = 100;
     int height = 100;
 
-    buf = calloc(1, width * height * 2);
-    zb = ZB_open(width, height, 0);
-
-    glInit(zb);
+    glInit();
     glViewport(0, 0, width, height);
-    ZB_resize(zb, buf, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -174,7 +158,7 @@ static void texture_mapping_test()
 
          glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
          glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, -0.5f, 0.f);
-         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
+         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.3f, 0.f);
 
 //         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
 //         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
@@ -185,13 +169,9 @@ static void texture_mapping_test()
 
     glDeleteTextures(2, TexObj);
 
-    glFlush();
+    ks_helper_image565_save_ppm("texture_mapping_test.ppm", glFlush(), width, height);
 
-    ks_helper_image565_save_ppm("texture_mapping_test.ppm", buf, width, height);
-
-    free(buf);
     glClose();
-    ZB_close(zb);
 }
 
 void ks_utest_r7_test()
