@@ -27,6 +27,16 @@ KS_API void ks_graphics_translate(int x, int y, int z)
     ks_graphics_instance()->klass->translate(x, y, z);
 }
 
+KS_API void ks_graphics_scale(float sx, float sy)
+{
+    ks_graphics_instance()->klass->scale(sx, sy);
+}
+
+KS_API void ks_graphics_rotate(float angle)
+{
+    ks_graphics_instance()->klass->rotate(angle);
+}
+
 KS_API void ks_graphics_pop()
 {
     ks_graphics_instance()->klass->pop();

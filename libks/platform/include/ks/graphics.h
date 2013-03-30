@@ -16,6 +16,8 @@ typedef struct ks_sys_graphics_interface_t
     void    (*push)();
     void    (*load_identity)();
     void    (*flush)();
+    void    (*scale)(float sx, float sy);
+    void    (*rotate)(float angle);
 } ks_sys_graphics_interface_t;
 
 #define ks_extends_graphics() \
@@ -35,6 +37,8 @@ KS_API ks_graphics_t* ks_graphics_instance();
 
 KS_API void ks_graphics_draw(ks_image_t* img, int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h);
 KS_API void ks_graphics_translate(int x, int y, int z);
+KS_API void ks_graphics_scale(float sx, float sy);
+KS_API void ks_graphics_rotate(float angle);
 KS_API void ks_graphics_load_identity();
 KS_API void ks_graphics_pop();
 KS_API void ks_graphics_push();

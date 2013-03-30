@@ -14,6 +14,7 @@ typedef int  (*ks_msgs_f)(ks_node_t* me_, ks_event_t* e);
 #define ks_extends_node()           \
     ks_extends_object();            \
     int         x, y, z;            \
+    float       sx, sy, angle;      \
     ks_node_t*  parent;             \
     ks_list_t   node_children;      \
     ks_list_t   node_sibling;       \

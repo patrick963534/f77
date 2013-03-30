@@ -11,7 +11,14 @@ static void node_draw(ks_node_t* me)
     ks_node_t *pos, *n;
 
     ks_graphics_push();
+
     ks_graphics_translate(me->x, me->y, me->z);
+
+    if (me->angle != 0)
+        ks_graphics_rotate(me->angle);
+
+    if (me->sx != 1 || me->sy != 1)
+        ks_graphics_scale(me->sx, me->sy);
 
     ks_node_for_each(pos, n, me, ks_node_t)
     {
