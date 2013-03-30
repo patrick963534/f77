@@ -32,22 +32,17 @@ static void bound_update(int *clip_x, int *clip_y, ks_image_t* img, int *clip_w,
 
 static void setup_model(int offx, int offy, int clip_x, int clip_y, int clip_w, int clip_h, int img_w, int img_h)
 {
-    int x = offx;
-    int y = offy;
-    int all_w = ks_director_instance()->width;
-    int all_h = ks_director_instance()->height;
-
-    float minx = -clip_w/2;
-    float miny = -clip_h/2;
-    float maxx =  clip_w/2;
-    float maxy =  clip_h/2;
+    float minx = (float)-clip_w/2;
+    float miny = (float)-clip_h/2;
+    float maxx = (float) clip_w/2;
+    float maxy = (float) clip_h/2;
 
     float minu = (clip_x) / (float)img_w;
     float minv = (clip_y) / (float)img_h;
     float maxu = (clip_x + clip_w) / (float)img_w;
     float maxv = (clip_y + clip_h) / (float)img_h;
 
-    glTranslatef(offx, offy, 0);
+    glTranslatef((float)offx, (float)offy, 0);
 
     glBegin(GL_TRIANGLES);
         glTexCoord2f(minu, minv); glVertex3f( minx, maxy, -5.f);
@@ -120,7 +115,7 @@ static void graphics_load_identity()
     int width = ks_director_instance()->width;
     int height = ks_director_instance()->height;
     glLoadIdentity();
-    glTranslatef(-width/2, -height/2, 0);
+    glTranslatef((float)-width/2, (float)-height/2, 0);
 }
 
 static void graphics_flush()

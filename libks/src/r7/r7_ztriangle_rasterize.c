@@ -90,7 +90,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
             float tv = lv;
             float tdu = (ru - lu) / n;
             float tdv = (rv - lv) / n;
-            int bv, bb = 0;
+            unsigned short bv = 0, bb = 0;
 
             while (n > 0)
             {
