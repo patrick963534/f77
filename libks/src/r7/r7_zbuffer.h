@@ -7,15 +7,6 @@
 
 #include "r7_zfeatures.h"
 
-#define ZB_Z_BITS 16
-
-#define ZB_POINT_Z_FRAC_BITS 14
-
-#define ZB_POINT_S_MIN ( (1<<13) )
-#define ZB_POINT_S_MAX ( (1<<22)-(1<<13) )
-#define ZB_POINT_T_MIN ( (1<<21) )
-#define ZB_POINT_T_MAX ( (1<<30)-(1<<21) )
-
 #define ZB_POINT_RED_MIN ( (1<<10) )
 #define ZB_POINT_RED_MAX ( (1<<16)-(1<<10) )
 #define ZB_POINT_GREEN_MIN ( (1<<9) )
@@ -23,67 +14,19 @@
 #define ZB_POINT_BLUE_MIN ( (1<<10) )
 #define ZB_POINT_BLUE_MAX ( (1<<16)-(1<<10) )
 
-/* display modes */
-#define ZB_MODE_5R6G5B  1  /* true color 16 bits */
-#define ZB_MODE_INDEX   2  /* color index 8 bits */
-#define ZB_MODE_RGBA    3  /* 32 bit rgba mode */
-#define ZB_MODE_RGB24   4  /* 24 bit rgb mode */
-#define ZB_NB_COLORS    225 /* number of colors for 8 bit display */
-
-#if TGL_FEATURE_RENDER_BITS == 15
-
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) >> 1) & 0x7c00) | (((g) >> 6) & 0x03e0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-/* bytes per pixel */
-#define PSZB 2 
-/* bits per pixel = (1 << PSZH) */
-#define PSZSH 4 
-
-#elif TGL_FEATURE_RENDER_BITS == 16
-
-/* 16 bit mode */
-#define RGB_TO_PIXEL(r,g,b) \
-  (((r) & 0xF800) | (((g) >> 5) & 0x07E0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-#define PSZB 2 
-#define PSZSH 4 
-
-#elif TGL_FEATURE_RENDER_BITS == 24
-
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
-typedef unsigned char PIXEL;
-#define PSZB 3
-#define PSZSH 5
-
-#elif TGL_FEATURE_RENDER_BITS == 32
-
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
-typedef unsigned int PIXEL;
-#define PSZB 4
-#define PSZSH 5
-
-#else
-
-#error Incorrect number of bits per pixel
-
-#endif
-
 typedef struct {
     int xsize,ysize;
     int linesize; /* line size, in bytes */
     int mode;
     
     unsigned short *zbuf;
-    PIXEL *pbuf;
+    unsigned short *pbuf;
     int frame_buffer_allocated;
     
     int nb_colors;
     unsigned char *dctable;
     int *ctable;
-    PIXEL *current_texture;
+    unsigned short *current_texture;
     int tex_w;
     int tex_h;
 } ZBuffer;
@@ -100,11 +43,7 @@ typedef struct {
 
 /* zbuffer.c */
 
-ZBuffer *ZB_open(int xsize,int ysize,int mode,
-		 int nb_colors,
-		 unsigned char *color_indexes,
-		 int *color_table,
-		 void *frame_buffer);
+ZBuffer *ZB_open(int xsize,int ysize,void *frame_buffer);
 
 
 void ZB_close(ZBuffer *zb);
@@ -131,7 +70,7 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
 
 /* ztriangle.c */
 
-void ZB_setTexture(ZBuffer *zb, PIXEL *texture, int w, int h);
+void ZB_setTexture(ZBuffer *zb, unsigned short *texture, int w, int h);
 
 //void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
 

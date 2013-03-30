@@ -40,11 +40,6 @@ void gl_transform_to_viewport(GLContext *c,GLVertex *v)
   /* texture */
 
   if (c->texture_2d_enabled) {
-    v->zp.s=(int)(v->tex_coord.X * (ZB_POINT_S_MAX - ZB_POINT_S_MIN) 
-                  + ZB_POINT_S_MIN);
-    v->zp.t=(int)(v->tex_coord.Y * (ZB_POINT_T_MAX - ZB_POINT_T_MIN) 
-                  + ZB_POINT_T_MIN);
-
     v->zp.u = v->tex_coord.X;
     v->zp.v = v->tex_coord.Y;
   }
@@ -403,17 +398,17 @@ void gl_draw_triangle_fill(GLContext *c,
   }
 #endif
     
-  if (c->texture_2d_enabled) {
+//  if (c->texture_2d_enabled) {
 #ifdef PROFILE
     count_triangles_textured++;
 #endif
     ZB_setTexture(c->zb,c->current_texture->images[0].pixmap, c->current_texture->images[0].xsize, c->current_texture->images[0].ysize);
-    ZB_fillTriangleMappingPerspective(c->zb,&p0->zp,&p1->zp,&p2->zp);
-  } else if (c->current_shade_model == GL_SMOOTH) {
-    ZB_fillTriangleSmooth(c->zb,&p0->zp,&p1->zp,&p2->zp);
-  } else {
-    
-  }
+    ZB_rasterize(c->zb,&p0->zp,&p1->zp,&p2->zp);
+//   } else if (c->current_shade_model == GL_SMOOTH) {
+//     ZB_fillTriangleSmooth(c->zb,&p0->zp,&p1->zp,&p2->zp);
+//   } else {
+//     
+//   }
 }
 
 /* Render a clipped triangle in line mode */  

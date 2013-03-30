@@ -52,6 +52,8 @@ void glopColor(GLContext * c, GLParam * p)
     }
 }
 
+#define ZB_POINT_Z_FRAC_BITS 14
+#define ZB_Z_BITS 16
 
 void gl_eval_viewport(GLContext * c)
 {

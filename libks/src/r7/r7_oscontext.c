@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#if 0
+
 static int buffercnt = 0;
 
 ostgl_context *
@@ -82,3 +84,5 @@ ostgl_resize(ostgl_context *context,
     ZB_resize(context->zbs[i], framebuffers[i], xsize, ysize);
   }
 }
+
+#endif
