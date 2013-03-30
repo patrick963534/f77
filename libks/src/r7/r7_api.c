@@ -639,7 +639,7 @@ void glCallList(unsigned int list)
 
 char* glFlush(void)
 {
-    return gl_get_context333()->zb->pbuf;
+    return (char*)gl_get_context333()->zb->pbuf;
 }
 
 void glHint(int target,int mode)

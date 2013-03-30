@@ -30,7 +30,6 @@ void endSharedState(GLContext *c)
 void glInit()
 {
   GLContext *c;
-  GLViewport *v;
   int i;
 
   c=gl_zalloc(sizeof(GLContext));
