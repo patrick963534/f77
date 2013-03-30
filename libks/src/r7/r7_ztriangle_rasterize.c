@@ -66,6 +66,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
 
     unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
     unsigned short* texture = zb->current_texture;
+    unsigned char*  alpha = zb->alpha;
 
     float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
     float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
@@ -96,7 +97,27 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                 int yy = (int)(tv+0.5f);
 
                 if (xx < tex_w && yy < tex_h)
-                    *line_pp++ = texture[yy * tex_w + xx];
+                {
+                    int ppidx = yy * tex_w + xx;
+                    unsigned char a = 0;
+                    
+                    if (alpha) a = alpha[ppidx];
+
+                    if (a)
+                    {
+                        int sv = *line_pp;
+                        int dv = texture[ppidx];
+                        float af = a / 255.0f;
+
+                        int r = (int)(((dv >> 11) & 0x1F) * (1- af) + ((sv >> 11) & 0x1F) * af);
+                        int g = (int)(((dv >>  5) & 0x3F) * (1- af) + ((sv >>  5) & 0x3F) * af);
+                        int b = (int)(((dv      ) & 0x1F) * (1- af) + ((sv      ) & 0x1F) * af);
+
+                        *line_pp++ = (unsigned short)((r << 11) | (g << 5) | b);
+                    }
+                    else
+                        *line_pp++ = texture[ppidx];
+                }
 
                 tu += tdu;
                 tv += tdv;

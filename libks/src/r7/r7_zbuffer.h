@@ -25,8 +25,9 @@ typedef struct {
     
     int nb_colors;
     unsigned char *dctable;
-    int *ctable;
-    unsigned short *current_texture;
+    int* ctable;
+    unsigned short* current_texture;
+    unsigned char*  alpha;
     int tex_w;
     int tex_h;
 } ZBuffer;
@@ -66,7 +67,7 @@ void ZB_line_z(ZBuffer * zb, ZBufferPoint * p1, ZBufferPoint * p2);
 
 /* ztriangle.c */
 
-void ZB_setTexture(ZBuffer *zb, unsigned short *texture, int w, int h);
+void ZB_setTexture(ZBuffer *zb, unsigned short *texture, unsigned char* alpha, int w, int h);
 
 //void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,ZBufferPoint *p2,ZBufferPoint *p3);
 

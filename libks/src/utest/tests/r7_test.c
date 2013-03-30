@@ -174,7 +174,7 @@ static void texture_mapping_test()
 
          glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
          glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, -0.5f, 0.f);
-         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.5f, 0.f);
+         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
 
 //         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
 //         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
