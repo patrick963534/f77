@@ -100,13 +100,13 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                 {
                     int ppidx = yy * tex_w + xx;
                     unsigned char a = 0;
-                    
+
                     if (alpha) a = alpha[ppidx];
 
                     if (a)
                     {
-                        int sv = *line_pp;
-                        int dv = texture[ppidx];
+                        int sv = texture[ppidx];
+                        int dv = *line_pp;
                         float af = a / 255.0f;
 
                         int r = (int)(((dv >> 11) & 0x1F) * (1- af) + ((sv >> 11) & 0x1F) * af);
@@ -117,6 +117,8 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                     }
                     else
                         *line_pp++ = texture[ppidx];
+
+                    
                 }
 
                 tu += tdu;

@@ -134,7 +134,7 @@ void glopTexImage2D(GLContext *c,GLParam *p)
     void *pixels=p[9].p;
     GLImage *im;
 
-    if (!(target == GL_TEXTURE_2D && level == 0 && components == 3 && 
+    if (!(target == GL_TEXTURE_2D && level == 0 && 
         border == 0 && (format == GL_RGB || format == GL_RGBA) &&
         type == GL_UNSIGNED_BYTE)) 
     {
