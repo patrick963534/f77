@@ -3,6 +3,10 @@
 
 #define swap_ptr(type, p1, p2)  { type* _type_t = p1; p1 = p2; p2 = _type_t; }
 
+#define shift_big(v)    ((v) << 16)
+#define shift_small(v)  (((v) + (1 << 15)) >> 16)
+
+
 static void sort_point_by_y(ZBufferPoint** zp0, ZBufferPoint** zp1, ZBufferPoint** zp2)
 {
     ZBufferPoint *p0, *p1, *p2;
@@ -57,29 +61,29 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
 {
     int tex_w = zb->tex_w;
     int tex_h = zb->tex_h;
-    int lx = vp->x << 16;
-    int rx = vp->x << 16;
-    int lu = ((int)(vp->u * (tex_w - 1))) << 16;
-    int ru = ((int)(vp->u * (tex_w - 1))) << 16;
-    int lv = ((int)(vp->v * (tex_h - 1))) << 16;
-    int rv = ((int)(vp->v * (tex_h - 1))) << 16;
+    int lx = shift_big(vp->x);
+    int rx = shift_big(vp->x);
+    int lu = shift_big((int)(vp->u * (tex_w - 1)));
+    int ru = shift_big((int)(vp->u * (tex_w - 1)));
+    int lv = shift_big((int)(vp->v * (tex_h - 1)));
+    int rv = shift_big((int)(vp->v * (tex_h - 1)));
 
     unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
     unsigned short* texture = zb->current_texture;
     unsigned char*  alpha = zb->alpha;
 
-    int dxl = (lp->x - vp->x) * (1 << 16) / (abs(vp->y - lp->y));
-    int dxr = (rp->x - vp->x) * (1 << 16) / (abs(vp->y - rp->y));
+    int dxl = shift_big(lp->x - vp->x) / (abs(vp->y - lp->y));
+    int dxr = shift_big(rp->x - vp->x) / (abs(vp->y - rp->y));
 
-    int dul = (lp->u - vp->u) * (tex_w - 1) * (1 << 16) / (abs(vp->y - lp->y));
-    int dur = (rp->u - vp->u) * (tex_w - 1) * (1 << 16) / (abs(vp->y - rp->y));
-    int dvl = (lp->v - vp->v) * (tex_h - 1) * (1 << 16) / (abs(vp->y - lp->y));
-    int dvr = (rp->v - vp->v) * (tex_h - 1) * (1 << 16) / (abs(vp->y - rp->y));
+    int dul = (int)((lp->u - vp->u) * shift_big(tex_w - 1) / (abs(vp->y - lp->y)));
+    int dur = (int)((rp->u - vp->u) * shift_big(tex_w - 1) / (abs(vp->y - rp->y)));
+    int dvl = (int)((lp->v - vp->v) * shift_big(tex_h - 1) / (abs(vp->y - lp->y)));
+    int dvr = (int)((rp->v - vp->v) * shift_big(tex_h - 1) / (abs(vp->y - rp->y)));
 
     while (nbline-- > 0)
     {
-        int n = (rx >> 16) - (lx >> 16) + 1;
-        unsigned short* line_pp = pp + (lx >> 16);
+        int n = shift_small(rx) - shift_small(lx) + 1;
+        unsigned short* line_pp = pp + shift_small(lx);
 
         if (line_step < 0)
             --n;
@@ -94,8 +98,8 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
 
             while (n > 0)
             {
-                int xx = tu >> 16;
-                int yy = tv >> 16;
+                int xx = shift_small(tu);
+                int yy = shift_small(tv);
 
                 if (xx >= 0 && yy >= 0 && xx < tex_w && yy < tex_h)
                 {
