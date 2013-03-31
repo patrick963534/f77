@@ -71,10 +71,10 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     float dxl = (float)(lp->x - vp->x) / (float)(abs(vp->y - lp->y));
     float dxr = (float)(rp->x - vp->x) / (float)(abs(vp->y - rp->y));
 
-    float dul = (float)(lp->u - vp->u) * tex_w / (float)(abs(vp->y - lp->y));
-    float dur = (float)(rp->u - vp->u) * tex_w / (float)(abs(vp->y - rp->y));
-    float dvl = (float)(lp->v - vp->v) * tex_h / (float)(abs(vp->y - lp->y));
-    float dvr = (float)(rp->v - vp->v) * tex_h / (float)(abs(vp->y - rp->y));
+    float dul = (float)(lp->u - vp->u) * (tex_w - 1) / (float)(abs(vp->y - lp->y));
+    float dur = (float)(rp->u - vp->u) * (tex_w - 1) / (float)(abs(vp->y - rp->y));
+    float dvl = (float)(lp->v - vp->v) * (tex_h - 1) / (float)(abs(vp->y - lp->y));
+    float dvr = (float)(rp->v - vp->v) * (tex_h - 1) / (float)(abs(vp->y - rp->y));
 
     while (nbline-- > 0)
     {
@@ -97,7 +97,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                 int xx = (int)(tu + 0.5f);
                 int yy = (int)(tv + 0.5f);
 
-                if (xx < tex_w && yy < tex_h)
+                if (xx >= 0 && yy >= 0 && xx < tex_w && yy < tex_h)
                 {
                     int ppidx = yy * tex_w + xx;
                     unsigned char a = 0xff;
