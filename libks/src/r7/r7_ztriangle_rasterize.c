@@ -126,7 +126,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                         if (a == 0)
                             *(line_pp - 1) = bv;
                         else
-                            *((unsigned int*)(line_pp - 1)) = bv << 16 | texture[ppidx];
+                            *((unsigned int*)(line_pp - 1)) = texture[ppidx] << 16 | bv;
 
                         bb = 0;
                     }
