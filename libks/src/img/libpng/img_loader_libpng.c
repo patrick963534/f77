@@ -42,6 +42,7 @@ void so_img_loader_libpng_load(const char* file, so_img_loader_data_t* info)
     ks_log("load image: %s, with size(%d, %d)", file, info->width, info->height);
 
     //png_free_default(png_ptr, info_ptr);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
     free(row_pointers);
     fclose(fp);
