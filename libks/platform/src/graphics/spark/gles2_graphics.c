@@ -176,19 +176,25 @@ static void destruct(graphics_t* me)
     ks_object_destruct((ks_object_t*)me);
 }
 
-static ks_sys_graphics_interface_t interfaces = {
-    0,
-    draw,
-    clear_screen,
-    graphics_translate,
-    graphics_pop,
-    graphics_push,
-    graphics_load_identity,
-    graphics_flush,
-};
+static ks_sys_graphics_interface_t interfaces;
 
 ks_sys_graphics_interface_t* ks_sys_graphics_interface_instance()
 {
+    static int init_interface = 1;
+
+    if (init_interface)
+    {
+        interfaces.draw                 = draw;
+        interfaces.clear_screen         = clear_screen;
+        interfaces.translate            = graphics_translate;
+        interfaces.pop                  = graphics_pop;
+        interfaces.push                 = graphics_push;
+        interfaces.load_identity        = graphics_load_identity;
+        interfaces.flush                = graphics_flush;
+
+        init_interface = 0;
+    }
+
     return &interfaces;
 }
 
