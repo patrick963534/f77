@@ -161,7 +161,6 @@ void ZB_rasterize(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
     ZBufferPoint *vp, *lp, *rp;
     int part;
     int nbline;
-    int line_step;
 
     sort_point_by_y(&p0, &p1, &p2);   
 
@@ -176,10 +175,9 @@ void ZB_rasterize(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
 
-            line_step = zb->xsize;
-            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y)) + 1;
-            if (p1->y == p2->y)
-                --nbline;
+            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));
+            if (nbline > 0 && p1->y != p2->y)
+                ++nbline;
         }
         else
         {
@@ -187,15 +185,12 @@ void ZB_rasterize(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
 
-            line_step = -zb->xsize;
             nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));          
-            if (p0->y == p1->y)
+            if (nbline > 0 && p0->y == p1->y)
                 ++nbline;
         }
 
-        if (nbline <= 0)
-            continue;
-
-        draw_part(zb, vp, lp, rp, nbline, line_step);
+        if (nbline > 0)
+            draw_part(zb, vp, lp, rp, nbline, part == 0? zb->xsize : -zb->xsize);
     }
 }
