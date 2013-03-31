@@ -68,32 +68,29 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     int lv = shift_big((int)(vp->v * (tex_h - 1)));
     int rv = shift_big((int)(vp->v * (tex_h - 1)));
 
-    unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
+    unsigned short* pp = zb->pbuf + zb->xsize * (vp->y + (line_step > 0 ? 0 : -1));
     unsigned short* texture = zb->current_texture;
     unsigned char*  alpha = zb->alpha;
 
     int dxl = shift_big(lp->x - vp->x) / (abs(vp->y - lp->y));
     int dxr = shift_big(rp->x - vp->x) / (abs(vp->y - rp->y));
 
-    int dul = (int)((lp->u - vp->u) * shift_big(tex_w - 1) / (abs(vp->y - lp->y)));
-    int dur = (int)((rp->u - vp->u) * shift_big(tex_w - 1) / (abs(vp->y - rp->y)));
-    int dvl = (int)((lp->v - vp->v) * shift_big(tex_h - 1) / (abs(vp->y - lp->y)));
-    int dvr = (int)((rp->v - vp->v) * shift_big(tex_h - 1) / (abs(vp->y - rp->y)));
+    int dul = (int)((lp->u - vp->u) * shift_big(tex_w) / (abs(vp->y - lp->y)));
+    int dur = (int)((rp->u - vp->u) * shift_big(tex_w) / (abs(vp->y - rp->y)));
+    int dvl = (int)((lp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - lp->y)));
+    int dvr = (int)((rp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - rp->y)));
 
     while (nbline-- > 0)
     {
         int n = shift_small(rx) - shift_small(lx) + 1;
         unsigned short* line_pp = pp + shift_small(lx);
 
-        if (line_step < 0)
-            --n;
-
         if (n > 0) 
         {
             int tu = lu;
             int tv = lv;
-            int tdu = (ru - lu) / n;
-            int tdv = (rv - lv) / n;
+            int tdu = n == 1 ? 0 : (ru - lu) / (n - 1);
+            int tdv = n == 1 ? 0 : (rv - lv) / (n - 1);
             unsigned short bv = 0, bb = 0;
 
             while (n > 0)
@@ -188,7 +185,7 @@ void ZB_rasterize(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
             if (area < 0)
                 swap_ptr(ZBufferPoint, lp, rp);
 
-            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y));          
+            nbline = min(abs(vp->y - lp->y), abs(vp->y - rp->y)) - 1;          
             if (nbline > 0 && p0->y == p1->y)
                 ++nbline;
         }
