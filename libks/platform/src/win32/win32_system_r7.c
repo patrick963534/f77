@@ -172,7 +172,7 @@ static void flush()
         }
     }
 
-    BitBlt(sys->hdc, 0, 30, ks_director_instance()->width, ks_director_instance()->height, sys->hdc_img, 0, 0, SRCCOPY);
+    BitBlt(sys->hdc, 3, 25, ks_director_instance()->width, ks_director_instance()->height, sys->hdc_img, 0, 0, SRCCOPY);
 }
 
 static ks_sys_system_interface_t interfaces = {
