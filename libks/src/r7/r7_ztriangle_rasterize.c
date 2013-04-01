@@ -63,12 +63,12 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     int tex_h = zb->tex_h;
     int lx = shift_big(vp->x);
     int rx = shift_big(vp->x);
-    int lu = shift_big((int)(vp->u * (tex_w - 1)));
-    int ru = shift_big((int)(vp->u * (tex_w - 1)));
-    int lv = shift_big((int)(vp->v * (tex_h - 1)));
-    int rv = shift_big((int)(vp->v * (tex_h - 1)));
+    int lu = shift_big((int)(vp->u * (tex_w)));
+    int ru = shift_big((int)(vp->u * (tex_w)));
+    int lv = shift_big((int)(vp->v * (tex_h)));
+    int rv = shift_big((int)(vp->v * (tex_h)));
 
-    unsigned short* pp = zb->pbuf + zb->xsize * (vp->y + (line_step > 0 ? 0 : -1));
+    unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
     unsigned short* texture = zb->current_texture;
     unsigned char*  alpha = zb->alpha;
 
@@ -80,12 +80,20 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     int dvl = (int)((lp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - lp->y)));
     int dvr = (int)((rp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - rp->y)));
 
-    int top_flat_right_edge_minor = (line_step > 0 ? 0 : -(shift_big(1) >> 1));
+    int top_flat_right_edge_minor = 0;
+
+    if (line_step < 0)
+    {
+        lv += dvl;
+        pp = pp - zb->xsize;
+        top_flat_right_edge_minor = -(shift_big(1) >> 1);
+    }
 
     while (nbline-- > 0)
     {
-        int n = shift_small(rx + top_flat_right_edge_minor) - shift_small(lx) + 1;
-        unsigned short* line_pp = pp + shift_small(lx);
+        int n = shift_small(rx + top_flat_right_edge_minor) - shift_small(lx + top_flat_right_edge_minor) + 1;
+        int startx = shift_small(lx + top_flat_right_edge_minor);
+        unsigned short* line_pp = pp + startx;
 
         if (n > 0) 
         {
