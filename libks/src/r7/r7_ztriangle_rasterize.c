@@ -98,6 +98,12 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                 int xx = shift_small(tu);
                 int yy = shift_small(tv);
 
+                if (xx < 0) xx = 0;
+                else if (xx >= tex_w) xx = tex_w - 1;
+
+                if (yy < 0) yy = 0;
+                else if (yy >= tex_h) yy = tex_h - 1;
+
                 if (xx >= 0 && yy >= 0 && xx < tex_w && yy < tex_h)
                 {
                     int ppidx = yy * tex_w + xx;
