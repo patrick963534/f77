@@ -151,6 +151,12 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                         bb = 1;
                 }
 
+                if (bb)
+                {
+                    *(line_pp-1) = bv;
+                    bb = 0;
+                }
+
                 tu += tdu;
                 tv += tdv;
                 ++line_pp;
