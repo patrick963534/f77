@@ -160,15 +160,12 @@ static void flush()
 
     for (i = 0; i < h; ++i)
     {
-        char* pd = &dst[i * strip];
+        int* pd = (int*)&dst[i * strip];
         unsigned short* ps = (unsigned short*)&src[i * w * 2];
         for (j = 0; j < w; ++j)
         {
             int sv = *ps++;
-            *pd++ = ((sv      ) & 0x1F) * 255 / 32;
-            *pd++ = ((sv >> 5 ) & 0x3F) * 255 / 64;
-            *pd++ = ((sv >> 11) & 0x1F) * 255 / 32;
-            *pd++ = 0xFF;
+            *pd++ = (((sv      ) & 0x1F) * 255 / 32) | (((sv >> 5 ) & 0x3F) * 255 / 64) << 8 | (((sv >> 11) & 0x1F) * 255 / 32) << 16 | 0xFF000000;
         }
     }
 
