@@ -81,10 +81,11 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     int dvr = (int)((rp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - rp->y)));
 
     int top_flat_right_edge_minor = 0;
+    int top_flat_right_edge_y_offset = 0;
 
     if (line_step < 0)
     {
-        lv += dvl;
+        top_flat_right_edge_y_offset = -1;
         pp = pp - zb->xsize;
         top_flat_right_edge_minor = -(shift_big(1) >> 1);
     }
@@ -106,7 +107,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
             while (n > 0)
             {
                 int xx = shift_small(tu);
-                int yy = shift_small(tv);
+                int yy = shift_small(tv) + top_flat_right_edge_y_offset;
 
                 if (xx < 0) xx = 0;
                 else if (xx >= tex_w) xx = tex_w - 1;
