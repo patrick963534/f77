@@ -6,7 +6,6 @@
 #define shift_big(v)    ((v) << 16)
 #define shift_small(v)  (((v) + (1 << 15)) >> 16)
 
-
 static void sort_point_by_y(ZBufferPoint** zp0, ZBufferPoint** zp1, ZBufferPoint** zp2)
 {
     ZBufferPoint *p0, *p1, *p2;
