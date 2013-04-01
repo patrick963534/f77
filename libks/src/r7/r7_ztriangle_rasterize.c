@@ -84,8 +84,8 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
 
     if (line_step < 0)
     {
-        top_flat_right_edge_y_offset = -1;
         pp = pp - zb->xsize;
+        top_flat_right_edge_y_offset = -1;
         top_flat_right_edge_minor = -(shift_big(1) >> 1);
     }
 
