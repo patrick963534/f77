@@ -63,10 +63,10 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     int tex_h = zb->tex_h;
     int lx = shift_big(vp->x);
     int rx = shift_big(vp->x);
-    int lu = (int)(vp->u * shift_big((tex_w - 1)));
-    int ru = (int)(vp->u * shift_big((tex_w - 1)));
-    int lv = (int)(vp->v * shift_big((tex_h - 1)));
-    int rv = (int)(vp->v * shift_big((tex_h - 1)));
+    int lu = (int)(vp->u * shift_big((tex_w)));
+    int ru = (int)(vp->u * shift_big((tex_w)));
+    int lv = (int)(vp->v * shift_big((tex_h)));
+    int rv = (int)(vp->v * shift_big((tex_h)));
 
     unsigned short* pp = zb->pbuf + zb->xsize * (vp->y);
     unsigned short* texture = zb->current_texture;
