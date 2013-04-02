@@ -1,53 +1,55 @@
 #ifndef __ZMATH__
 #define __ZMATH__
 
-/* Matrix & Vertex */
-
-typedef struct {
-	float m[4][4];
-} M4;
-
-typedef struct {
-	float m[3][3];
-} M3;
-
-typedef struct {
-	 float m[3][4];
-} M34;
-
-
 #define X v[0]
 #define Y v[1]
 #define Z v[2]
 #define W v[3]
 
-typedef struct {
+typedef struct M44
+{
+	float m[4][4];
+} M44;
+
+typedef struct M33
+{
+	float m[3][3];
+} M33;
+
+typedef struct M34
+{
+	 float m[3][4];
+} M34;
+
+typedef struct V3
+{
 	 float v[3];
 } V3;
 
-typedef struct {
+typedef struct V4
+{
 	 float v[4];
 } V4;
 	
-void gl_M4_Id(M4 *a);
-int gl_M4_IsId(M4 *a);
-void gl_M4_Move(M4 *a,M4 *b);
-void gl_MoveV3(V3 *a,V3 *b);
-void gl_MulM4V3(V3 *a,M4 *b,V3 *c);
-void gl_MulM3V3(V3 *a,M4 *b,V3 *c);
+int  r7_m44_is_identity(const M44* a);
+void r7_m44_identity(M44* a);
+void r7_m44_copy(M44* a, const M44* b);
 
-void gl_M4_MulV4(V4 * a,M4 *b,V4 * c);
-void gl_M4_InvOrtho(M4 *a,M4 b);
-void gl_M4_Inv(M4 *a,M4 *b);
-void gl_M4_Mul(M4 *c,M4 *a,M4 *b);
-void gl_M4_MulLeft(M4 *c,M4 *a);
-void gl_M4_Transpose(M4 *a,M4 *b);
-void gl_M4_Rotate(M4 *c,float t,int u);
-int  gl_V3_Norm(V3 *a);
+void r7_m44_mul_vector4(V4* a, const M44* b, const V4* c);
+void r7_m44_inv_ortho(M44* a, M44 b);
+void r7_m44_inverse(M44* a, const M44* b);
+void r7_m44_multiply(M44* c, const M44* a, const M44* b);
+void r7_m44_multiply_left(M44* c, const M44* a);
+void r7_m44_transpose(M44* a, const M44* b);
+void r7_m44_rotate(M44* c, float t, int u);
 
-V3 gl_V3_New(float x,float y,float z);
-V4 gl_V4_New(float x,float y,float z,float w);
+void r7_m43_multiply(V3* a, const M44* b, const V3* c);
+void r7_m33_multiply(V3* a, const M44* b, const V3* c);
 
-int gl_Matrix_Inv(float *r,float *m,int n);
+V3   r7_v3_new(float x, float y, float z);
+int  r7_v3_normal(V3* a);
+void r7_v3_copy(V3* a, const V3* b);
+
+V4 r7_v4_new(float x, float y, float z, float w);
 
 #endif  __ZMATH__

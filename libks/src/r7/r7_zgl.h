@@ -192,12 +192,12 @@ typedef struct GLContext {
     /* matrix */
 
     int matrix_mode;
-    M4 *matrix_stack[3];
-    M4 *matrix_stack_ptr[3];
+    M44 *matrix_stack[3];
+    M44 *matrix_stack_ptr[3];
     int matrix_stack_depth_max[3];
 
-    M4 matrix_model_view_inv;
-    M4 matrix_model_projection;
+    M44 matrix_model_view_inv;
+    M44 matrix_model_projection;
     int matrix_model_projection_updated;
     int matrix_model_projection_no_w_transform; 
     int apply_texture_matrix;

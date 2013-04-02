@@ -6,86 +6,109 @@
 #include <math.h>
 #include "r7_zmath.h"
 
-
-/* ******* Gestion des matrices 4x4 ****** */
-
-void gl_M4_Id(M4 *a)
+void r7_m44_identity(M44* a)
 {
-	int i,j;
-	for(i=0;i<4;i++)
-	for(j=0;j<4;j++) 
-	if (i==j) a->m[i][j]=1.0; else a->m[i][j]=0.0;
-}
-
-int gl_M4_IsId(M4 *a)
-{
-	int i,j;
-	for(i=0;i<4;i++)
-    for(j=0;j<4;j++) {
-      if (i==j) { 
-        if (a->m[i][j] != 1.0) return 0;
-      } else if (a->m[i][j] != 0.0) return 0;
+    int i,j;
+    for(i = 0; i < 4; ++i)
+    {
+        for(j = 0; j<4; ++j) 
+        {
+            if (i == j) 
+                a->m[i][j] = 1.0f; 
+            else 
+                a->m[i][j] = 0.0f;
+        }
     }
-  return 1;
 }
 
-void gl_M4_Mul(M4 *c,M4 *a,M4 *b)
+int r7_m44_is_identity(const M44* a)
 {
-  int i,j,k;
-  float s;
-  for(i=0;i<4;i++)
-    for(j=0;j<4;j++) {
-      s=0.0;
-      for(k=0;k<4;k++) s+=a->m[i][k]*b->m[k][j];
-      c->m[i][j]=s;
+    int i,j;
+    for(i = 0; i < 4; ++i)
+    {
+        for(j = 0; j < 4; ++j) 
+        {
+            if (i == j) 
+            { 
+                if (a->m[i][j] != 1.0f) 
+                    return 0;
+            } 
+            else if (a->m[i][j] != 0.0f) 
+                return 0;
+        }
+    }
+    return 1;
+}
+
+void r7_m44_multiply(M44* c, const M44* a, const M44* b)
+{
+    int i,j,k;
+    float s;
+
+    for(i=0;i<4;i++)
+    {
+        for(j=0;j<4;j++) 
+        {
+            s=0.0;
+
+            for(k=0;k<4;k++) 
+                s+=a->m[i][k]*b->m[k][j];
+
+            c->m[i][j]=s;
+        }
     }
 }
 
 /* c=c*a */
-void gl_M4_MulLeft(M4 *c,M4 *b)
+void r7_m44_multiply_left(M44* c, const M44* b)
 {
-  int i,j,k;
-  float s;
-  M4 a;
+    int i,j,k;
+    float s;
+    M44 a;
 
-  /*memcpy(&a, c, 16*sizeof(float));
-  */
-  a=*c;
+    /*memcpy(&a, c, 16*sizeof(float));
+    */
+    a=*c;
 
-  for(i=0;i<4;i++)
-    for(j=0;j<4;j++) {
-      s=0.0;
-      for(k=0;k<4;k++) s+=a.m[i][k]*b->m[k][j];
-      c->m[i][j]=s;
+    for(i = 0; i < 4; ++i)
+    {
+        for(j = 0; j<4; ++j) 
+        {
+            s = 0.0;
+
+            for(k = 0;k < 4; ++k) 
+                s+=a.m[i][k]*b->m[k][j];
+
+            c->m[i][j]=s;
+        }
     }
 }
 
-void gl_M4_Move(M4 *a,M4 *b)
+void r7_m44_copy(M44* a, const M44* b)
 {
-	memcpy(a,b,sizeof(M4));
+	memcpy(a,b,sizeof(M44));
 }
 
-void gl_MoveV3(V3 *a,V3 *b)
+void r7_v3_copy(V3* a, const V3* b)
 {
 	memcpy(a,b,sizeof(V3));
 }
 
-
-void gl_MulM4V3(V3 *a,M4 *b,V3 *c)
+void r7_m43_multiply(V3* a, const M44* b, const V3* c)
 {
 	 a->X=b->m[0][0]*c->X+b->m[0][1]*c->Y+b->m[0][2]*c->Z+b->m[0][3];
 	 a->Y=b->m[1][0]*c->X+b->m[1][1]*c->Y+b->m[1][2]*c->Z+b->m[1][3];
 	 a->Z=b->m[2][0]*c->X+b->m[2][1]*c->Y+b->m[2][2]*c->Z+b->m[2][3];
 }
 
-void gl_MulM3V3(V3 *a,M4 *b,V3 *c)
+void r7_m33_multiply(V3* a, const M44* b, const V3* c)
 {
 	 a->X=b->m[0][0]*c->X+b->m[0][1]*c->Y+b->m[0][2]*c->Z;
 	 a->Y=b->m[1][0]*c->X+b->m[1][1]*c->Y+b->m[1][2]*c->Z;
 	 a->Z=b->m[2][0]*c->X+b->m[2][1]*c->Y+b->m[2][2]*c->Z;
 }
 
-void gl_M4_MulV4(V4 *a,M4 *b,V4 *c)
+void r7_m44_mul_vector4(V4* a, const M44* b, const V4* c)
 {
 	 a->X=b->m[0][0]*c->X+b->m[0][1]*c->Y+b->m[0][2]*c->Z+b->m[0][3]*c->W;
 	 a->Y=b->m[1][0]*c->X+b->m[1][1]*c->Y+b->m[1][2]*c->Z+b->m[1][3]*c->W;
@@ -94,7 +117,7 @@ void gl_M4_MulV4(V4 *a,M4 *b,V4 *c)
 }
 	
 /* transposition of a 4x4 matrix */
-void gl_M4_Transpose(M4 *a,M4 *b)
+void r7_m44_transpose(M44* a, const M44* b)
 {
   a->m[0][0]=b->m[0][0]; 
   a->m[0][1]=b->m[1][0]; 
@@ -118,7 +141,7 @@ void gl_M4_Transpose(M4 *a,M4 *b)
 }
 
 /* inversion of an orthogonal matrix of type Y=M.X+P */ 
-void gl_M4_InvOrtho(M4 *a,M4 b)
+void r7_m44_inv_ortho(M44* a, M44 b)
 {
 	int i,j;
 	float s;
@@ -135,7 +158,7 @@ void gl_M4_InvOrtho(M4 *a,M4 b)
 /* Inversion of a general nxn matrix.
    Note : m is destroyed */
 
-int Matrix_Inv(float *r,float *m,int n)
+static int matrix_inverse(float* r,float* m,int n)
 {
 	 int i,j,k,l;
 	 float max,tmp,t;
@@ -195,15 +218,15 @@ int Matrix_Inv(float *r,float *m,int n)
 
 /* inversion of a 4x4 matrix */
 
-void gl_M4_Inv(M4 *a,M4 *b)
+void r7_m44_inverse(M44* a, const M44* b)
 {
-  M4 tmp;
+  M44 tmp;
   memcpy(&tmp, b, 16*sizeof(float));
   /*tmp=*b;*/
-  Matrix_Inv(&a->m[0][0],&tmp.m[0][0],4);
+  matrix_inverse(&a->m[0][0],&tmp.m[0][0],4);
 }
 
-void gl_M4_Rotate(M4 *a,float t,int u)
+void r7_m44_rotate(M44* a,float t,int u)
 {
 	 float s,c;
 	 int v,w;
@@ -211,14 +234,14 @@ void gl_M4_Rotate(M4 *a,float t,int u)
 	 if ((w=v+1)>2) w=0;
 	 s=(float)sin(t);
 	 c=(float)cos(t);
-	 gl_M4_Id(a);
+	 r7_m44_identity(a);
 	 a->m[v][v]=c;	a->m[v][w]=-s;
 	 a->m[w][v]=s;	a->m[w][w]=c;
 }
 	
 
 /* inverse of a 3x3 matrix */
-void gl_M3_Inv(M3 *a,M3 *m)
+void r7_m33_inverse(M33* a, M33* m)
 {
 	 float det;
 	 
@@ -242,7 +265,7 @@ void gl_M3_Inv(M3 *a,M3 *m)
 																										
 /* vector arithmetic */
 
-int gl_V3_Norm(V3 *a)
+int r7_v3_normal(V3* a)
 {
 	float n;
 	n=(float)sqrt(a->X*a->X+a->Y*a->Y+a->Z*a->Z);
@@ -253,7 +276,7 @@ int gl_V3_Norm(V3 *a)
 	return 0;
 }
 
-V3 gl_V3_New(float x,float y,float z)
+V3 r7_v3_new(float x,float y,float z)
 {
 	 V3 a;
 	 a.X=x;
@@ -262,7 +285,7 @@ V3 gl_V3_New(float x,float y,float z)
 	 return a;
 }
 
-V4 gl_V4_New(float x,float y,float z,float w)
+V4 r7_v4_new(float x,float y,float z,float w)
 {
   V4 a;
   a.X=x;

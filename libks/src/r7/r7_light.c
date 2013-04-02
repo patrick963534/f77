@@ -85,7 +85,7 @@ void glopLight(GLContext *c,GLParam *p)
   case GL_POSITION:
     {
       V4 pos;
-      gl_M4_MulV4(&pos,c->matrix_stack_ptr[0],&v);
+      r7_m44_mul_vector4(&pos,c->matrix_stack_ptr[0],&v);
 
       l->position=pos;
 
@@ -94,7 +94,7 @@ void glopLight(GLContext *c,GLParam *p)
         l->norm_position.Y=pos.Y;
         l->norm_position.Z=pos.Z;
         
-        gl_V3_Norm(&l->norm_position);
+        r7_v3_normal(&l->norm_position);
       }
     }
     break;
@@ -103,7 +103,7 @@ void glopLight(GLContext *c,GLParam *p)
       l->spot_direction.v[i]=v.v[i];
       l->norm_spot_direction.v[i]=v.v[i];
     }
-    gl_V3_Norm(&l->norm_spot_direction);
+    r7_v3_normal(&l->norm_spot_direction);
     break;
   case GL_SPOT_EXPONENT:
     l->spot_exponent=v.v[0];
@@ -261,7 +261,7 @@ void gl_shade_vertex(GLContext *c,GLVertex *v)
         vcoord.X=v->ec.X;
         vcoord.Y=v->ec.Y;
         vcoord.Z=v->ec.Z;
-        gl_V3_Norm(&vcoord);
+        r7_v3_normal(&vcoord);
         s.X=d.X-vcoord.X;
         s.Y=d.Y-vcoord.X;
         s.Z=d.Z-vcoord.X;

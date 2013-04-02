@@ -74,7 +74,7 @@ void gl_eval_viewport(GLContext * c)
 void glopBegin(GLContext * c, GLParam * p)
 {
     int type;
-    M4 tmp;
+    M44 tmp;
 
     assert(c->in_begin == 0);
 
@@ -88,12 +88,12 @@ void glopBegin(GLContext * c, GLParam * p)
 
 	if (c->lighting_enabled) {
 	    /* precompute inverse modelview */
-	    gl_M4_Inv(&tmp, c->matrix_stack_ptr[0]);
-	    gl_M4_Transpose(&c->matrix_model_view_inv, &tmp);
+	    r7_m44_inverse(&tmp, c->matrix_stack_ptr[0]);
+	    r7_m44_transpose(&c->matrix_model_view_inv, &tmp);
 	} else {
 	    float *m = &c->matrix_model_projection.m[0][0];
 	    /* precompute projection matrix */
-	    gl_M4_Mul(&c->matrix_model_projection,
+	    r7_m44_multiply(&c->matrix_model_projection,
 		      c->matrix_stack_ptr[1],
 		      c->matrix_stack_ptr[0]);
 	    /* test to accelerate computation */
@@ -103,7 +103,7 @@ void glopBegin(GLContext * c, GLParam * p)
 	}
 
 	/* test if the texture matrix is not Identity */
-	c->apply_texture_matrix = !gl_M4_IsId(c->matrix_stack_ptr[2]);
+	c->apply_texture_matrix = !r7_m44_is_identity(c->matrix_stack_ptr[2]);
 
 	c->matrix_model_projection_updated = 0;
     }
@@ -182,7 +182,7 @@ static INLINE_GL void gl_vertex_transform(GLContext * c, GLVertex * v)
 	v->normal.Z = (n->X * m[8] + n->Y * m[9] + n->Z * m[10]);
 
 	if (c->normalize_enabled) {
-	    gl_V3_Norm(&v->normal);
+	    r7_v3_normal(&v->normal);
 	}
     } else {
 	/* no eye coordinates needed, no normal */
@@ -253,7 +253,7 @@ void glopVertex(GLContext * c, GLParam * p)
 
     if (c->texture_2d_enabled) {
 	if (c->apply_texture_matrix) {
-	    gl_M4_MulV4(&v->tex_coord, c->matrix_stack_ptr[2], &c->current_tex_coord);
+	    r7_m44_mul_vector4(&v->tex_coord, c->matrix_stack_ptr[2], &c->current_tex_coord);
 	} else {
 	    v->tex_coord = c->current_tex_coord;
 	}
