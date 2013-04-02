@@ -62,13 +62,9 @@ void r7_m44_multiply(M44* c, const M44* a, const M44* b)
 /* c=c*a */
 void r7_m44_multiply_left(M44* c, const M44* b)
 {
-    int i,j,k;
+    int i, j, k;
     float s;
-    M44 a;
-
-    /*memcpy(&a, c, 16*sizeof(float));
-    */
-    a=*c;
+    M44 a = *c;
 
     for(i = 0; i < 4; ++i)
     {
@@ -226,17 +222,24 @@ void r7_m44_inverse(M44* a, const M44* b)
   matrix_inverse(&a->m[0][0],&tmp.m[0][0],4);
 }
 
-void r7_m44_rotate(M44* a,float t,int u)
+void r7_m44_rotate(M44* a, float t, int u)
 {
-	 float s,c;
-	 int v,w;
-   if ((v=u+1)>2) v=0;
-	 if ((w=v+1)>2) w=0;
-	 s=(float)sin(t);
-	 c=(float)cos(t);
-	 r7_m44_identity(a);
-	 a->m[v][v]=c;	a->m[v][w]=-s;
-	 a->m[w][v]=s;	a->m[w][w]=c;
+    float s, c;
+    int v, w;
+
+    if ((v=u+1) > 2) 
+        v = 0;
+
+    if ((w=v+1) > 2) 
+        w = 0;
+
+    s = (float)sin(t);
+    c = (float)cos(t);
+
+    r7_m44_identity(a);
+
+    a->m[v][v] = c;	a->m[v][w] = -s;
+    a->m[w][v] = s;	a->m[w][w] = c;
 }
 	
 

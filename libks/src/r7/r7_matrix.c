@@ -114,101 +114,98 @@ void glopPopMatrix(GLContext *c,GLParam *p)
 
 void glopRotate(GLContext *c,GLParam *p)
 {
-  M44 m;
-  float u[3];
-  float angle;
-  int dir_code;
+    M44 m;
+    float u[3];
+    float angle;
+    int dir_code;
 
-  angle = (float)(p[1].f * M_PI / 180.0);
-  u[0]=p[2].f;
-  u[1]=p[3].f;
-  u[2]=p[4].f;
+    angle = (float)(p[1].f * M_PI / 180.0);
+    u[0]=p[2].f;
+    u[1]=p[3].f;
+    u[2]=p[4].f;
 
-  /* simple case detection */
-  dir_code = ((u[0] != 0)<<2) | ((u[1] != 0)<<1) | (u[2] != 0);
+    /* simple case detection */
+    dir_code = ((u[0] != 0)<<2) | ((u[1] != 0)<<1) | (u[2] != 0);
 
-  switch(dir_code) {
-  case 0:
-    r7_m44_identity(&m);
-    break;
-  case 4:
-    if (u[0] < 0) angle=-angle;
-    r7_m44_rotate(&m,angle,0);
-    break;
-  case 2:
-    if (u[1] < 0) angle=-angle;
-    r7_m44_rotate(&m,angle,1);
-    break;
-  case 1:
-    if (u[2] < 0) angle=-angle;
-    r7_m44_rotate(&m,angle,2);
-    break;
-  default:
-    {
-      float cost, sint;
+    switch(dir_code) {
+        case 0:
+            r7_m44_identity(&m);
+            break;
+        case 4:
+            if (u[0] < 0) angle=-angle;
+            r7_m44_rotate(&m,angle,0);
+            break;
+        case 2:
+            if (u[1] < 0) angle=-angle;
+            r7_m44_rotate(&m,angle,1);
+            break;
+        case 1:
+            if (u[2] < 0) angle=-angle;
+            r7_m44_rotate(&m,angle,2);
+            break;
+        default:
+            {
+                float cost, sint;
 
-      /* normalize vector */
-      float len = u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
-      if (len == 0.0f) return;
-      len = (float)(1.0f / sqrt(len));
-      u[0] *= len;
-      u[1] *= len;
-      u[2] *= len;
+                /* normalize vector */
+                float len = u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
+                if (len == 0.0f) return;
+                len = (float)(1.0f / sqrt(len));
+                u[0] *= len;
+                u[1] *= len;
+                u[2] *= len;
 
-      /* store cos and sin values */
-      cost=(float)cos(angle);
-      sint=(float)sin(angle);
+                /* store cos and sin values */
+                cost=(float)cos(angle);
+                sint=(float)sin(angle);
 
-      /* fill in the values */
-      m.m[3][0]=m.m[3][1]=m.m[3][2]=
-        m.m[0][3]=m.m[1][3]=m.m[2][3]=0.0f;
-      m.m[3][3]=1.0f;
+                /* fill in the values */
+                m.m[3][0]=m.m[3][1]=m.m[3][2]=
+                    m.m[0][3]=m.m[1][3]=m.m[2][3]=0.0f;
+                m.m[3][3]=1.0f;
 
-      /* do the math */
-      m.m[0][0]=u[0]*u[0]+cost*(1-u[0]*u[0]);
-      m.m[1][0]=u[0]*u[1]*(1-cost)-u[2]*sint;
-      m.m[2][0]=u[2]*u[0]*(1-cost)+u[1]*sint;
-      m.m[0][1]=u[0]*u[1]*(1-cost)+u[2]*sint;
-      m.m[1][1]=u[1]*u[1]+cost*(1-u[1]*u[1]);
-      m.m[2][1]=u[1]*u[2]*(1-cost)-u[0]*sint;
-      m.m[0][2]=u[2]*u[0]*(1-cost)-u[1]*sint;
-      m.m[1][2]=u[1]*u[2]*(1-cost)+u[0]*sint;
-      m.m[2][2]=u[2]*u[2]+cost*(1-u[2]*u[2]);
+                /* do the math */
+                m.m[0][0]=u[0]*u[0]+cost*(1-u[0]*u[0]);
+                m.m[1][0]=u[0]*u[1]*(1-cost)-u[2]*sint;
+                m.m[2][0]=u[2]*u[0]*(1-cost)+u[1]*sint;
+                m.m[0][1]=u[0]*u[1]*(1-cost)+u[2]*sint;
+                m.m[1][1]=u[1]*u[1]+cost*(1-u[1]*u[1]);
+                m.m[2][1]=u[1]*u[2]*(1-cost)-u[0]*sint;
+                m.m[0][2]=u[2]*u[0]*(1-cost)-u[1]*sint;
+                m.m[1][2]=u[1]*u[2]*(1-cost)+u[0]*sint;
+                m.m[2][2]=u[2]*u[2]+cost*(1-u[2]*u[2]);
+              }
     }
-  }
 
-  r7_m44_multiply_left(c->matrix_stack_ptr[c->matrix_mode],&m);
+    r7_m44_multiply_left(c->matrix_stack_ptr[c->matrix_mode],&m);
 
-  gl_matrix_update(c);
+    gl_matrix_update(c);
 }
 
 void glopScale(GLContext *c,GLParam *p)
 {
-  float *m;
-  float x=p[1].f,y=p[2].f,z=p[3].f;
+    float  x = p[1].f, y = p[2].f, z = p[3].f;
+    float* m =&c->matrix_stack_ptr[c->matrix_mode]->m[0][0];
 
-  m=&c->matrix_stack_ptr[c->matrix_mode]->m[0][0];
+    m[0]  *= x;  m[1]  *= y;  m[2]  *= z;
+    m[4]  *= x;  m[5]  *= y;  m[6]  *= z;
+    m[8]  *= x;  m[9]  *= y;  m[10] *= z;
+    m[12] *= x;  m[13] *= y;  m[14] *= z;
 
-  m[0] *= x;   m[1] *= y;   m[2]  *= z;
-  m[4] *= x;   m[5] *= y;   m[6]  *= z;
-  m[8] *= x;   m[9] *= y;   m[10] *= z;
-  m[12] *= x;   m[13] *= y;   m[14] *= z;
-  gl_matrix_update(c);
+    gl_matrix_update(c);
 }
 
 void glopTranslate(GLContext *c,GLParam *p)
 {
-  float *m;
-  float x=p[1].f,y=p[2].f,z=p[3].f;
+    float* m=&c->matrix_stack_ptr[c->matrix_mode]->m[0][0];
+    float  x=p[1].f,y=p[2].f,z=p[3].f;
 
-  m=&c->matrix_stack_ptr[c->matrix_mode]->m[0][0];
+    m[3]  = m[0]  * x + m[1]  * y + m[2]  * z + m[3];
+    m[7]  = m[4]  * x + m[5]  * y + m[6]  * z + m[7];
+    m[11] = m[8]  * x + m[9]  * y + m[10] * z + m[11];
+    m[15] = m[12] * x + m[13] * y + m[14] * z + m[15];
 
-  m[3] = m[0] * x + m[1] * y + m[2]  * z + m[3];
-  m[7] = m[4] * x + m[5] * y + m[6]  * z + m[7];
-  m[11] = m[8] * x + m[9] * y + m[10] * z + m[11];
-  m[15] = m[12] * x + m[13] * y + m[14] * z + m[15];
-
-  gl_matrix_update(c);
+    gl_matrix_update(c);
 }
 
 

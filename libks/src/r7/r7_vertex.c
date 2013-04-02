@@ -84,62 +84,70 @@ void glopBegin(GLContext * c, GLParam * p)
     c->vertex_n = 0;
     c->vertex_cnt = 0;
 
-    if (c->matrix_model_projection_updated) {
+    if (c->matrix_model_projection_updated) 
+    {
+        if (c->lighting_enabled) 
+        {
+            /* precompute inverse modelview */
+            r7_m44_inverse(&tmp, c->matrix_stack_ptr[0]);
+            r7_m44_transpose(&c->matrix_model_view_inv, &tmp);
+        } 
+        else 
+        {
+            float *m = &c->matrix_model_projection.m[0][0];
+            /* precompute projection matrix */
+            r7_m44_multiply(&c->matrix_model_projection,
+                c->matrix_stack_ptr[1],
+                c->matrix_stack_ptr[0]);
+            /* test to accelerate computation */
+            c->matrix_model_projection_no_w_transform = 0;
+            if (m[12] == 0.0 && m[13] == 0.0 && m[14] == 0.0)
+                c->matrix_model_projection_no_w_transform = 1;
+        }
 
-	if (c->lighting_enabled) {
-	    /* precompute inverse modelview */
-	    r7_m44_inverse(&tmp, c->matrix_stack_ptr[0]);
-	    r7_m44_transpose(&c->matrix_model_view_inv, &tmp);
-	} else {
-	    float *m = &c->matrix_model_projection.m[0][0];
-	    /* precompute projection matrix */
-	    r7_m44_multiply(&c->matrix_model_projection,
-		      c->matrix_stack_ptr[1],
-		      c->matrix_stack_ptr[0]);
-	    /* test to accelerate computation */
-	    c->matrix_model_projection_no_w_transform = 0;
-	    if (m[12] == 0.0 && m[13] == 0.0 && m[14] == 0.0)
-		c->matrix_model_projection_no_w_transform = 1;
-	}
-
-	/* test if the texture matrix is not Identity */
-	c->apply_texture_matrix = !r7_m44_is_identity(c->matrix_stack_ptr[2]);
-
-	c->matrix_model_projection_updated = 0;
+        /* test if the texture matrix is not Identity */
+        c->apply_texture_matrix = !r7_m44_is_identity(c->matrix_stack_ptr[2]);
+        c->matrix_model_projection_updated = 0;
     }
     /*  viewport */
-    if (c->viewport.updated) {
-	gl_eval_viewport(c);
-	c->viewport.updated = 0;
+    if (c->viewport.updated) 
+    {
+        gl_eval_viewport(c);
+        c->viewport.updated = 0;
     }
     /* triangle drawing functions */
-    if (c->render_mode == GL_SELECT) {
-	c->draw_triangle_front = gl_draw_triangle_select;
-	c->draw_triangle_back = gl_draw_triangle_select;
-    } else {
-	switch (c->polygon_mode_front) {
-	case GL_POINT:
-	    c->draw_triangle_front = gl_draw_triangle_point;
-	    break;
-	case GL_LINE:
-	    c->draw_triangle_front = gl_draw_triangle_line;
-	    break;
-	default:
-	    c->draw_triangle_front = gl_draw_triangle_fill;
-	    break;
-	}
+    if (c->render_mode == GL_SELECT) 
+    {
+        c->draw_triangle_front = gl_draw_triangle_select;
+        c->draw_triangle_back = gl_draw_triangle_select;
+    } 
+    else 
+    {
+        switch (c->polygon_mode_front) 
+        {
+            case GL_POINT:
+                c->draw_triangle_front = gl_draw_triangle_point;
+                break;
+            case GL_LINE:
+                c->draw_triangle_front = gl_draw_triangle_line;
+                break;
+            default:
+                c->draw_triangle_front = gl_draw_triangle_fill;
+                break;
+        }
 
-	switch (c->polygon_mode_back) {
-	case GL_POINT:
-	    c->draw_triangle_back = gl_draw_triangle_point;
-	    break;
-	case GL_LINE:
-	    c->draw_triangle_back = gl_draw_triangle_line;
-	    break;
-	default:
-	    c->draw_triangle_back = gl_draw_triangle_fill;
-	    break;
-	}
+        switch (c->polygon_mode_back) 
+        {
+            case GL_POINT:
+                c->draw_triangle_back = gl_draw_triangle_point;
+                break;
+            case GL_LINE:
+                c->draw_triangle_back = gl_draw_triangle_line;
+                break;
+            default:
+                c->draw_triangle_back = gl_draw_triangle_fill;
+                break;
+        }
     }
 }
 
@@ -151,56 +159,44 @@ static INLINE_GL void gl_vertex_transform(GLContext * c, GLVertex * v)
     V4 *n;
 
     if (c->lighting_enabled) {
-	/* eye coordinates needed for lighting */
+        /* eye coordinates needed for lighting */
 
-	m = &c->matrix_stack_ptr[0]->m[0][0];
-	v->ec.X = (v->coord.X * m[0] + v->coord.Y * m[1] +
-		   v->coord.Z * m[2] + m[3]);
-	v->ec.Y = (v->coord.X * m[4] + v->coord.Y * m[5] +
-		   v->coord.Z * m[6] + m[7]);
-	v->ec.Z = (v->coord.X * m[8] + v->coord.Y * m[9] +
-		   v->coord.Z * m[10] + m[11]);
-	v->ec.W = (v->coord.X * m[12] + v->coord.Y * m[13] +
-		   v->coord.Z * m[14] + m[15]);
+        m = &c->matrix_stack_ptr[0]->m[0][0];
+        v->ec.X = (v->coord.X * m[0]  + v->coord.Y * m[1]  + v->coord.Z * m[2]  + m[3]);
+        v->ec.Y = (v->coord.X * m[4]  + v->coord.Y * m[5]  + v->coord.Z * m[6]  + m[7]);
+        v->ec.Z = (v->coord.X * m[8]  + v->coord.Y * m[9]  + v->coord.Z * m[10] + m[11]);
+        v->ec.W = (v->coord.X * m[12] + v->coord.Y * m[13] + v->coord.Z * m[14] + m[15]);
 
-	/* projection coordinates */
-	m = &c->matrix_stack_ptr[1]->m[0][0];
-	v->pc.X = (v->ec.X * m[0] + v->ec.Y * m[1] +
-		   v->ec.Z * m[2] + v->ec.W * m[3]);
-	v->pc.Y = (v->ec.X * m[4] + v->ec.Y * m[5] +
-		   v->ec.Z * m[6] + v->ec.W * m[7]);
-	v->pc.Z = (v->ec.X * m[8] + v->ec.Y * m[9] +
-		   v->ec.Z * m[10] + v->ec.W * m[11]);
-	v->pc.W = (v->ec.X * m[12] + v->ec.Y * m[13] +
-		   v->ec.Z * m[14] + v->ec.W * m[15]);
+        /* projection coordinates */
+        m = &c->matrix_stack_ptr[1]->m[0][0];
+        v->pc.X = (v->ec.X * m[0]  + v->ec.Y * m[1]  + v->ec.Z * m[2]  + v->ec.W * m[3]);
+        v->pc.Y = (v->ec.X * m[4]  + v->ec.Y * m[5]  + v->ec.Z * m[6]  + v->ec.W * m[7]);
+        v->pc.Z = (v->ec.X * m[8]  + v->ec.Y * m[9]  + v->ec.Z * m[10] + v->ec.W * m[11]);
+        v->pc.W = (v->ec.X * m[12] + v->ec.Y * m[13] + v->ec.Z * m[14] + v->ec.W * m[15]);
 
-	m = &c->matrix_model_view_inv.m[0][0];
-	n = &c->current_normal;
+        m = &c->matrix_model_view_inv.m[0][0];
+        n = &c->current_normal;
 
-	v->normal.X = (n->X * m[0] + n->Y * m[1] + n->Z * m[2]);
-	v->normal.Y = (n->X * m[4] + n->Y * m[5] + n->Z * m[6]);
-	v->normal.Z = (n->X * m[8] + n->Y * m[9] + n->Z * m[10]);
+        v->normal.X = (n->X * m[0] + n->Y * m[1] + n->Z * m[2]);
+        v->normal.Y = (n->X * m[4] + n->Y * m[5] + n->Z * m[6]);
+        v->normal.Z = (n->X * m[8] + n->Y * m[9] + n->Z * m[10]);
 
-	if (c->normalize_enabled) {
-	    r7_v3_normal(&v->normal);
-	}
+        if (c->normalize_enabled)
+            r7_v3_normal(&v->normal);
+        
     } else {
-	/* no eye coordinates needed, no normal */
-	/* NOTE: W = 1 is assumed */
-	m = &c->matrix_model_projection.m[0][0];
+        /* no eye coordinates needed, no normal */
+        /* NOTE: W = 1 is assumed */
+        m = &c->matrix_model_projection.m[0][0];
 
-	v->pc.X = (v->coord.X * m[0] + v->coord.Y * m[1] +
-		   v->coord.Z * m[2] + m[3]);
-	v->pc.Y = (v->coord.X * m[4] + v->coord.Y * m[5] +
-		   v->coord.Z * m[6] + m[7]);
-	v->pc.Z = (v->coord.X * m[8] + v->coord.Y * m[9] +
-		   v->coord.Z * m[10] + m[11]);
-	if (c->matrix_model_projection_no_w_transform) {
-	    v->pc.W = m[15];
-	} else {
-	    v->pc.W = (v->coord.X * m[12] + v->coord.Y * m[13] +
-		       v->coord.Z * m[14] + m[15]);
-	}
+        v->pc.X = (v->coord.X * m[0] + v->coord.Y * m[1] + v->coord.Z * m[2]  + m[3]);
+        v->pc.Y = (v->coord.X * m[4] + v->coord.Y * m[5] + v->coord.Z * m[6]  + m[7]);
+        v->pc.Z = (v->coord.X * m[8] + v->coord.Y * m[9] + v->coord.Z * m[10] + m[11]);
+
+        if (c->matrix_model_projection_no_w_transform)
+            v->pc.W = m[15];
+        else
+            v->pc.W = (v->coord.X * m[12] + v->coord.Y * m[13] + v->coord.Z * m[14] + m[15]);
     }
 
     v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);

@@ -12,39 +12,35 @@
 
 void gl_transform_to_viewport(GLContext *c,GLVertex *v)
 {
-  float winv;
+    float winv;
 
-  /* coordinates */
-  winv=(float)(1.0/v->pc.W);
-  v->zp.x= (int) ( v->pc.X * winv * c->viewport.scale.X 
-                   + c->viewport.trans.X );
-  v->zp.y= (int) ( v->pc.Y * winv * c->viewport.scale.Y 
-                   + c->viewport.trans.Y );
-  v->zp.z= (int) ( v->pc.Z * winv * c->viewport.scale.Z 
-                   + c->viewport.trans.Z );
-  /* color */
-  if (c->lighting_enabled) {
-      v->zp.r=(int)(v->color.v[0] * (ZB_POINT_RED_MAX - ZB_POINT_RED_MIN) 
-                    + ZB_POINT_RED_MIN);
-      v->zp.g=(int)(v->color.v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) 
-                    + ZB_POINT_GREEN_MIN);
-      v->zp.b=(int)(v->color.v[2] * (ZB_POINT_BLUE_MAX - ZB_POINT_BLUE_MIN) 
-                    + ZB_POINT_BLUE_MIN);
-  } else {
-      /* no need to convert to integer if no lighting : take current color */
-      v->zp.r = c->longcurrent_color[0];
-      v->zp.g = c->longcurrent_color[1];
-      v->zp.b = c->longcurrent_color[2];
-  }
-  
-  /* texture */
+    /* coordinates */
+    winv=(float)(1.0/v->pc.W);
+    v->zp.x = (int) ( v->pc.X * winv * c->viewport.scale.X + c->viewport.trans.X );
+    v->zp.y = (int) ( v->pc.Y * winv * c->viewport.scale.Y + c->viewport.trans.Y );
+    v->zp.z = (int) ( v->pc.Z * winv * c->viewport.scale.Z + c->viewport.trans.Z );
+    /* color */
+    if (c->lighting_enabled) 
+    {
+        v->zp.r = (int)(v->color.v[0] * (ZB_POINT_RED_MAX   - ZB_POINT_RED_MIN)   + ZB_POINT_RED_MIN);
+        v->zp.g = (int)(v->color.v[1] * (ZB_POINT_GREEN_MAX - ZB_POINT_GREEN_MIN) + ZB_POINT_GREEN_MIN);
+        v->zp.b = (int)(v->color.v[2] * (ZB_POINT_BLUE_MAX  - ZB_POINT_BLUE_MIN)  + ZB_POINT_BLUE_MIN);
+    } 
+    else 
+    {
+        /* no need to convert to integer if no lighting : take current color */
+        v->zp.r = c->longcurrent_color[0];
+        v->zp.g = c->longcurrent_color[1];
+        v->zp.b = c->longcurrent_color[2];
+    }
 
-  if (c->texture_2d_enabled) {
-    v->zp.u = v->tex_coord.X;
-    v->zp.v = v->tex_coord.Y;
-  }
+    /* texture */
+    if (c->texture_2d_enabled) 
+    {
+        v->zp.u = v->tex_coord.X;
+        v->zp.v = v->tex_coord.Y;
+    }
 }
-
 
 static void gl_add_select1(GLContext *c,int z1,int z2,int z3)
 {
