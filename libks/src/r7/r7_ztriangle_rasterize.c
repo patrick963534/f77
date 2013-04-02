@@ -89,8 +89,8 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
 
     while (nbline-- > 0)
     {
-        int n = shift_small(rx) - shift_small(lx) + 1;
-        int startx = shift_small(lx);
+        int startx = shift_small(lx) + 1;
+        int n = shift_small(rx) - startx + 1;
         unsigned short* line_pp = pp + startx;
 
         if (n > 0) 
