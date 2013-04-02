@@ -79,20 +79,18 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
     int dvl = (int)((lp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - lp->y)));
     int dvr = (int)((rp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - rp->y)));
 
-    int top_flat_right_edge_minor = 0;
-    int top_flat_right_edge_y_offset = 0;
-
     if (line_step < 0)
     {
-        pp = pp - zb->xsize;
-        top_flat_right_edge_y_offset = -1;
-        top_flat_right_edge_minor = -(shift_big(1) >> 1);
+        lx += dxl; rx += dxr;
+        lu += dul; ru += dur;
+        lv += dvl; rv += dvr;
+        pp += line_step;
     }
 
     while (nbline-- > 0)
     {
-        int n = shift_small(rx + top_flat_right_edge_minor) - shift_small(lx + top_flat_right_edge_minor) + 1;
-        int startx = shift_small(lx + top_flat_right_edge_minor);
+        int n = shift_small(rx) - shift_small(lx) + 1;
+        int startx = shift_small(lx);
         unsigned short* line_pp = pp + startx;
 
         if (n > 0) 
@@ -106,7 +104,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
             while (n > 0)
             {
                 int xx = shift_small(tu);
-                int yy = shift_small(tv) + top_flat_right_edge_y_offset;
+                int yy = shift_small(tv);
 
                 if (xx < 0) xx = 0; else if (xx >= tex_w) xx = tex_w - 1;
                 if (yy < 0) yy = 0; else if (yy >= tex_h) yy = tex_h - 1;
