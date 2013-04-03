@@ -97,8 +97,8 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
         {
             int tu = lu;
             int tv = lv;
-            int tdu = n == 1 ? 0 : (ru - lu) / (n - 1);
-            int tdv = n == 1 ? 0 : (rv - lv) / (n - 1);
+            int tdu = (ru - lu) / (n); // because 'startx' already add '1', here 'n' don't need to add '-1' again.
+            int tdv = (rv - lv) / (n); // because 'startx' already add '1', here 'n' don't need to add '-1' again.
             unsigned short bv = 0, bb = 0;
 
             while (n > 0)
