@@ -105,52 +105,44 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
             {
                 int xx = shift_small(tu);
                 int yy = shift_small(tv);
+                unsigned char a = 0xff;
+                int ppidx;
 
                 if (xx < 0) xx = 0; else if (xx >= tex_w) xx = tex_w - 1;
                 if (yy < 0) yy = 0; else if (yy >= tex_h) yy = tex_h - 1;
 
-                if (xx >= 0 && yy >= 0 && xx < tex_w && yy < tex_h)
+                ppidx = yy * tex_w + xx;
+
+                if (alpha) a = alpha[ppidx];
+
+                if (a == 0xff)
                 {
-                    int ppidx = yy * tex_w + xx;
-                    unsigned char a = 0xff;
+                    bv = texture[ppidx];
+                }
+                else if (a > 0)
+                {
+                    int sv = texture[ppidx];
+                    int dv = *line_pp;
 
-                    if (alpha) a = alpha[ppidx];
+                    int r = (((dv >> 11) & 0x1F) * (255 - a) + ((sv >> 11) & 0x1F) * a) >> 8;
+                    int g = (((dv >>  5) & 0x3F) * (255 - a) + ((sv >>  5) & 0x3F) * a) >> 8;
+                    int b = (((dv      ) & 0x1F) * (255 - a) + ((sv      ) & 0x1F) * a) >> 8;
 
-                    if (a == 0xff)
-                    {
-                        bv = texture[ppidx];
-                    }
-                    else if (a > 0)
-                    {
-                        int sv = texture[ppidx];
-                        int dv = *line_pp;
-
-                        int r = (((dv >> 11) & 0x1F) * (255 - a) + ((sv >> 11) & 0x1F) * a) >> 8;
-                        int g = (((dv >>  5) & 0x3F) * (255 - a) + ((sv >>  5) & 0x3F) * a) >> 8;
-                        int b = (((dv      ) & 0x1F) * (255 - a) + ((sv      ) & 0x1F) * a) >> 8;
-
-                        bv = (unsigned short)((r << 11) | (g << 5) | b);
-                    }
-
-                    if (bb)
-                    {
-                        if (a == 0)
-                            *(line_pp - 1) = bv;
-                        else
-                            *((unsigned int*)(line_pp - 1)) = texture[ppidx] << 16 | bv;
-
-                        bb = 0;
-                    }
-
-                    if (a)
-                        bb = 1;
+                    bv = (unsigned short)((r << 11) | (g << 5) | b);
                 }
 
                 if (bb)
                 {
-                    *(line_pp-1) = bv;
+                    if (a == 0)
+                        *(line_pp - 1) = bv;
+                    else
+                        *((unsigned int*)(line_pp - 1)) = texture[ppidx] << 16 | bv;
+
                     bb = 0;
                 }
+
+                if (a)
+                    bb = 1;
 
                 tu += tdu;
                 tv += tdv;
