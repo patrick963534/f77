@@ -99,7 +99,7 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
             int tv = lv;
             int tdu = (ru - lu) / (n); // because 'startx' already add '1', here 'n' don't need to add '-1' again.
             int tdv = (rv - lv) / (n); // because 'startx' already add '1', here 'n' don't need to add '-1' again.
-            unsigned short bv = 0, bb = 0;
+            unsigned short bv = 0, bv2 = 0, bb = 0;
 
             while (n > 0)
             {
@@ -136,13 +136,16 @@ static void draw_part(ZBuffer * zb, ZBufferPoint * vp, ZBufferPoint * lp, ZBuffe
                     if (a == 0)
                         *(line_pp - 1) = bv;
                     else
-                        *((unsigned int*)(line_pp - 1)) = texture[ppidx] << 16 | bv;
+                        *((unsigned int*)(line_pp - 1)) = bv << 16 | bv2;
 
                     bb = 0;
                 }
 
                 if (a)
+                {
                     bb = 1;
+                    bv2 = bv;
+                }
 
                 tu += tdu;
                 tv += tdv;
