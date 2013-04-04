@@ -290,12 +290,12 @@ V3 r7_v3_new(float x,float y,float z)
 
 V4 r7_v4_new(float x,float y,float z,float w)
 {
-  V4 a;
-  a.X=x;
-  a.Y=y;
-  a.Z=z;
-  a.W=w;
-  return a;
+    V4 a;
+    a.X=x;
+    a.Y=y;
+    a.Z=z;
+    a.W=w;
+    return a;
 }
 
 
