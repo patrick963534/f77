@@ -95,24 +95,21 @@ static ks_scene_t* create_scene()
     me       = ks_scene_new(sizeof(*me));
     me->msgs = msgs;
 
-//     node = ks_node_new(sizeof(*node), (ks_node_t*)me);
-//     node->x = 100;
-//     node->z = -1;
-// 
-//     ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
-//     ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
-//     ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
-//     ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
-//     ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
-//     ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
+    node = ks_node_new(sizeof(*node), (ks_node_t*)me);
+    node->x = 100;
+    node->z = -1;
 
-    actor0 = ks_actor_new("grid4.png", (ks_node_t*)me);
-    actor0->x = 300;
-    actor0->y = 200;
+    ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
+    ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
+    ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
+    ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
+    ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
+    ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
 
-    actor1 = ks_actor_new("grid4.png", (ks_node_t*)me);
-    actor1->x = 300 + 256;
-    actor1->y = 200;
+    actor0 = ks_actor_new("bag.png", (ks_node_t*)me);
+    actor0->x = Win_W/2;
+    actor0->y = Win_H/2;
+
 //      actor0->sx = 0.333f;
 //      actor0->sy = 1.5f;
 //     actor0->angle = 0;
