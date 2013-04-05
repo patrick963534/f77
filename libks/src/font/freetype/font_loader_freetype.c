@@ -198,7 +198,7 @@ static char* render_text(FT_Face face, const int* text, int* ret_w, int* ret_h)
                 if (idx >= max_idx)
                     continue;
 
-                pixels[idx] = 0xff << 24 | bp << 16 | bp << 8 | bp;
+                pixels[idx] = bp << 24 | bp << 16 | bp << 8 | bp;
             }
         }
 
