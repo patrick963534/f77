@@ -119,8 +119,8 @@ static void smooth_test()
 
 static void texture_mapping_test()
 {
-    int width = 100;
-    int height = 100;
+    int width = 32;
+    int height = 32;
 
     glInit();
     glViewport(0, 0, width, height);
@@ -147,22 +147,23 @@ static void texture_mapping_test()
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(0, 0, -5);
+    //glRotatef(75, 0, 0, -1);
     glBegin(GL_TRIANGLES);
-        //glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f, 0.5f, 0.f);
-        //glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, 0.5f, 0.f);
-        //glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f, 0.0f, 0.f);
+        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f, 0.5f, 0.f);
+        glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, 0.5f, 0.f);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f, 0.0f, 0.f);
+
+        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
+        glTexCoord2f(0.0, 1.0); glVertex3f( 0.0f,  0.0f, 0.f);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f,  0.0f, 0.f);
 
         //glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
-        //glTexCoord2f(0.0, 1.0); glVertex3f( 0.0f,  0.0f, 0.f);
-        //glTexCoord2f(1.0, 1.0); glVertex3f( 0.5f,  0.0f, 0.f);
+        //glTexCoord2f(1.0, 0.0); glVertex3f( 0.0f, -0.5f, 0.f);
+        //glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.5f, 0.f);
 
-         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
-         glTexCoord2f(1.0, 0.0); glVertex3f( 0.5f, -0.5f, 0.f);
-         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.3f, 0.f);
-
-//         glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.8f, 0.f);
-//         glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
-//         glTexCoord2f(1.0, 0.0); glVertex3f(-1.0f,  0.5f, 0.f);
+        //glTexCoord2f(1.0, 1.0); glVertex3f(-0.5f, -0.5f, 0.f);
+        //glTexCoord2f(0.0, 0.0); glVertex3f( 0.0f,  0.5f, 0.f);
+        //glTexCoord2f(1.0, 0.0); glVertex3f(-0.5f,  0.5f, 0.f);
     glEnd();
     glPopMatrix();
     glDisable(GL_TEXTURE_2D);
