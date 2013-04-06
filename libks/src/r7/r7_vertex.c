@@ -40,15 +40,15 @@ void glopColor(GLContext * c, GLParam * p)
     c->longcurrent_color[2] = p[7].ui;
 
     if (c->color_material_enabled) {
-	GLParam q[7];
-	q[0].op = OP_Material;
-	q[1].i = c->current_color_material_mode;
-	q[2].i = c->current_color_material_type;
-	q[3].f = p[1].f;
-	q[4].f = p[2].f;
-	q[5].f = p[3].f;
-	q[6].f = p[4].f;
-	glopMaterial(c, q);
+        GLParam q[7];
+        q[0].op = OP_Material;
+        q[1].i = c->current_color_material_mode;
+        q[2].i = c->current_color_material_type;
+        q[3].f = p[1].f;
+        q[4].f = p[2].f;
+        q[5].f = p[3].f;
+        q[6].f = p[4].f;
+        glopMaterial(c, q);
     }
 }
 
@@ -96,9 +96,7 @@ void glopBegin(GLContext * c, GLParam * p)
         {
             float *m = &c->matrix_model_projection.m[0][0];
             /* precompute projection matrix */
-            r7_m44_multiply(&c->matrix_model_projection,
-                c->matrix_stack_ptr[1],
-                c->matrix_stack_ptr[0]);
+            r7_m44_multiply(&c->matrix_model_projection, c->matrix_stack_ptr[1], c->matrix_stack_ptr[0]);
             /* test to accelerate computation */
             c->matrix_model_projection_no_w_transform = 0;
             if (m[12] == 0.0 && m[13] == 0.0 && m[14] == 0.0)
@@ -125,28 +123,28 @@ void glopBegin(GLContext * c, GLParam * p)
     {
         switch (c->polygon_mode_front) 
         {
-            case GL_POINT:
-                c->draw_triangle_front = gl_draw_triangle_point;
-                break;
-            case GL_LINE:
-                c->draw_triangle_front = gl_draw_triangle_line;
-                break;
-            default:
-                c->draw_triangle_front = gl_draw_triangle_fill;
-                break;
+        case GL_POINT:
+            c->draw_triangle_front = gl_draw_triangle_point;
+            break;
+        case GL_LINE:
+            c->draw_triangle_front = gl_draw_triangle_line;
+            break;
+        default:
+            c->draw_triangle_front = gl_draw_triangle_fill;
+            break;
         }
 
         switch (c->polygon_mode_back) 
         {
-            case GL_POINT:
-                c->draw_triangle_back = gl_draw_triangle_point;
-                break;
-            case GL_LINE:
-                c->draw_triangle_back = gl_draw_triangle_line;
-                break;
-            default:
-                c->draw_triangle_back = gl_draw_triangle_fill;
-                break;
+        case GL_POINT:
+            c->draw_triangle_back = gl_draw_triangle_point;
+            break;
+        case GL_LINE:
+            c->draw_triangle_back = gl_draw_triangle_line;
+            break;
+        default:
+            c->draw_triangle_back = gl_draw_triangle_fill;
+            break;
         }
     }
 }
@@ -158,7 +156,8 @@ static INLINE_GL void gl_vertex_transform(GLContext * c, GLVertex * v)
     float *m;
     V4 *n;
 
-    if (c->lighting_enabled) {
+    if (c->lighting_enabled) 
+    {
         /* eye coordinates needed for lighting */
 
         m = &c->matrix_stack_ptr[0]->m[0][0];
@@ -183,8 +182,9 @@ static INLINE_GL void gl_vertex_transform(GLContext * c, GLVertex * v)
 
         if (c->normalize_enabled)
             r7_v3_normal(&v->normal);
-        
-    } else {
+    } 
+    else 
+    {
         /* no eye coordinates needed, no normal */
         /* NOTE: W = 1 is assumed */
         m = &c->matrix_model_projection.m[0][0];
@@ -215,16 +215,18 @@ void glopVertex(GLContext * c, GLParam * p)
     c->vertex_cnt = cnt;
 
     /* quick fix to avoid crashes on large polygons */
-    if (n >= c->vertex_max) {
-	GLVertex *newarray;
-	c->vertex_max <<= 1;	/* just double size */
-	newarray = gl_malloc(sizeof(GLVertex) * c->vertex_max);
-	if (!newarray) {
-	    gl_fatal_error("unable to allocate GLVertex array.\n");
-	}
-	memcpy(newarray, c->vertex, n * sizeof(GLVertex));
-	gl_free(c->vertex);
-	c->vertex = newarray;
+    if (n >= c->vertex_max) 
+    {
+        GLVertex *newarray;
+        c->vertex_max <<= 1;	/* just double size */
+        newarray = gl_malloc(sizeof(GLVertex) * c->vertex_max);
+
+        if (!newarray)
+            gl_fatal_error("unable to allocate GLVertex array.\n");
+
+        memcpy(newarray, c->vertex, n * sizeof(GLVertex));
+        gl_free(c->vertex);
+        c->vertex = newarray;
     }
     /* new vertex entry */
     v = &c->vertex[n];
@@ -239,106 +241,117 @@ void glopVertex(GLContext * c, GLParam * p)
 
     /* color */
 
-    if (c->lighting_enabled) {
-	gl_shade_vertex(c, v);
-    } else {
-	v->color = c->current_color;
-    }
+    if (c->lighting_enabled)
+        gl_shade_vertex(c, v);
+    else 
+        v->color = c->current_color;
 
     /* tex coords */
 
-    if (c->texture_2d_enabled) {
-	if (c->apply_texture_matrix) {
-	    r7_m44_mul_vector4(&v->tex_coord, c->matrix_stack_ptr[2], &c->current_tex_coord);
-	} else {
-	    v->tex_coord = c->current_tex_coord;
-	}
+    if (c->texture_2d_enabled) 
+    {
+        if (c->apply_texture_matrix)
+            r7_m44_mul_vector4(&v->tex_coord, c->matrix_stack_ptr[2], &c->current_tex_coord);
+        else
+            v->tex_coord = c->current_tex_coord;
     }
+
     /* precompute the mapping to the viewport */
     if (v->clip_code == 0)
-	gl_transform_to_viewport(c, v);
+        gl_transform_to_viewport(c, v);
 
     /* edge flag */
 
     v->edge_flag = c->current_edge_flag;
 
-    switch (c->begin_type) {
-    case GL_POINTS:
-	gl_draw_point(c, &c->vertex[0]);
-	n = 0;
-	break;
+    switch (c->begin_type) 
+    {
+        case GL_POINTS:
+            gl_draw_point(c, &c->vertex[0]);
+            n = 0;
+            break;
 
-    case GL_LINES:
-	if (n == 2) {
-	    gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
-	    n = 0;
-	}
-	break;
-    case GL_LINE_STRIP:
-    case GL_LINE_LOOP:
-	if (n == 1) {
-	    c->vertex[2] = c->vertex[0];
-	} else if (n == 2) {
-	    gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
-	    c->vertex[0] = c->vertex[1];
-	    n = 1;
-	}
-	break;
-
-    case GL_TRIANGLES:
-	if (n == 3) {
-	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-	    n = 0;
-	}
-	break;
-    case GL_TRIANGLE_STRIP:
-	if (cnt >= 3) {
-	    if (n == 3)
-		n = 0;
-            /* needed to respect triangle orientation */
-            switch(cnt & 1) {
-            case 0:
-      		gl_draw_triangle(c,&c->vertex[2],&c->vertex[1],&c->vertex[0]);
-      		break;
-            default:
-            case 1:
-      		gl_draw_triangle(c,&c->vertex[0],&c->vertex[1],&c->vertex[2]);
-      		break;
+        case GL_LINES:
+            if (n == 2) 
+            {
+                gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
+                n = 0;
             }
-	}
-	break;
-    case GL_TRIANGLE_FAN:
-	if (n == 3) {
-	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-	    c->vertex[1] = c->vertex[2];
-	    n = 2;
-	}
-	break;
+            break;
+        case GL_LINE_STRIP:
+        case GL_LINE_LOOP:
+            if (n == 1) 
+            {
+                c->vertex[2] = c->vertex[0];
+            } 
+            else if (n == 2) 
+            {
+                gl_draw_line(c, &c->vertex[0], &c->vertex[1]);
+                c->vertex[0] = c->vertex[1];
+                n = 1;
+            }
+            break;
 
-    case GL_QUADS:
-	if (n == 4) {
-	    c->vertex[2].edge_flag = 0;
-	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-	    c->vertex[2].edge_flag = 1;
-	    c->vertex[0].edge_flag = 0;
-	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[2], &c->vertex[3]);
-	    n = 0;
-	}
-	break;
+        case GL_TRIANGLES:
+            if (n == 3) 
+            {
+                gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+                n = 0;
+            }
+            break;
+        case GL_TRIANGLE_STRIP:
+            if (cnt >= 3) 
+            {
+                if (n == 3)
+                    n = 0;
+                /* needed to respect triangle orientation */
+                switch(cnt & 1) 
+                {
+                    case 0:
+                        gl_draw_triangle(c, &c->vertex[2], &c->vertex[1], &c->vertex[0]);
+                        break;
+                    default:
+                    case 1:
+                        gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+                        break;
+                }
+            }
+            break;
+        case GL_TRIANGLE_FAN:
+            if (n == 3) 
+            {
+                gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+                c->vertex[1] = c->vertex[2];
+                n = 2;
+            }
+            break;
 
-    case GL_QUAD_STRIP:
-	if (n == 4) {
-	    gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
-	    gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
-	    for (i = 0; i < 2; i++)
-		c->vertex[i] = c->vertex[i + 2];
-	    n = 2;
-	}
-	break;
-    case GL_POLYGON:
-	break;
-    default:
-	gl_fatal_error("glBegin: type %x not handled\n", c->begin_type);
+        case GL_QUADS:
+            if (n == 4) 
+            {
+                c->vertex[2].edge_flag = 0;
+                gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+                c->vertex[2].edge_flag = 1;
+                c->vertex[0].edge_flag = 0;
+                gl_draw_triangle(c, &c->vertex[0], &c->vertex[2], &c->vertex[3]);
+                n = 0;
+            }
+            break;
+
+        case GL_QUAD_STRIP:
+            if (n == 4) 
+            {
+                gl_draw_triangle(c, &c->vertex[0], &c->vertex[1], &c->vertex[2]);
+                gl_draw_triangle(c, &c->vertex[1], &c->vertex[3], &c->vertex[2]);
+                for (i = 0; i < 2; i++)
+                    c->vertex[i] = c->vertex[i + 2];
+                n = 2;
+            }
+            break;
+        case GL_POLYGON:
+            break;
+        default:
+            gl_fatal_error("glBegin: type %x not handled\n", c->begin_type);
     }
 
     c->vertex_n = n;
@@ -348,16 +361,19 @@ void glopEnd(GLContext * c, GLParam * param)
 {
     assert(c->in_begin == 1);
     r7_unused(param);
-    if (c->begin_type == GL_LINE_LOOP) {
-	if (c->vertex_cnt >= 3) {
-	    gl_draw_line(c, &c->vertex[0], &c->vertex[2]);
-	}
-    } else if (c->begin_type == GL_POLYGON) {
-	int i = c->vertex_cnt;
-	while (i >= 3) {
-	    i--;
-	    gl_draw_triangle(c, &c->vertex[i], &c->vertex[0], &c->vertex[i - 1]);
-	}
+    if (c->begin_type == GL_LINE_LOOP) 
+    {
+        if (c->vertex_cnt >= 3)
+            gl_draw_line(c, &c->vertex[0], &c->vertex[2]);
+    } 
+    else if (c->begin_type == GL_POLYGON) 
+    {
+        int i = c->vertex_cnt;
+        while (i >= 3) 
+        {
+            i--;
+            gl_draw_triangle(c, &c->vertex[i], &c->vertex[0], &c->vertex[i - 1]);
+        }
     }
     c->in_begin = 0;
 }
