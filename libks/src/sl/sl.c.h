@@ -7,16 +7,24 @@
 #define NULL                ((void*)0)
 #define sl_unused(a)        (void)(a)
 
+#define Matrix_Stack_Size   32
+
 typedef unsigned short  ushort;
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
 
 typedef struct sl_context_t
 {
-    sl_matrix_t     matrix_projection;
-    sl_matrix_t     matrix_model_view;
+    sl_matrix_t     matrix[3];
+    sl_matrix_t*    matrix_projection;
+    sl_matrix_t*    matrix_model_view;
+    sl_matrix_t*    matrix_texture;
     sl_matrix_t*    matrix_current;
+    int             matrix_mode;
     
+    sl_matrix_t     matrix_stacks[3][Matrix_Stack_Size];
+    sl_matrix_t*    matrix_stacks_ptr[3];
+
 
 } sl_context_t;
 

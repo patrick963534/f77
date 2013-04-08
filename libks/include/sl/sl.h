@@ -7,6 +7,7 @@ typedef enum sl_matrix_mode_e
 {
     sl_matrix_mode_project,
     sl_matrix_mode_model,
+    sl_matrix_mode_texture,
 } sl_matrix_mode_e;
 
 typedef enum sl_cull_face_mode_e
