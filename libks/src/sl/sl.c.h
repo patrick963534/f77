@@ -4,6 +4,7 @@
 #include <sl/sl.h>
 #include "sl_matrix.h"
 
+#define SL_PI		        3.14159265358979323846
 #define NULL                ((void*)0)
 #define sl_unused(a)        (void)(a)
 
