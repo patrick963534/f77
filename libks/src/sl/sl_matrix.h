@@ -3,12 +3,12 @@
 
 typedef struct sl_matrix_t
 {
-    float m[4][4];
+    float m[4][4];    
 } sl_matrix_t;
 
-typedef struct V3
+typedef struct sl_vector_t
 {
     float x, y, z;
-} V3;
+} sl_vector_t;
 
 #endif

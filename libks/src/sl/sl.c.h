@@ -13,15 +13,19 @@ typedef unsigned char   uchar;
 
 typedef struct sl_context_t
 {
-    int             matrix_mode;
     sl_matrix_t     matrix_stack[3];
-
+    sl_matrix_t*    matrix_current;
+    sl_matrix_t*    matrix_projection;
+    sl_matrix_t*    matrix_model_view;
 
 } sl_context_t;
 
 void*         sl_malloc(int sz);
 void*         sl_calloc(int count, int sz);
 void          sl_free(void* p);
+
+void          sl_error_exit(const char* format, ...);
 sl_context_t* sl_get_context();
+
 
 #endif
