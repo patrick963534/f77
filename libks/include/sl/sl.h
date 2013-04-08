@@ -19,18 +19,18 @@ typedef enum sl_cull_face_mode_e
     sl_cull_face_mode_back,
 } sl_cull_face_mode_e;
 
-typedef enum sl_enable_mode_e
+typedef enum sl_mode_e
 {
-    sl_enable_mode_cull_face,
-} sl_enable_mode_e;
+    sl_mode_cull_face,
+} sl_mode_e;
 
 SL_API void     sl_init();
 SL_API void     sl_flush(uint* target, int w, int h);
 SL_API void     sl_clear_color(float r, float g, float b, float a);
 SL_API void     sl_clear();
 
-SL_API void     sl_enable(sl_enable_mode_e mode);
-SL_API void     sl_disable(sl_enable_mode_e mode);
+SL_API void     sl_enable(sl_mode_e mode);
+SL_API void     sl_disable(sl_mode_e mode);
 
 SL_API void     sl_viewport(int x, int y, int w, int h);
 SL_API void     sl_frustum(float left, float right, float bottom, float top, float near, float far);
