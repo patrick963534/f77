@@ -3,6 +3,10 @@
 
 #define SL_API      extern
 
+typedef unsigned short  ushort;
+typedef unsigned int    uint;
+typedef unsigned char   uchar;
+
 typedef enum sl_matrix_mode_e
 {
     sl_matrix_mode_project,
@@ -21,8 +25,8 @@ typedef enum sl_enable_mode_e
 } sl_enable_mode_e;
 
 SL_API void     sl_init();
-SL_API void     sl_flush();
-SL_API void     sl_clear_color(int r, int g, int b);
+SL_API void     sl_flush(uint* target, int w, int h);
+SL_API void     sl_clear_color(float r, float g, float b, float a);
 SL_API void     sl_clear();
 
 SL_API void     sl_enable(sl_enable_mode_e mode);
