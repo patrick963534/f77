@@ -159,7 +159,6 @@ static INLINE_GL void gl_vertex_transform(GLContext * c, GLVertex * v)
     if (c->lighting_enabled) 
     {
         /* eye coordinates needed for lighting */
-
         m = &c->matrix_stack_ptr[0]->m[0][0];
         v->ec.X = (v->coord.X * m[0]  + v->coord.Y * m[1]  + v->coord.Z * m[2]  + m[3]);
         v->ec.Y = (v->coord.X * m[4]  + v->coord.Y * m[5]  + v->coord.Z * m[6]  + m[7]);
@@ -228,7 +227,7 @@ void glopVertex(GLContext * c, GLParam * p)
         gl_free(c->vertex);
         c->vertex = newarray;
     }
-    /* new vertex entry */
+
     v = &c->vertex[n];
     n++;
 
@@ -239,14 +238,10 @@ void glopVertex(GLContext * c, GLParam * p)
 
     gl_vertex_transform(c, v);
 
-    /* color */
-
     if (c->lighting_enabled)
         gl_shade_vertex(c, v);
     else 
         v->color = c->current_color;
-
-    /* tex coords */
 
     if (c->texture_2d_enabled) 
     {
