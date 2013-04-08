@@ -1,11 +1,7 @@
 #ifndef __SKY_LIBRARY_H__
 #define __SKY_LIBRARY_H__
 
-#define SL_API      extern
-
-typedef unsigned short  ushort;
-typedef unsigned int    uint;
-typedef unsigned char   uchar;
+#define SL_API extern
 
 typedef enum sl_matrix_mode_e
 {
@@ -25,7 +21,7 @@ typedef enum sl_mode_e
 } sl_mode_e;
 
 SL_API void     sl_init();
-SL_API void     sl_flush(uint* target, int w, int h);
+SL_API void     sl_flush(unsigned int* target, int w, int h);
 SL_API void     sl_clear_color(float r, float g, float b, float a);
 SL_API void     sl_clear();
 
