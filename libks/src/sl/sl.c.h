@@ -13,10 +13,10 @@ typedef unsigned char   uchar;
 
 typedef struct sl_context_t
 {
-    sl_matrix_t     matrix_stack[3];
+    sl_matrix_t     matrix_projection;
+    sl_matrix_t     matrix_model_view;
     sl_matrix_t*    matrix_current;
-    sl_matrix_t*    matrix_projection;
-    sl_matrix_t*    matrix_model_view;
+    
 
 } sl_context_t;
 

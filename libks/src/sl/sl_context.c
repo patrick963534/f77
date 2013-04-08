@@ -9,9 +9,6 @@ SL_API void sl_init()
 {
     context = calloc(1, sizeof(*context));
 
-    context->matrix_projection = &context->matrix_stack[0];
-    context->matrix_model_view = &context->matrix_stack[1];
-
     sl_matrix_mode(sl_matrix_mode_project);
     sl_load_identity();
     sl_matrix_mode(sl_matrix_mode_model);
