@@ -102,12 +102,17 @@ SL_API void sl_rotate(float rotation, float x, float y, float z)
     c = (float)cos(angle);
     s = (float)sin(angle);
 
+    if (c < 1E-6 && c > -1E-6)
+        c = 0;
+    if (s < 1E-6 && s > -1E-6)
+        s = 0;
+
     cx = x * (1 - c); cy = y * (1 - c); cz = z * (1 - c);
 
     m.m[0][0] = x*cx+c;   m.m[0][1] = y*cx-s*z; m.m[0][2] = z*cx+s*y; m.m[0][3] = 0;
     m.m[1][0] = x*cy+z*s; m.m[1][1] = y*cy+c;   m.m[1][2] = z*cy-x*s; m.m[1][3] = 0;
     m.m[2][0] = x*cz-s*y; m.m[2][1] = y*cz+s*x; m.m[2][2] = z*cz+c;   m.m[2][3] = 0;
-    m.m[3][0] = 0;        m.m[2][1] = 0;        m.m[3][2] = 0;        m.m[3][3] = 1;
+    m.m[3][0] = 0;        m.m[3][1] = 0;        m.m[3][2] = 0;        m.m[3][3] = 1;
 
     matrix_multiply_left(sl_get_context()->matrix_current, &m);
 }
