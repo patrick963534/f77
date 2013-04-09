@@ -21,11 +21,19 @@ typedef enum sl_mode_e
     sl_mode_cull_face,
 } sl_mode_e;
 
+typedef enum sl_param_name_e
+{
+    sl_param_name_matrix_projection,
+    sl_param_name_matrix_model_view,
+} sl_param_name_e;
+
 SL_API void     sl_init();
 SL_API void     sl_close();
 SL_API void     sl_flush(unsigned int* target, int w, int h);
 SL_API void     sl_clear_color(float r, float g, float b, float a);
 SL_API void     sl_clear();
+
+SL_API void     sl_get_floatv(sl_param_name_e pname, float* v);
 
 SL_API void     sl_enable(sl_mode_e mode);
 SL_API void     sl_disable(sl_mode_e mode);
