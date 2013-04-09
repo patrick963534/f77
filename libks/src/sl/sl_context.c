@@ -47,8 +47,7 @@ void sl_error_exit(const char* format, ...)
     exit(0);
 }
 
-sl_context_t* sl_get_context()
+sl_context_t* sl_context()
 {
     return context;
 }
-

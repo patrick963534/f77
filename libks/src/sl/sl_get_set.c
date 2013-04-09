@@ -6,7 +6,7 @@
 
 SL_API void sl_get_floatv(sl_param_name_e pname, float* v)
 {
-    sl_context_t* c = sl_get_context();
+    sl_context_t* c = sl_context();
 
     switch (pname)
     {

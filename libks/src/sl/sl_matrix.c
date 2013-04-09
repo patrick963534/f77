@@ -42,7 +42,7 @@ static void matrix_multiply_left(sl_matrix_t* c, const sl_matrix_t* left)
 
 SL_API void sl_matrix_mode(sl_matrix_mode_e mode)
 {
-    sl_context_t* c = sl_get_context();
+    sl_context_t* c = sl_context();
 
     switch (mode)
     {
@@ -72,12 +72,12 @@ SL_API void sl_load_identity()
         0, 0, 0, 1,
     };
 
-    memcpy(sl_get_context()->matrix_current, &identity, sizeof(identity));
+    memcpy(sl_context()->matrix_current, &identity, sizeof(identity));
 }
 
 SL_API void sl_translate(float x, float y, float z)
 {
-    float* m = &sl_get_context()->matrix_current->m[0][0];
+    float* m = &sl_context()->matrix_current->m[0][0];
 
     m[12] = m[0] * x + m[4] * y + m[8]  * z + m[12];
     m[13] = m[1] * x + m[5] * y + m[9]  * z + m[13];
@@ -114,12 +114,12 @@ SL_API void sl_rotate(float rotation, float x, float y, float z)
     m.m[2][0] = x*cz-s*y; m.m[2][1] = y*cz+s*x; m.m[2][2] = z*cz+c;   m.m[2][3] = 0;
     m.m[3][0] = 0;        m.m[3][1] = 0;        m.m[3][2] = 0;        m.m[3][3] = 1;
 
-    matrix_multiply_left(sl_get_context()->matrix_current, &m);
+    matrix_multiply_left(sl_context()->matrix_current, &m);
 }
 
 SL_API void sl_scale(float x, float y, float z)
 {
-    float* m =&sl_get_context()->matrix_current->m[0][0];
+    float* m =&sl_context()->matrix_current->m[0][0];
 
     m[0] *= x;  m[4] *= y;  m[8]  *= z;
     m[1] *= x;  m[5] *= y;  m[9]  *= z;
@@ -129,7 +129,7 @@ SL_API void sl_scale(float x, float y, float z)
 
 SL_API void sl_push_matrix()
 {
-    sl_context_t* c = sl_get_context();
+    sl_context_t* c = sl_context();
 
     if (c->matrix_stacks_ptr[c->matrix_mode] - c->matrix_stacks[c->matrix_mode] >= Matrix_Stack_Size - 1)
     {
@@ -143,7 +143,7 @@ SL_API void sl_push_matrix()
 
 SL_API void sl_pop_matrix()
 {
-    sl_context_t* c = sl_get_context();
+    sl_context_t* c = sl_context();
 
     if (c->matrix_stacks_ptr[c->matrix_mode] == c->matrix_stacks[c->matrix_mode])
     {

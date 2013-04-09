@@ -26,7 +26,7 @@ typedef struct sl_context_t
     sl_matrix_t     matrix_stacks[3][Matrix_Stack_Size];
     sl_matrix_t*    matrix_stacks_ptr[3];
 
-
+    int             is_cull_face;
 } sl_context_t;
 
 void*         sl_malloc(int sz);
@@ -34,7 +34,7 @@ void*         sl_calloc(int count, int sz);
 void          sl_free(void* p);
 
 void          sl_error_exit(const char* format, ...);
-sl_context_t* sl_get_context();
+sl_context_t* sl_context();
 
 
 #endif
