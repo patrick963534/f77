@@ -40,6 +40,7 @@ SL_API void     sl_disable(sl_mode_e mode);
 
 SL_API void     sl_viewport(int x, int y, int w, int h);
 SL_API void     sl_frustum(float left, float right, float bottom, float top, float near, float far);
+SL_API void     sl_ortho(float left, float right, float bottom, float top, float near, float far);
 
 SL_API void     sl_matrix_mode(sl_matrix_mode_e mode);
 SL_API void     sl_load_identity();
@@ -48,11 +49,16 @@ SL_API void     sl_rotate(float angle, float x, float y, float z);
 SL_API void     sl_scale(float x, float y, float z);
 SL_API void     sl_push_matrix();
 SL_API void     sl_pop_matrix();
+SL_API void     sl_mult_matrix(const float *m);
 
 SL_API void     sl_cull_face(sl_cull_face_mode_e mode);
 SL_API void     sl_begin();
 SL_API void     sl_vertex(float x, float y, float z);
 SL_API void     sl_tex_coord(float u, float v);
 SL_API void     sl_end();
+
+SL_API void     slu_perspective(float fovy, float aspect, float near, float far);
+SL_API void     slu_lookat(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz);
+
 
 #endif

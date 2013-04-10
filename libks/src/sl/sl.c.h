@@ -35,6 +35,6 @@ void          sl_free(void* p);
 
 void          sl_error_exit(const char* format, ...);
 sl_context_t* sl_context();
-
+int           sl_normalize(float* x, float* y, float* z);
 
 #endif
