@@ -1,5 +1,6 @@
 #include "sl.c.h"
 #include <sl/sl.h>
+#include <stdlib.h>
 
 SL_API void sl_viewport(int x, int y, int w, int h)
 {
@@ -20,5 +21,7 @@ SL_API void sl_viewport(int x, int y, int w, int h)
         free(c->zbuffer.zbuf);
         c->zbuffer.pbuf = sl_calloc(1, w * h * sizeof(c->zbuffer.pbuf[0]));
         c->zbuffer.zbuf = sl_calloc(1, w * h * sizeof(c->zbuffer.zbuf[0]));
+        c->zbuffer.w = w;
+        c->zbuffer.w = h;
     }
 }

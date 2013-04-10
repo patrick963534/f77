@@ -58,6 +58,8 @@ SL_API void     sl_vertex(float x, float y, float z);
 SL_API void     sl_tex_coord(float u, float v);
 SL_API void     sl_end();
 
+SL_API void     sl_texture_load(int w, int h, unsigned int* pixels);
+
 SL_API void     slu_perspective(float fovy, float aspect, float near, float far);
 SL_API void     slu_lookat(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz);
 
