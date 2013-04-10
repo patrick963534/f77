@@ -16,17 +16,18 @@ typedef unsigned char   uchar;
 
 typedef struct sl_context_t
 {
-    sl_matrix_t     matrix[3];
-    sl_matrix_t*    matrix_projection;
-    sl_matrix_t*    matrix_model_view;
-    sl_matrix_t*    matrix_texture;
-    sl_matrix_t*    matrix_current;
-    int             matrix_mode;
+    sl_matrix_t             matrix[3];
+    sl_matrix_t*            matrix_projection;
+    sl_matrix_t*            matrix_model_view;
+    sl_matrix_t*            matrix_texture;
+    sl_matrix_t*            matrix_current;
+    int                     matrix_mode;
     
-    sl_matrix_t     matrix_stacks[3][Matrix_Stack_Size];
-    sl_matrix_t*    matrix_stacks_ptr[3];
+    sl_matrix_t             matrix_stacks[3][Matrix_Stack_Size];
+    sl_matrix_t*            matrix_stacks_ptr[3];
 
-    int             is_cull_face;
+    int                     is_cull_face;
+    sl_cull_face_mode_e     cull_face_mode;
 } sl_context_t;
 
 void*         sl_malloc(int sz);

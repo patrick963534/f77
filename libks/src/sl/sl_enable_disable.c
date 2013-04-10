@@ -33,3 +33,9 @@ SL_API void sl_disable(sl_mode_e mode)
         break;
     }
 }
+
+SL_API void sl_cull_face(sl_cull_face_mode_e mode)
+{
+    sl_context_t* c = sl_context();
+    c->cull_face_mode = mode;
+}
