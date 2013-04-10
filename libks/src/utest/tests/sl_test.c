@@ -28,9 +28,10 @@ static void matrix_print(float* m1)
         if (i % 4 == 0)
             printf("\n");
 
-        printf("%12f,", m1[i]);
+        printf("%12ff,", m1[i]);
     }
 
+    printf("\n");
     fflush(stdout);
 }
 
@@ -115,7 +116,6 @@ static void matrix_scale_test()
     sl_scale(0.5f, 0.3f, 0.2f);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
-
     test_result(result, buf, __FUNCTION__);
 }
 
@@ -144,10 +144,10 @@ static void matrix_rotate_test()
 static void matrix_slu_perspective_test()
 {
     float result[16] = {
-        1.039230,    0.000000,    0.000000,    0.000000,
-        0.000000,    1.732051,    0.000000,    0.000000,
-        0.000000,    0.000000,   -1.000667,   -1.000000,
-        0.000000,    0.000000,   -1.000333,    0.000000,
+        1.039230f,    0.000000f,    0.000000f,    0.000000f,
+        0.000000f,    1.732051f,    0.000000f,    0.000000f,
+        0.000000f,    0.000000f,   -1.000667f,   -1.000000f,
+        0.000000f,    0.000000f,   -1.000333f,    0.000000f,
     };
 
     float buf[16];
