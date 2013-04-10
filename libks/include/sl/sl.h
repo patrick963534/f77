@@ -34,6 +34,7 @@ SL_API void     sl_clear_color(float r, float g, float b, float a);
 SL_API void     sl_clear();
 
 SL_API void     sl_get_floatv(sl_param_name_e pname, float* v);
+SL_API void     sl_set_floatv(sl_param_name_e pname, float* v);
 
 SL_API void     sl_enable(sl_mode_e mode);
 SL_API void     sl_disable(sl_mode_e mode);
