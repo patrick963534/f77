@@ -14,6 +14,26 @@ typedef unsigned short  ushort;
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
 
+typedef struct sl_zbuffer_t
+{
+    int     w, h;
+    int     pitch;
+
+    ushort* zbuf;
+    uint*   pbuf;
+
+    uint*   texture;
+    int     tex_w;
+    int     tex_h;
+} sl_zbuffer_t;
+
+typedef struct sl_viewport_t
+{
+    int         x, y, w, h;
+    sl_vector_t scale, trans;
+    int         updated;
+} sl_viewport_t;
+
 typedef struct sl_context_t
 {
     sl_matrix_t             matrix[3];
@@ -28,6 +48,9 @@ typedef struct sl_context_t
 
     int                     is_cull_face;
     sl_cull_face_mode_e     cull_face_mode;
+
+    sl_viewport_t           viewport;
+    sl_zbuffer_t            zbuffer;
 } sl_context_t;
 
 void*         sl_malloc(int sz);
