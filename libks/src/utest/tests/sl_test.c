@@ -19,7 +19,7 @@
 #include <ks/constants.h>
 #include <sl/sl.h>
 
-static void print_matrix(float* m1)
+static void matrix_print(float* m1)
 {
     int i;
 
@@ -122,7 +122,7 @@ static void matrix_rotate_test()
 static void matrix_slu_perspective_test()
 {
     float result[16] = {
-        1.732051,    0.000000,    0.000000,    0.000000,
+        1.039230,    0.000000,    0.000000,    0.000000,
         0.000000,    1.732051,    0.000000,    0.000000,
         0.000000,    0.000000,   -1.000667,   -1.000000,
         0.000000,    0.000000,   -1.000333,    0.000000,
@@ -133,7 +133,7 @@ static void matrix_slu_perspective_test()
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
     sl_load_identity();
-    slu_perspective(60, 800 / 480, 0.5, 1500);
+    slu_perspective(60, 800.f / 480.f, 0.5, 1500);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
 
