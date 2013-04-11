@@ -53,6 +53,7 @@ typedef struct sl_vertex_t
 
 typedef struct sl_context_t
 {
+    sl_matrix_t             matrix_model_view_projection;
     sl_matrix_t             matrix[3];
     sl_matrix_t*            matrix_projection;
     sl_matrix_t*            matrix_model_view;
@@ -72,6 +73,8 @@ typedef struct sl_context_t
     float                   u, v;
     sl_vertex_t             vertexs[3];
     int                     nvertex;
+
+    int                     begin;
 } sl_context_t;
 
 void*         sl_malloc(int sz);

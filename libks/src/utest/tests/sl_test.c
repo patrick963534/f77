@@ -198,6 +198,27 @@ static void matrix_push_pop_test()
     sl_close();
 }
 
+static void matrix_sl_frustum_test()
+{
+    float result[16] = {
+        5.000000f,    0.000000f,    0.000000f,    0.000000f,
+        0.000000f,    5.000000f,    0.000000f,    0.000000f,
+        0.000000f,    0.000000f,   -2.000000f,   -1.000000f,
+        0.000000f,    0.000000f,  -15.000000f,    0.000000f,
+    };
+
+    float buf[16];
+
+    sl_init();
+    sl_matrix_mode(sl_matrix_mode_model);
+    sl_load_identity();
+    sl_frustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
+    sl_get_floatv(sl_param_name_matrix_model_view, buf);    
+    sl_close();
+
+    test_result(result, buf, __FUNCTION__);
+}
+
 void ks_utest_sl_test()
 {
     matrix_rotate_test();
@@ -206,4 +227,5 @@ void ks_utest_sl_test()
     matrix_slu_perspective_test();
     matrix_load_identity_test();
     matrix_push_pop_test();
+    matrix_sl_frustum_test();
 }

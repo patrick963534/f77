@@ -3,10 +3,31 @@
 #include <string.h>
 #include <math.h>
 
-
 static void matrix_multiply_left(sl_matrix_t* c, const sl_matrix_t* left)
 {
     sl_matrix_t a = *c;
+    sl_matrix_t b = *left;
+
+    int i, j, k;
+    float s;
+
+    for(i = 0; i < 4; ++i)
+    {
+        for(j = 0; j < 4; ++j) 
+        {
+            s = 0;
+
+            for(k = 0;k < 4; ++k) 
+                s += b.m[i][k] * a.m[k][j];
+
+            c->m[i][j]=s;
+        }
+    }
+}
+
+void sl_matrix_multiply(sl_matrix_t* c, const sl_matrix_t* left, const sl_matrix_t* right)
+{
+    sl_matrix_t a = *right;
     sl_matrix_t b = *left;
 
     int i, j, k;

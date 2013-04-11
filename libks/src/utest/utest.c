@@ -10,6 +10,6 @@ void ks_utest_start()
     //ks_utest_path_test();
     //ks_utest_zip_test();
     //ks_utest_image_test();
-    //ks_utest_r7_test();
+    ks_utest_r7_test();
     ks_utest_sl_test();
 }
