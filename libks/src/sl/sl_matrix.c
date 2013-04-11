@@ -25,6 +25,16 @@ static void matrix_multiply_left(sl_matrix_t* c, const sl_matrix_t* left)
     }
 }
 
+void sl_vector_mul_matrix(sl_vector_t* c, const sl_vector_t* left, const sl_matrix_t* right)
+{
+    const float* m = &right->m[0][0];
+
+    c->x = (left->x * m[0] + left->y * m[4] + left->z * m[8]  + m[12]);
+    c->y = (left->x * m[1] + left->y * m[5] + left->z * m[9]  + m[13]);
+    c->z = (left->x * m[2] + left->y * m[6] + left->z * m[10] + m[14]);
+    c->w = (left->x * m[3] + left->y * m[7] + left->z * m[11] + m[15]);
+}
+
 void sl_matrix_multiply(sl_matrix_t* c, const sl_matrix_t* left, const sl_matrix_t* right)
 {
     sl_matrix_t a = *right;
