@@ -69,7 +69,6 @@ static void matrix_load_identity_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
     sl_translate(0.5f, 0.3f, 0.2f);
     sl_load_identity();
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
@@ -91,7 +90,6 @@ static void matrix_translate_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
     sl_translate(0.5f, 0.3f, 0.2f);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
@@ -112,7 +110,6 @@ static void matrix_scale_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
     sl_scale(0.5f, 0.3f, 0.2f);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
@@ -132,7 +129,6 @@ static void matrix_rotate_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
     sl_rotate(90, 0, 1, 0);
     sl_translate(0, 0, -5);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
@@ -154,7 +150,6 @@ static void matrix_slu_perspective_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
     slu_perspective(60, 800.f / 480.f, 0.5, 1500);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
@@ -182,7 +177,6 @@ static void matrix_push_pop_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
     sl_scale(0.5f, 0.3f, 0.2f);
     sl_push_matrix();
     sl_load_identity();
@@ -211,7 +205,6 @@ static void matrix_sl_frustum_test()
 
     sl_init();
     sl_matrix_mode(sl_matrix_mode_project);
-    sl_load_identity();
     sl_frustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
     sl_get_floatv(sl_param_name_matrix_projection, buf);    
     sl_close();
@@ -231,15 +224,16 @@ static void matrix_sl_mvp_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
-    sl_translate(.0f, .0f, -5.0f);
-    sl_get_floatv(sl_param_name_matrix_model_view, buf);    
-    sl_matrix_mode(sl_matrix_mode_model);
-    sl_load_identity();
+
+    sl_matrix_mode(sl_matrix_mode_project);
     sl_frustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
-    sl_mult_matrix(buf);
-    sl_get_floatv(sl_param_name_matrix_model_view, buf);    
+    sl_matrix_mode(sl_matrix_mode_model);
+    sl_translate(.0f, .0f, -5.0f);
+
+    sl_begin();
+    slut_get_mvp(buf);
+    sl_end();
+
     sl_close();
 
     test_result(result, buf, __FUNCTION__);

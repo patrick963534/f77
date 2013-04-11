@@ -63,5 +63,5 @@ SL_API void     sl_texture_load(int w, int h, unsigned int* pixels);
 SL_API void     slu_perspective(float fovy, float aspect, float near, float far);
 SL_API void     slu_lookat(float eyex, float eyey, float eyez, float centerx, float centery, float centerz, float upx, float upy, float upz);
 
-
+SL_API void     slut_get_mvp(float* m);
 #endif
