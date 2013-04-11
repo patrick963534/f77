@@ -210,9 +210,35 @@ static void matrix_sl_frustum_test()
     float buf[16];
 
     sl_init();
+    sl_matrix_mode(sl_matrix_mode_project);
+    sl_load_identity();
+    sl_frustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
+    sl_get_floatv(sl_param_name_matrix_projection, buf);    
+    sl_close();
+
+    test_result(result, buf, __FUNCTION__);
+}
+
+static void matrix_sl_mvp_test()
+{
+    float result[16] = {
+        5.000000f,    0.000000f,    0.000000f,    0.000000f,
+        0.000000f,    5.000000f,    0.000000f,    0.000000f,
+        0.000000f,    0.000000f,   -2.000000f,   -1.000000f,
+        0.000000f,    0.000000f,   -5.000000f,    5.000000f,
+    };
+
+    float buf[16];
+
+    sl_init();
+    sl_matrix_mode(sl_matrix_mode_model);
+    sl_load_identity();
+    sl_translate(.0f, .0f, -5.0f);
+    sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_matrix_mode(sl_matrix_mode_model);
     sl_load_identity();
     sl_frustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
+    sl_mult_matrix(buf);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
 
@@ -228,4 +254,5 @@ void ks_utest_sl_test()
     matrix_load_identity_test();
     matrix_push_pop_test();
     matrix_sl_frustum_test();
+    matrix_sl_mvp_test();
 }

@@ -28,6 +28,8 @@ SL_API void sl_init()
 
 SL_API void sl_close()
 {
+    sl_free(context->zbuffer.pbuf);
+    sl_free(context->zbuffer.zbuf);
     sl_free(context);
     context = NULL;
 }
