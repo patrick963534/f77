@@ -43,11 +43,11 @@ typedef struct sl_zb_point_t
 
 typedef struct sl_vertex_t
 {
-    float   x, y, z;
-    float   u, v;
+    sl_vector_t     pos;
+    float           u, v;
 
-    sl_vector_t     ec;
-    sl_vector_t     pc;
+    sl_vector_t     eye;
+    sl_vector_t     prj;
     sl_zb_point_t   zp;
 } sl_vertex_t;
 
@@ -84,5 +84,8 @@ void          sl_free(void* p);
 void          sl_error_exit(const char* format, ...);
 sl_context_t* sl_context();
 int           sl_normalize(float* x, float* y, float* z);
+
+void          sl_clip_draw();
+void          sl_rasterize(sl_zb_point_t* p1, sl_zb_point_t* p2, sl_zb_point_t* p3);
 
 #endif
