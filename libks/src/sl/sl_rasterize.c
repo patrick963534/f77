@@ -9,3 +9,4 @@ SL_API void sl_texture_load(int w, int h, uint* pixels)
     c->zbuffer.tex_h = h;
     c->zbuffer.texture = pixels;
 }
+

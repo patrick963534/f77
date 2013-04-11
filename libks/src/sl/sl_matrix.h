@@ -8,7 +8,7 @@ typedef struct sl_matrix_t
 
 typedef struct sl_vector_t
 {
-    float x, y, z;
+    float x, y, z, w;
 } sl_vector_t;
 
 #endif

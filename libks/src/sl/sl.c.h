@@ -34,6 +34,23 @@ typedef struct sl_viewport_t
     int         updated;
 } sl_viewport_t;
 
+typedef struct sl_zb_point_t
+{
+    int     x, y;
+    float   u, v;
+    int     r, g, b;
+} sl_zb_point_t;
+
+typedef struct sl_vertex_t
+{
+    float   x, y, z;
+    float   u, v;
+
+    sl_vector_t     ec;
+    sl_vector_t     pc;
+    sl_zb_point_t   zp;
+} sl_vertex_t;
+
 typedef struct sl_context_t
 {
     sl_matrix_t             matrix[3];
@@ -51,6 +68,10 @@ typedef struct sl_context_t
 
     sl_viewport_t           viewport;
     sl_zbuffer_t            zbuffer;
+
+    float                   u, v;
+    sl_vertex_t             vertexs[3];
+    int                     nvertex;
 } sl_context_t;
 
 void*         sl_malloc(int sz);

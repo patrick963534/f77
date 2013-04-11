@@ -17,11 +17,16 @@ SL_API void sl_viewport(int x, int y, int w, int h)
         c->viewport.h = h;
         c->viewport.updated = 1;
 
-        free(c->zbuffer.pbuf);
-        free(c->zbuffer.zbuf);
-        c->zbuffer.pbuf = sl_calloc(1, w * h * sizeof(c->zbuffer.pbuf[0]));
-        c->zbuffer.zbuf = sl_calloc(1, w * h * sizeof(c->zbuffer.zbuf[0]));
-        c->zbuffer.w = w;
-        c->zbuffer.w = h;
+        {
+            int zw = max(x + w, w);
+            int zh = max(y + h, h);
+
+            free(c->zbuffer.pbuf);
+            free(c->zbuffer.zbuf);
+            c->zbuffer.pbuf = sl_calloc(1, zw * zh * sizeof(c->zbuffer.pbuf[0]));
+            c->zbuffer.zbuf = sl_calloc(1, zw * zh * sizeof(c->zbuffer.zbuf[0]));
+            c->zbuffer.w = zw;
+            c->zbuffer.w = zh;
+        }        
     }
 }
