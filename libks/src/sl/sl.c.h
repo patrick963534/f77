@@ -36,7 +36,7 @@ typedef struct sl_viewport_t
 
 typedef struct sl_zb_point_t
 {
-    int     x, y;
+    int     x, y, z;
     float   u, v;
     int     r, g, b;
 } sl_zb_point_t;
@@ -85,6 +85,7 @@ void          sl_error_exit(const char* format, ...);
 sl_context_t* sl_context();
 int           sl_normalize(float* x, float* y, float* z);
 
+void          sl_transform_viewport(sl_vertex_t* v);
 void          sl_clip_draw();
 void          sl_rasterize(sl_zb_point_t* p1, sl_zb_point_t* p2, sl_zb_point_t* p3);
 

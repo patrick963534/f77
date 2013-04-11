@@ -26,6 +26,7 @@ SL_API void sl_begin()
     c->begin = 1;
 
     sl_matrix_multiply(&c->matrix_model_view_projection, c->matrix_model_view, c->matrix_projection);
+
 }
 
 SL_API void sl_end()
@@ -46,6 +47,7 @@ SL_API void sl_vertex(float x, float y, float z)
     v->pos.x = x; v->pos.y = y; v->pos.z = z; v->pos.w = 1.0f;
 
     apply_mvp(v);
+    
 
     if (c->nvertex == 3)
         sl_clip_draw();
