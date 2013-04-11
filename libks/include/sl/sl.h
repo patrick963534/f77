@@ -29,7 +29,7 @@ typedef enum sl_param_name_e
 
 SL_API void     sl_init();
 SL_API void     sl_close();
-SL_API void     sl_flush(unsigned int* target, int w, int h);
+SL_API void*    sl_flush();
 SL_API void     sl_clear_color(float r, float g, float b, float a);
 SL_API void     sl_clear();
 

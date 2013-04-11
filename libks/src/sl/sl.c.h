@@ -75,6 +75,7 @@ typedef struct sl_context_t
     int                     nvertex;
 
     int                     begin;
+    int                     clear_color;
 } sl_context_t;
 
 void*         sl_malloc(int sz);

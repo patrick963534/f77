@@ -39,5 +39,8 @@ SL_API void sl_vertex(float x, float y, float z)
     sl_transform_viewport(v);
 
     if (c->nvertex == 3)
+    {
         sl_clip_draw();
+        c->nvertex = 0;
+    }
 }

@@ -34,6 +34,11 @@ SL_API void sl_close()
     context = NULL;
 }
 
+SL_API void* sl_flush()
+{
+    return context->zbuffer.pbuf;
+}
+
 void sl_error_exit(const char* format, ...)
 {
     char buf[1024];
