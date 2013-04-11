@@ -88,6 +88,6 @@ int           sl_normalize(float* x, float* y, float* z);
 void          sl_vector_mul_matrix(sl_vector_t* c, const sl_vector_t* left, const sl_matrix_t* right);
 void          sl_transform_viewport(sl_vertex_t* v);
 void          sl_clip_draw();
-void          sl_rasterize(sl_zb_point_t* p1, sl_zb_point_t* p2, sl_zb_point_t* p3);
+void          sl_rasterize(sl_zb_point_t* p0, sl_zb_point_t* p1, sl_zb_point_t* p2);
 
 #endif
