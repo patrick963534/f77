@@ -95,16 +95,16 @@ static ks_scene_t* create_scene()
     me       = ks_scene_new(sizeof(*me));
     me->msgs = msgs;
 
-    node = ks_node_new(sizeof(*node), (ks_node_t*)me);
-    node->x = 100;
-    node->z = -1;
-
-    ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
-    ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
-    ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
-    ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
-    ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
-    ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
+//     node = ks_node_new(sizeof(*node), (ks_node_t*)me);
+//     node->x = 100;
+//     node->z = -1;
+// 
+//     ks_text_new("arial.ttf", 18, 60, "",        node)->step = (ks_step_f)step_fps;
+//     ks_text_new("arial.ttf", 18, 60, "0",       node)->y = 200;
+//     ks_text_new("arial.ttf", 18, 60, "00",      node)->y = 60;
+//     ks_text_new("arial.ttf", 18, 60, "000",     node)->y = 90;
+//     ks_text_new("arial.ttf", 18, 60, "0000",    node)->y = 120;
+//     ks_text_new("arial.ttf", 18, 60, "00000",   node)->y = 150;
 
     actor0 = ks_actor_new("bag.png", (ks_node_t*)me);
     actor0->x = Win_W/2;
