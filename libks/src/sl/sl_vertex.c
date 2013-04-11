@@ -33,7 +33,10 @@ SL_API void sl_vertex(float x, float y, float z)
         sl_error_exit("[SL_ERROR] please call sl_begin() before sl_vertex(...).");
     
     v = &c->vertexs[c->nvertex++];
+
     v->pos.x = x; v->pos.y = y; v->pos.z = z; v->pos.w = 1.0f;
+
+    v->u = c->u; v->v = c->v;
 
     sl_vector_mul_matrix(&v->prj, &v->pos, &c->matrix_model_view_projection);
     sl_transform_viewport(v);

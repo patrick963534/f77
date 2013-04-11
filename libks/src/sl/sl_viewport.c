@@ -46,7 +46,7 @@ SL_API void sl_viewport(int x, int y, int w, int h)
             c->zbuffer.pbuf = sl_calloc(1, zw * zh * sizeof(c->zbuffer.pbuf[0]));
             c->zbuffer.zbuf = sl_calloc(1, zw * zh * sizeof(c->zbuffer.zbuf[0]));
             c->zbuffer.w = zw;
-            c->zbuffer.w = zh;
+            c->zbuffer.h = zh;
         }        
     }
 }

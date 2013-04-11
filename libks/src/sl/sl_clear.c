@@ -39,5 +39,5 @@ SL_API void sl_clear()
     sl_context_t* c = sl_context();
     int color = c->clear_color;
 
-    memset_l(&c->zbuffer.pbuf, color, c->zbuffer.w * c->zbuffer.h);
+    memset_l(c->zbuffer.pbuf, color, c->zbuffer.w * c->zbuffer.h);
 }

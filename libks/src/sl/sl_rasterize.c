@@ -90,7 +90,7 @@ static void draw_part(sl_zbuffer_t * zb, sl_zb_point_t * vp, sl_zb_point_t * lp,
                 if (xx < 0) xx = 0; else if (xx >= tex_w) xx = tex_w - 1;
                 if (yy < 0) yy = 0; else if (yy >= tex_h) yy = tex_h - 1;
 
-                sv = 0xffffffff;//texture[yy * tex_w + xx];
+                sv = texture[yy * tex_w + xx];
                 a = (sv >> 24) & 0xFF;
 
                 if (a == 0xff)
@@ -105,7 +105,7 @@ static void draw_part(sl_zbuffer_t * zb, sl_zb_point_t * vp, sl_zb_point_t * lp,
                     uchar g = (((dv >>  8) & 0xFF) * (255 - a) + ((sv >>  8) & 0xFF) * a) >> 8;
                     uchar b = (((dv      ) & 0xFF) * (255 - a) + ((sv      ) & 0xFF) * a) >> 8;
 
-                    *line_pp = r << 24 | g << 16 | b << 8 | 0xFF;
+                    *line_pp = 0xFF000000 | r << 16 | g << 8 | b;
                 }
 
                 tu += tdu;

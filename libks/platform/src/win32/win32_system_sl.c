@@ -156,17 +156,11 @@ static void flush()
     char* src = (char*)ks_graphics_instance()->buffer;
 
     int strip = w * 4 + (4 - w * 3 / 4) % 4;
-    int i, j;
+    int i;
 
     for (i = 0; i < h; ++i)
     {
-        int* pd = (int*)&dst[i * strip];
-        unsigned short* ps = (unsigned short*)&src[i * w * 2];
-        for (j = 0; j < w; ++j)
-        {
-            int sv = *ps++;
-            *pd++ = (((sv      ) & 0x1F) * 255 / 32) | (((sv >> 5 ) & 0x3F) * 255 / 64) << 8 | (((sv >> 11) & 0x1F) * 255 / 32) << 16 | 0xFF000000;
-        }
+        memcpy(&dst[i * strip], &src[i * w * 4], w * 4);
     }
 
     BitBlt(sys->hdc, 3, 25, ks_director_instance()->width, ks_director_instance()->height, sys->hdc_img, 0, 0, SRCCOPY);

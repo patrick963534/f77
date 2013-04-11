@@ -17,7 +17,6 @@ typedef unsigned char   uchar;
 typedef struct sl_zbuffer_t
 {
     int     w, h;
-    int     pitch;
 
     ushort* zbuf;
     uint*   pbuf;
