@@ -269,7 +269,7 @@ static void sl_render_test()
     sl_matrix_mode(sl_matrix_mode_project);
     sl_frustum(-1.0f, 1.0f, -1.0f, 1.0f, 5.0f, 15.0f);
     sl_matrix_mode(sl_matrix_mode_modelview);
-    sl_translate(0.1f, 0, -5);
+    sl_translate(0, 0, -5);
 
     sl_texture_load(tex_w, tex_h, pixels);
     sl_begin();
