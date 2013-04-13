@@ -282,7 +282,7 @@ static void sl_render_test()
         sl_tex_coord(1.0, 1.0); sl_vertex( 0.5f,  0.0f, 0.f);
     sl_end();
 
-    ks_helper_image565_save_ppm("sl_texture_mapping_test.ppm", sl_flush(), width, height);
+    ks_helper_image_save_ppm("sl_texture_mapping_test.ppm", sl_flush(), width, height);
 
     sl_close();
 }
