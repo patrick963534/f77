@@ -66,7 +66,7 @@ SL_API void sl_matrix_mode(sl_matrix_mode_e mode)
     case sl_matrix_mode_project:
         c->matrix_mode = 0;
         break;
-    case sl_matrix_mode_model:
+    case sl_matrix_mode_modelview:
         c->matrix_mode = 1;
         break;
     case sl_matrix_mode_texture:

@@ -17,7 +17,7 @@ SL_API void sl_init()
 
     sl_matrix_mode(sl_matrix_mode_project);
     sl_load_identity();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_load_identity();
 
     for (i = 0; i < 3; ++i)

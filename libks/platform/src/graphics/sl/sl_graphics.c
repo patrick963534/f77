@@ -163,7 +163,7 @@ KS_API void ks_graphics_init(ks_object_t* container)
 
     sl_matrix_mode(sl_matrix_mode_project);
     sl_frustum(-width/2, width/2, -height/2, height/2, 5.0f, 15.0f);
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
 }
 
 KS_API ks_graphics_t* ks_graphics_instance()

@@ -68,7 +68,7 @@ static void matrix_load_identity_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_translate(0.5f, 0.3f, 0.2f);
     sl_load_identity();
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
@@ -89,7 +89,7 @@ static void matrix_translate_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_translate(0.5f, 0.3f, 0.2f);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
@@ -109,7 +109,7 @@ static void matrix_scale_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_scale(0.5f, 0.3f, 0.2f);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
@@ -128,7 +128,7 @@ static void matrix_rotate_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_rotate(90, 0, 1, 0);
     sl_translate(0, 0, -5);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
@@ -149,7 +149,7 @@ static void matrix_slu_perspective_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     slu_perspective(60, 800.f / 480.f, 0.5, 1500);
     sl_get_floatv(sl_param_name_matrix_model_view, buf);    
     sl_close();
@@ -176,7 +176,7 @@ static void matrix_push_pop_test()
     float buf[16];
 
     sl_init();
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_scale(0.5f, 0.3f, 0.2f);
     sl_push_matrix();
     sl_load_identity();
@@ -227,7 +227,7 @@ static void matrix_sl_mvp_test()
 
     sl_matrix_mode(sl_matrix_mode_project);
     sl_frustum(-1.0, 1.0, -1.0, 1.0, 5.0, 15.0);
-    sl_matrix_mode(sl_matrix_mode_model);
+    sl_matrix_mode(sl_matrix_mode_modelview);
     sl_translate(.0f, .0f, -5.0f);
 
     sl_begin();
@@ -237,6 +237,54 @@ static void matrix_sl_mvp_test()
     sl_close();
 
     test_result(result, buf, __FUNCTION__);
+}
+
+static void sl_render_test()
+{
+#define G   0xff00ff00
+#define W   0xffffffff
+
+    int tex_w = 8;
+    int tex_h = 8;
+    unsigned pixels[] = {
+        W,W,W,W,W,W,W,W,
+        W,W,W,G,G,W,W,W,
+        W,W,G,W,W,G,W,W,
+        W,W,W,W,W,G,W,W,
+        W,W,W,W,G,W,W,W,
+        W,W,W,G,W,W,W,W,
+        W,W,G,G,G,G,W,W,
+        W,W,W,W,W,W,W,W,
+    };
+
+#undef G
+#undef W
+
+    int width = 32;
+    int height = 32;
+
+    sl_init();
+    sl_viewport(0, 0, width, height);
+
+    sl_matrix_mode(sl_matrix_mode_project);
+    sl_frustum(-1.0f, 1.0f, -1.0f, 1.0f, 5.0f, 15.0f);
+    sl_matrix_mode(sl_matrix_mode_modelview);
+    sl_translate(0.1f, 0, -5);
+
+    sl_texture_load(tex_w, tex_h, pixels);
+    sl_begin();
+        sl_tex_coord(0.0, 0.0); sl_vertex( 0.0f, 0.5f, 0.f);
+        sl_tex_coord(1.0, 0.0); sl_vertex( 0.5f, 0.5f, 0.f);
+        sl_tex_coord(1.0, 1.0); sl_vertex( 0.5f, 0.0f, 0.f);
+
+        sl_tex_coord(0.0, 0.0); sl_vertex( 0.0f,  0.5f, 0.f);
+        sl_tex_coord(0.0, 1.0); sl_vertex( 0.0f,  0.0f, 0.f);
+        sl_tex_coord(1.0, 1.0); sl_vertex( 0.5f,  0.0f, 0.f);
+    sl_end();
+
+    ks_helper_image565_save_ppm("sl_texture_mapping_test.ppm", sl_flush(), width, height);
+
+    sl_close();
 }
 
 void ks_utest_sl_test()
@@ -249,4 +297,5 @@ void ks_utest_sl_test()
     matrix_push_pop_test();
     matrix_sl_frustum_test();
     matrix_sl_mvp_test();
+    sl_render_test();
 }
