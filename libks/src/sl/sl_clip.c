@@ -101,9 +101,7 @@ static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2
         sl_vertex_t  tv1, tv2;
         int out_cn, mask;
 
-        int b2 = c0 & c1 & c2;
-
-        if (b2 != 0)
+        if ((c0 & c1 & c2) != 0)
             return;
 
         while ((b1 & (1 << bit)) == 0 && bit < 6)
