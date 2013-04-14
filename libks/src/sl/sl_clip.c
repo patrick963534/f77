@@ -76,6 +76,11 @@ static void find_clip_vertex(sl_vertex_t* c, const sl_vertex_t* a, const sl_vert
     c->prj.y = a->prj.y - t * (a->prj.y - b->prj.y);
     c->prj.z = a->prj.z - t * (a->prj.z - b->prj.z);
     c->prj.w = a->prj.w - t * (a->prj.w - b->prj.w);
+    c->u     = a->u     - t * (a->u     - b->u);
+    c->v     = a->v     - t * (a->v     - b->v);
+
+    calc_clip_code(c);
+    sl_transform_viewport(c);
 }
 
 static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2, int bit) 
@@ -98,10 +103,10 @@ static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2
 
         int b2 = c0 & c1 & c2;
 
-        if (b2 == 0)
+        if (b2 != 0)
             return;
 
-        while ((b2 & (1 << bit)) == 0 && bit < 6)
+        while ((b1 & (1 << bit)) == 0 && bit < 6)
             ++bit;
 
         if (bit >= 6)
