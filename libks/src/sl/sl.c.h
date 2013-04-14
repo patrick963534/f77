@@ -48,6 +48,8 @@ typedef struct sl_vertex_t
     sl_vector_t     eye;
     sl_vector_t     prj;
     sl_zb_point_t   zp;
+
+    int             clip_code;
 } sl_vertex_t;
 
 typedef struct sl_context_t
