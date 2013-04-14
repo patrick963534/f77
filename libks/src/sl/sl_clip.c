@@ -47,7 +47,7 @@ static void find_clip_vertex(sl_vertex_t* c, const sl_vertex_t* a, const sl_vert
     sl_transform_viewport(c);
 }
 
-static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2, int bit) 
+static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2) 
 {
     int c0 = v0->clip_code;
     int c1 = v1->clip_code;
@@ -61,9 +61,9 @@ static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2
     else
     {
         sl_vertex_t *p0, *p1, *p2;
-
         sl_vertex_t  tv1, tv2;
         int out_cn, mask;
+        int bit = 0;
 
         if ((c0 & c1 & c2) != 0)
             return;
@@ -84,10 +84,10 @@ static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2
             else                { p0 = v2; p1 = v0; p2 = v1; }
 
             find_clip_vertex(&tv1, p0, p1, bit);
-            draw_triangle_clip(&tv1, p1, p2, bit+1);   
+            draw_triangle_clip(&tv1, p1, p2);   
 
             find_clip_vertex(&tv2, p0, p2, bit);
-            draw_triangle_clip(&tv2, &tv1, p2, bit+1);   
+            draw_triangle_clip(&tv2, &tv1, p2);   
         }
         else // two points out
         {
@@ -98,7 +98,7 @@ static void draw_triangle_clip(sl_vertex_t* v0, sl_vertex_t* v1, sl_vertex_t* v2
             find_clip_vertex(&tv1, p0, p1, bit);
             find_clip_vertex(&tv2, p0, p2, bit);
 
-            draw_triangle_clip(p0, &tv1, &tv2, bit+1);   
+            draw_triangle_clip(p0, &tv1, &tv2);   
         }
     }
 }
@@ -114,5 +114,5 @@ void sl_clip_draw()
     calc_clip_code(v1);
     calc_clip_code(v2);
 
-    draw_triangle_clip(v0, v1, v2, 0);
+    draw_triangle_clip(v0, v1, v2);
 }
