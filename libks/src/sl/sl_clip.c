@@ -1,42 +1,6 @@
 #include "sl.c.h"
 #include <math.h>
 
-static float clip_factor(float v0, float w0, float v1, float w1)
-{
-    float len = (v0 - w0) + (w1 - v1);
-
-    if (len < 0)
-        len = -len;
-
-    if (len == 0)
-        return 0;
-    else
-        return (v0 - w0) / len;        
-}
-
-static float clip_ymax(sl_vector_t *c, const sl_vector_t *a, const sl_vector_t *b) 
-{
-    float t, dX, dY, dZ, dW, den;
-
-    dX = (b->x - a->x);
-    dY = (b->y - a->y);
-    dZ = (b->z - a->z);
-    dW = (b->w - a->w);
-    den =  - (+ dY) + dW;
-
-    if (den == 0) 
-        t = 0;
-    else 
-        t = (+ a->y - a->w) / den;
-
-    c->x = a->x + t * dX;
-    c->z = a->z + t * dX;
-    c->w = a->w + t * dW;
-    c->y = a->y + t * dY; //+ c->w;
-
-    return t;
-}
-
 static void calc_clip_code(sl_vertex_t* v)
 {
     float w = v->prj.w;
