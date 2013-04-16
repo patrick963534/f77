@@ -5,8 +5,11 @@
 
 #define swap_ptr(type, p1, p2)  { type* _type_t = p1; p1 = p2; p2 = _type_t; }
 
-#define shift_big(v)    ((v) << 16)
-#define shift_small(v)  (((v) + (1 << 15)) >> 16)
+#define shift_vertex_big(v)    ((v) << 16)
+#define shift_vertex_small(v)  (((v) + (1 << 15)) >> 16)
+
+#define shift_uv_big(v)    ((v) << 20)
+#define shift_uv_small(v)  (((v) + (1 << 19)) >> 20)
 
 static void sort_point_by_y(sl_zb_point_t** zp0, sl_zb_point_t** zp1, sl_zb_point_t** zp2)
 {
@@ -41,23 +44,23 @@ static void draw_part(sl_zbuffer_t * zb, sl_zb_point_t * vp, sl_zb_point_t * lp,
 {
     int tex_w = zb->tex_w;
     int tex_h = zb->tex_h;
-    int lx = shift_big(vp->x);
-    int rx = shift_big(vp->x);
-    int lu = (int)(vp->u * shift_big((tex_w)));
-    int ru = (int)(vp->u * shift_big((tex_w)));
-    int lv = (int)(vp->v * shift_big((tex_h)));
-    int rv = (int)(vp->v * shift_big((tex_h)));
+    int lx = shift_vertex_big(vp->x);
+    int rx = shift_vertex_big(vp->x);
+    int lu = (int)(vp->u * shift_uv_big((tex_w)));
+    int ru = (int)(vp->u * shift_uv_big((tex_w)));
+    int lv = (int)(vp->v * shift_uv_big((tex_h)));
+    int rv = (int)(vp->v * shift_uv_big((tex_h)));
 
     uint* pp = zb->pbuf + zb->w * (vp->y);
     uint* texture = zb->texture;
 
-    int dxl = shift_big(lp->x - vp->x) / (abs(vp->y - lp->y));
-    int dxr = shift_big(rp->x - vp->x) / (abs(vp->y - rp->y));
+    int dxl = shift_vertex_big(lp->x - vp->x) / (abs(vp->y - lp->y));
+    int dxr = shift_vertex_big(rp->x - vp->x) / (abs(vp->y - rp->y));
 
-    int dul = (int)((lp->u - vp->u) * shift_big(tex_w) / (abs(vp->y - lp->y)));
-    int dur = (int)((rp->u - vp->u) * shift_big(tex_w) / (abs(vp->y - rp->y)));
-    int dvl = (int)((lp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - lp->y)));
-    int dvr = (int)((rp->v - vp->v) * shift_big(tex_h) / (abs(vp->y - rp->y)));
+    int dul = (int)((lp->u * shift_uv_big(tex_w) - vp->u * shift_uv_big(tex_w)) / (abs(vp->y - lp->y)));
+    int dur = (int)((rp->u * shift_uv_big(tex_w) - vp->u * shift_uv_big(tex_w)) / (abs(vp->y - rp->y)));
+    int dvl = (int)((lp->v * shift_uv_big(tex_h) - vp->v * shift_uv_big(tex_h)) / (abs(vp->y - lp->y)));
+    int dvr = (int)((rp->v * shift_uv_big(tex_h) - vp->v * shift_uv_big(tex_h)) / (abs(vp->y - rp->y)));
 
     if (line_step < 0)
     {
@@ -69,8 +72,8 @@ static void draw_part(sl_zbuffer_t * zb, sl_zb_point_t * vp, sl_zb_point_t * lp,
 
     while (nbline-- > 0)
     {
-        int startx = shift_small(lx) + 1;
-        int n = shift_small(rx) - startx + 1;
+        int startx = shift_vertex_small(lx) + 1;
+        int n = shift_vertex_small(rx) - startx + 1;
         uint* line_pp = pp + startx;
 
         if (n > 0) 
@@ -82,8 +85,8 @@ static void draw_part(sl_zbuffer_t * zb, sl_zb_point_t * vp, sl_zb_point_t * lp,
 
             while (n > 0)
             {
-                int xx = shift_small(tu);
-                int yy = shift_small(tv);
+                int xx = shift_uv_small(tu);
+                int yy = shift_uv_small(tv);
                 uchar a;
                 uint sv;
 
