@@ -102,7 +102,6 @@ static void graphics_load_identity()
     int width = ks_director_instance()->width;
     int height = ks_director_instance()->height;
     sl_load_identity();
-    sl_translate((float)-width/2, (float)-height/2, 0);
 }
 
 static void graphics_flush()
@@ -162,7 +161,7 @@ KS_API void ks_graphics_init(ks_object_t* container)
     sl_viewport(0, 0, width, height);
 
     sl_matrix_mode(sl_matrix_mode_project);
-    sl_frustum(-width/2, width/2, -height/2, height/2, 5.0f, 15.0f);
+    sl_frustum(0, width * 1.f, height * 1.f, 0, 5.0f, 15.0f);
     sl_matrix_mode(sl_matrix_mode_modelview);
 }
 
