@@ -155,12 +155,19 @@ static void flush()
     char* dst = sys->ptr;
     char* src = (char*)ks_graphics_instance()->buffer;
 
+    int i, j;
     int strip = w * 4 + (4 - w * 3 / 4) % 4;
-    int i;
 
-    for (i = 0; i < h; ++i)
+    for (i = 0; i < h; i++)
     {
-        memcpy(&dst[i * strip], &src[i * w * 4], w * 4);
+        for (j = 0; j < w; j++)
+        {
+            dst[j * 4]     = src[i * w * 4 + j * 4 + 2];
+            dst[j * 4 + 1] = src[i * w * 4 + j * 4 + 1];
+            dst[j * 4 + 2] = src[i * w * 4 + j * 4 ];
+        }
+
+        dst += strip;
     }
 
     BitBlt(sys->hdc, 3, 25, ks_director_instance()->width, ks_director_instance()->height, sys->hdc_img, 0, 0, SRCCOPY);
