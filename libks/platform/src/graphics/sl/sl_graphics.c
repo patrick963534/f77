@@ -161,7 +161,7 @@ KS_API void ks_graphics_init(ks_object_t* container)
     sl_viewport(0, 0, width, height);
 
     sl_matrix_mode(sl_matrix_mode_project);
-    sl_frustum(0, width * 1.f, height * 1.f, 0, 5.0f, 15.0f);
+    sl_frustum(0, width * 1.f, 0, height * 1.f, 5.0f, 15.0f);
     sl_matrix_mode(sl_matrix_mode_modelview);
 }
 
